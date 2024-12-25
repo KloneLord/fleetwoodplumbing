@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+    <script type="module" src="./js/auth_codes.js"></script>
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.style.display = 'none';
+                tab.classList.remove('active');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.style.display = 'block';
+                activeTab.classList.add('active');
+            }
+
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabId = urlParams.get('tab') || 'business_setup_tab';
+            showTab(tabId);
+        });
+    </script>
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+        <nav>
+            <div class="menu-buttons">
+                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+                <button onclick="window.location.href='portal_clients.html'">Clients</button>
+                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+                <button onclick="window.location.href='portal_projects.html'">Projects</button>
+                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+                <button onclick="window.location.href='portal_orders.html'">Orders</button>
+                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="window.location.href='portal_settings.html'">Settings</button>
+                <button onclick="window.location.href='portal_log_out.html'">Log Out</button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container" style="width: 50%">
+            <div class="tab-buttons">
+                <button data-tab="business_setup_tab" class="active" onclick="showTab('business_setup_tab')">Set up your business</button>
+                <button data-tab="add_clients_tab" onclick="showTab('add_clients_tab')">Set up an admin account</button>
+                <button data-tab="add_employees_tab" onclick="showTab('add_employees_tab')">Admin Login</button>
+            </div>
+            <div>
+                <form id="business_setup_form">
+                    <label for="business_name_input">Business Name:</label>
+                    <input type="text" id="business_name_input" name="business_name" required>
+
+                    <label for="business_abn_input">Business ABN:</label>
+                    <input type="text" id="business_abn_input" name="business_abn" required>
+
+                    <label for="business_email_input">Business Email:</label>
+                    <input type="email" id="business_email_input" name="business_email" required>
+
+                    <label for="business_phone_input">Business Phone:</label>
+                    <input type="tel" id="business_phone_input" name="business_phone" required>
+
+                    <label for="business_address_input">Business Address:</label>
+                    <input type="text" id="business_address_input" name="business_address" required>
+
+                    <label for="auth_code_generate">Generate an Authentication Code:</label>
+                    <input type="text" id="auth_code_generate" name="auth_code_generate" readonly>
+                    <button type="button" onclick="generateAuthCode()">Generate</button>
+
+                    <div style="margin-top: 20px;">
+                        <button type="submit">Submit</button>
+                        <button type="reset">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Add Clients Tab -->
+            <div id="add_clients_tab" class="tab">
+                <form id="add_clients_form">
+                    <label for="client_auth_code_input">Authentication Code:</label>
+                    <input type="text" id="client_auth_code_input" name="auth_code" required>
+                    <button type="button" onclick="validateClientAuthCode()">Validate Code</button>
+
+                    <label for="client_name_input">Username</label>
+                    <input type="text" id="client_name_input" name="client_name" required>
+
+                    <label for="password_input">Password</label>
+                    <input type="password" id="password_input" name="password" required>
+
+                    <label for="repassword_input">Repeat Password</label>
+                    <input type="password" id="repassword_input" name="repassword" required>
+
+                    <label for="email_input">Email</label>
+                    <input type="email" id="email_input" name="email" required>
+
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+
+            <!-- Add Employees Tab -->
+            <div id="add_employees_tab" class="tab">
+                <form id="add_employees_form">
+                    <label for="employee_username_input">Username</label>
+                    <input type="text" id="employee_username_input" name="username" required>
+
+                    <label for="employee_password_input">Password:</label>
+                    <input type="password" id="employee_password_input" name="password" required>
+
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>

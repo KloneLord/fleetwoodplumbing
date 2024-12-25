@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .service-box {
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .service-box:nth-child(odd) {
+            flex-direction: row-reverse; /* Flip direction for odd rows */
+        }
+
+        .service-image {
+            flex: 1;
+            background: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            width: 500px;
+        }
+
+        .service-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .service-content {
+            flex: 2;
+            padding: 1.5rem;
+        }
+
+        .service-content h3 {
+            color: #E25822;
+            margin: 0 0 1rem;
+        }
+
+        .service-content p {
+            color: #555;
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #E25822;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo" style="margin-left: 180px">Fleetwood Plumbing Pty Ltd</div>
+    <nav style="margin-right: 180px;">
+        <ul class="menu">
+            <li><a href="index.html" class="menu-button">Home</a></li>
+            <li><a href="services.html" class="menu-button">Services</a></li>
+            <li><a href="store.html" class="menu-button">Online Store</a></li>
+            <li><a href="contact.html" class="menu-button">Contact</a></li>
+            <li><a href="portal.html" class="menu-button">Portal</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main style="max-width: 60%; align-self: center">
+    <section class="hero">
+        <h1 style="color: #E25822">Our Services</h1>
+        <p>At Fleetwood Plumbing Pty Ltd, we offer professional, fully licensed plumbing services that ensure your home or business runs smoothly. With a comprehensive range of qualifications, we handle every job with precision, care, and attention to detail so you can have peace of mind knowing the work is done right.</p>
+    </section>
+</main>
+<main style="max-width: 60%; align-self: center">
+    <section class="hero-l">
+        <h2 style="color: #E25822">Licensed Plumbing Services You Can Rely On</h2>
+        <p>At Fleetwood Plumbing Pty Ltd, we offer professional, fully licensed plumbing services that ensure your home or business runs smoothly. With a comprehensive range of qualifications, we handle every job with precision, care, and attention to detail so you can have peace of mind knowing the work is done right.</p>
+        <p>Our current licenses and registrations reflect years of training, experience, and compliance with Victorian safety standards. Here’s what we’re qualified to provide:</p>
+    </section>
+</main>
+<main style="max-width: 60%; align-self: center">
+    <section class="hero-l">
+        <h2 style="color: #E25822">Licenses Held</h2>
+        <h3>Drainage (Sewer and Stormwater)</h3>
+        <p>Expert installation and maintenance of sewer and stormwater systems to prevent blockages and ensure proper flow.</p>
+        <h3>Fire Protection – Hydrants and Hose Reels</h3>
+        <p>Safe and compliant installation of hydrants and hose reels to keep your property protected.</p>
+        <h3>Gas-fitting – Type A Gas Appliances</h3>
+        <p>Licensed to install, service, and convert gas appliances, including work on caravans, mobile homes, and Type A systems. We ensure gas systems operate safely and efficiently.</p>
+        <h3>Hot Water Systems and Water Supply</h3>
+        <p>Installation, repairs, and maintenance of reliable water supply systems and hot water services for your comfort.</p>
+        <h3>Mechanical Services</h3>
+        <p>Registered in HVAC systems, and licensed in solid fuel heaters to keep your home comfortable year-round.</p>
+        <h3>Roofing (Stormwater)</h3>
+        <p>Proper installation of roofing and stormwater drainage to protect your property from water damage.</p>
+        <h3>Sanitary Plumbing</h3>
+        <p>Clean and effective plumbing systems that provide safe water and proper waste management.</p>
+    </section>
+</main>
+
+<main style="max-width: 60%; align-self: center">
+    <section class="services-container">
+        <div class="service-box">
+            <div class="service-content">
+                <h3>General Plumbing Pricing</h3>
+                <p>We offer general plumbing services starting at $180. This includes a service call and a trades-person for the first hour. Additional time is invoiced at $60 for each subsequent half hour. A travel allowance of up to 10 km is included in the service call.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Drain Cleaning">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Drain Cleaning">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-content">
+                <h3>Drain Cleaning Pricing</h3>
+                <p>We offer drain cleaning services for $280. This includes a camera, locating equipment, and a trades-person for the first hour. Additional hours are invoiced at $60 for the equipment, plus the trades-person's rate.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-content">
+                <h3>After Hours</h3>
+                <p>After-hours call-out will be $380, which includes a tradesman for the first two hours. Any time beyond this will be charged at double the tradesman’s rate. Additional time billed at double the trades-person's rate. After-hours: 6 PM to 7 AM, Monday to Friday, and 6 PM Friday to 7 AM Monday.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Drain Cleaning">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Drain Cleaning">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-content">
+                <h3>Hot Water Service Changeover</h3>
+                <p>Electric Hot Water Service Changeover: $650, plus the cost of the hot water service. Gas Instantaneous Hot Water Service Changeover: $550, plus the cost of the hot water service. Any valve replacement or pipework relocation will incur additional costs.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-content">
+                <h3>Renovations</h3>
+                <p>Prices are per fixture. Hot and cold water services and fitting off - 750 per fixture. Drainage per fixture - 110 p/m per fixture. Appliances can be quoted.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Renovations">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-image">
+                <img src="https://via.placeholder.com/460x260" alt="Cold water">
+            </div>
+        </div>
+
+        <div class="service-box">
+            <div class="service-content">
+                <h3>Cold water service replacement</h3>
+                <p>Cold water replacement - $250 per fixture. Cold and hot water replacement - $400 per fixture.</p>
+                <p><em>Prices are excluding GST.</em></p>
+            </div>
+        </div>
+    </section>
+</main>
+<main style="max-width: 60%; align-self: center">
+    <section class="hero-l">
+        <h2>Qualified, Licensed, and Ready to Help</h2>
+        <p>We take pride in our extensive qualifications and the trust our clients place in us. Whether it’s a plumbing repair, a gas installation, or a drainage project, our professional services allow you to rest easy, knowing everything is done right.</p>
+        <p>License Number: 101115</p>
+        <p>Our current licenses and registrations reflect years of training, experience, and compliance with Victorian safety standards. Here’s what we’re qualified to provide:</p>
+    </section>
+
+</main>
+
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>

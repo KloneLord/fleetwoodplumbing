@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetwood Plumbing - Contact Us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css">
+  <style>
+    .contact-container {
+      display: flex;
+      justify-content: space-between;
+      padding: 2rem;
+    }
+    .contact-info {
+      max-width: 400px;
+      color: #555;
+    }
+    .contact-info h2 {
+      color: #E25822;
+      margin-bottom: 1rem;
+    }
+    .contact-info p {
+      margin: 0.5rem 0;
+    }
+    .contact-info a {
+      color: #FF7F50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .contact-info a:hover {
+      color: #E25822;
+      text-decoration: underline;
+    }
+    .tab-container {
+      flex: 1;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 0 8px 8px 8px;
+      padding: 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #ddd; /* Adds bottom border to the tab container */
+    }
+    .tab-button {
+      background: #f9f9f9;
+      color: #333;
+      border: 1px solid #ddd;
+      border-bottom: none; /* Removes bottom border for a clean file-tab look */
+      padding: 0.75rem 1rem;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .tab-button.active {
+      background: #FF7F50; /* Highlight active tab */
+      color: white;
+      border-color: #FF7F50;
+      font-weight: bold;
+      z-index: 1; /* Ensures it appears above the tab container border */
+    }
+    .tab-button:hover {
+      background: #E25822;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #f9f9f9;
+      padding: 1.5rem;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    form h3 {
+      color: #E25822;
+    }
+    form label {
+      font-weight: bold;
+    }
+    form input, form textarea, form select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    form button {
+      background: #FF7F50;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    form button:hover {
+      background: #E25822;
+    }
+  </style>
+  <script>
+    function showTab(tabId) {
+      // Find all tab contents and hide them
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show the selected tab content
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.classList.add('active');
+      }
+
+      // Find all tab buttons and reset their styles
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(button => {
+        button.classList.remove('active');
+      });
+
+      // Highlight the selected tab button
+      const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get the 'tab' parameter from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabId = urlParams.get('tab') || 'inquiry'; // Default to 'inquiry'
+
+      // Show the selected tab
+      showTab(tabId);
+    });
+  </script>
+
+</head>
+<body>
+<header>
+  <div class="logo" style="margin-left: 180px">Fleetwood Plumbing Pty Ltd</div>
+  <nav style="margin-right: 180px;">
+    <ul class="menu">
+      <li><a href="index.html" class="menu-button">Home</a></li>
+      <li><a href="services.html" class="menu-button">Services</a></li>
+      <li><a href="store.html" class="menu-button">Online Store</a></li>
+      <li><a href="contact.html" class="menu-button">Contact</a></li>
+      <li><a href="portal.html" class="menu-button">Portal</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <h1 style="color: #E25822">Contact Fleetwood Plumbing</h1>
+    <p>We're here to help! Reach out with inquiries, job requests, or quotes.</p>
+  </section>
+
+  <section class="contact-container">
+    <div class="contact-info">
+      <h2>Our Address</h2>
+      <p>30-34 Fraser St<br>Birchip, Victoria 3483</p>
+      <p><strong>Email:</strong> <a href="mailto:info@fleetwoodplumbing.com.au">info@fleetwoodplumbing.com.au</a></p>
+      <p><strong>Phone:</strong> <a href="tel:0400826925">0400 826 925</a></p>
+    </div>
+
+    <div class="tab-container">
+      <div class="tabs">
+        <button class="tab-button active" data-tab="inquiry" onclick="showTab('inquiry')">Make an Inquiry</button>
+        <button class="tab-button" data-tab="job" onclick="showTab('job')">Submit a Job</button>
+        <button class="tab-button" data-tab="quote" onclick="showTab('quote')">Request a Quote</button>
+      </div>
+
+      <div id="inquiry" class="tab-content active">
+        <form action="#" method="POST">
+          <h3>Make an Inquiry</h3>
+          <label for="inquiry-name">Name</label>
+          <input type="text" id="inquiry-name" name="name" placeholder="Your name" required>
+          <label for="inquiry-address">Address</label>
+          <input type="text" id="inquiry-address" name="address" placeholder="Your address">
+          <label for="inquiry-phone">Phone</label>
+          <input type="tel" id="inquiry-phone" name="phone" placeholder="Your phone number">
+          <label for="inquiry-email">Email</label>
+          <input type="email" id="inquiry-email" name="email" placeholder="Your email" required>
+          <label for="inquiry-message">Description</label>
+          <textarea id="inquiry-message" name="message" rows="4" placeholder="Your inquiry" required></textarea>
+          <button type="submit">Submit Inquiry</button>
+        </form>
+      </div>
+
+      <div id="job" class="tab-content">
+        <form action="#" method="POST">
+          <h3>Submit a Job</h3>
+          <label for="job-name">Name</label>
+          <input type="text" id="job-name" name="name" placeholder="Your name" required>
+          <label for="job-address">Address</label>
+          <input type="text" id="job-address" name="address" placeholder="Your address">
+          <label for="job-phone">Phone</label>
+          <input type="tel" id="job-phone" name="phone" placeholder="Your phone number">
+          <label for="job-email">Email</label>
+          <input type="email" id="job-email" name="email" placeholder="Your email" required>
+          <label for="job-details">Job Description</label>
+          <textarea id="job-details" name="details" rows="4" placeholder="Job description" required></textarea>
+          <label for="job-timeframe">Time Frame</label>
+          <input type="text" id="job-timeframe" name="timeframe" placeholder="Expected completion time">
+          <label for="job-upload">Upload File</label>
+          <input type="file" id="job-upload" name="file">
+          <button type="submit">Submit Job</button>
+        </form>
+      </div>
+
+      <div id="quote" class="tab-content">
+        <form action="#" method="POST">
+          <h3>Request a Quote</h3>
+          <label for="quote-name">Name</label>
+          <input type="text" id="quote-name" name="name" placeholder="Your name" required>
+          <label for="quote-address">Address</label>
+          <input type="text" id="quote-address" name="address" placeholder="Your address">
+          <label for="quote-phone">Phone</label>
+          <input type="tel" id="quote-phone" name="phone" placeholder="Your phone number">
+          <label for="quote-email">Email</label>
+          <input type="email" id="quote-email" name="email" placeholder="Your email" required>
+          <label for="quote-details">Work Description</label>
+          <textarea id="quote-details" name="details" rows="4" placeholder="Description of work" required></textarea>
+          <label for="quote-timeframe">Time Frame</label>
+          <input type="text" id="quote-timeframe" name="timeframe" placeholder="Expected completion time">
+          <label for="quote-upload">Upload File</label>
+          <input type="file" id="quote-upload" name="file">
+          <button type="submit">Request Quote</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>

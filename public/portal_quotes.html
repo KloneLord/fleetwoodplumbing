@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+
+    <script>
+        function showTab(tabId) {
+            // Find all tab contents and hide them
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.style.display = 'none'; // Hide all tabs
+                tab.classList.remove('active'); // Remove active class
+            });
+
+            // Show the selected tab content
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.style.display = 'block'; // Show the active tab
+                activeTab.classList.add('active'); // Add active class
+            }
+
+            // Reset styles for all tab buttons
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active'); // Remove active class from all buttons
+            });
+
+            // Highlight the active tab button
+            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active'); // Add active class to the current button
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Default to showing the first tab or a specific tab from the URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabId = urlParams.get('tab') || 'temp_1_tab'; // Default tab
+            showTab(tabId);
+        });
+    </script>
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+        <nav>
+            <div class="menu-buttons">
+                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+                <button onclick="window.location.href='portal_clients.html'">Clients</button>
+                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+                <button onclick="window.location.href='portal_projects.html'">Projects</button>
+                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+                <button onclick="window.location.href='portal_orders.html'">Orders</button>
+                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="window.location.href='portal_settings.html'">Settings</button>
+                <button onclick="window.location.href='portal_log_out.html'">Log Out</button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Template 1</button>
+                <button data-tab="temp_2_tab" onclick="showTab('temp_2_tab')">Template 2</button>
+                <button data-tab="temp_3_tab" onclick="showTab('temp_3_tab')">Template 3</button>
+                <button data-tab="temp_4_tab" onclick="showTab('temp_4_tab')">Template 4</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="temp_1_tab" class="tab active">
+                <h2>Template 1</h2>
+                <form id="temp_1_form">
+                    <label for="temp_1_input">Input:</label>
+                    <input type="text" id="temp_1_input" name="temp_1_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div id="temp_2_tab" class="tab">
+                <h2>Template 2</h2>
+                <form id="temp_2_form">
+                    <label for="temp_2_input">Input:</label>
+                    <input type="text" id="temp_2_input" name="temp_2_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div id="temp_3_tab" class="tab">
+                <h2>Template 3</h2>
+                <form id="temp_3_form">
+                    <label for="temp_3_input">Input:</label>
+                    <input type="text" id="temp_3_input" name="temp_3_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div id="temp_4_tab" class="tab">
+                <h2>Template 4</h2>
+                <form id="temp_4_form">
+                    <label for="temp_4_input">Input:</label>
+                    <input type="text" id="temp_4_input" name="temp_4_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>

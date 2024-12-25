@@ -1,0 +1,114 @@
+/* Sophisticated Blue Palette */
+
+/* General Colors */
+body {
+    background-color: #F5F5F5; /* Light gray background */
+    color: #263238; /* Charcoal gray text */
+}
+
+/* Header Colors */
+header {
+    background-color: #2196F3; /* Bright blue */
+    color: white; /* White text */
+    border-bottom: 4px solid #BBDEFB; /* Light blue trim */
+}
+
+header .logo {
+    color: white; /* White logo */
+}
+
+nav ul li a {
+    color: white; /* White links */
+}
+
+nav ul li a:hover {
+    color: #BBDEFB; /* Light blue hover */
+}
+
+/* Menu Button Colors */
+.menu-buttons button {
+    background: #2196F3; /* Bright blue */
+    color: white; /* White text */
+    border-color: #1976D2; /* Deep blue border */
+}
+
+.menu-buttons button.active {
+    background: #1976D2; /* Deep blue */
+    color: white; /* White text */
+}
+
+.menu-buttons button:hover {
+    background: #BBDEFB; /* Light blue */
+    color: #263238; /* Charcoal gray text */
+}
+
+/* Tab Button Colors */
+
+/* Inactive Tabs */
+.tab-buttons button {
+    background: #2196F3; /* Bright blue for inactive tabs */
+    color: white; /* White text */
+    border-color: #1976D2; /* Deep blue border */
+}
+
+/* Active Tab */
+.tab-buttons button.active {
+    background: #BBDEFB; /* Light blue for the active tab */
+    color: #1976D2; /* Deep blue text for active tab */
+    border-color: #1976D2; /* Deep blue border */
+}
+
+/* Hover State */
+.tab-buttons button:hover {
+    background: #E3F2FD; /* Even lighter blue for hover state */
+    color: #1976D2; /* Deep blue text */
+}
+
+/* Tab Content */
+.tab {
+    background: #FFFFFF; /* Clean white for content */
+    border-color: #1976D2; /* Deep blue border */
+    color: #263238; /* Charcoal gray text */
+}
+
+/* Form Colors */
+form {
+    background: white; /* Clean white */
+    color: #263238; /* Charcoal gray text */
+    border: 1px solid #BBDEFB; /* Light blue border */
+}
+
+form input {
+    border: 1px solid #2196F3; /* Bright blue */
+    background: #F5F5F5; /* Light gray */
+    color: #263238; /* Charcoal gray text */
+}
+
+form input:focus {
+    border-color: #1976D2; /* Deep blue focus */
+    box-shadow: 0 0 5px #2196F3; /* Bright blue glow */
+}
+
+form button {
+    background: #2196F3; /* Bright blue */
+    color: white; /* White text */
+}
+
+form button:hover {
+    background: #1976D2; /* Deep blue */
+    color: white; /* White text */
+}
+
+/* Footer Colors */
+footer {
+    background-color: #1976D2; /* Deep blue */
+    color: white; /* White text */
+}
+
+footer a {
+    color: #BBDEFB; /* Light blue links */
+}
+
+footer a:hover {
+    color: white; /* White hover */
+}

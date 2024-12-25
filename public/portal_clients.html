@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Clients</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+        <nav>
+            <div class="menu-buttons">
+                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+                <button onclick="window.location.href='portal_clients.html'">Clients</button>
+                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+                <button onclick="window.location.href='portal_projects.html'">Projects</button>
+                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+                <button onclick="window.location.href='portal_orders.html'">Orders</button>
+                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="window.location.href='portal_settings.html'">Settings</button>
+                <button onclick="window.location.href='portal_log_out.html'">Log Out</button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button data-tab="client_list_tab" class="active" onclick="showTab('client_list_tab')">Client List</button>
+                <button data-tab="add_client_tab" onclick="showTab('add_client_tab')">Add a Client</button>
+                <button data-tab="edit_client_tab" onclick="showTab('edit_client_tab')">Edit a Client</button>
+                <button data-tab="client_settings_tab" onclick="showTab('client_settings_tab')">Client Settings</button>
+            </div>
+
+            <!-- Client List Tab -->
+            <div id="client_list_tab" class="tab active">
+                <h2>Client List</h2>
+                <table id="clientList">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>View/Edit</th>
+                        <th>Select</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Add Client Tab -->
+            <div id="add_client_tab" class="tab">
+                <h2>Add a Client</h2>
+                <form id="addClientForm">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <label for="contact_method">Preferred Contact Method:</label>
+                    <select id="contact_method" name="contact_method" required>
+                        <option value="phone">Phone</option>
+                        <option value="email">Email</option>
+                        <option value="text">Text</option>
+                    </select>
+                    <label for="street">Street and Number:</label>
+                    <input type="text" id="street" name="street" required>
+                    <label for="city">City/Town:</label>
+                    <input type="text" id="city" name="city" required>
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" required>
+                    <label for="postcode">Postcode:</label>
+                    <input type="text" id="postcode" name="postcode" required>
+                    <button type="submit">Add</button>
+                    <button type="reset">Clear</button>
+                </form>
+            </div>
+
+            <!-- Edit Client Tab -->
+            <div id="edit_client_tab" class="tab">
+                <h2>Edit a Client</h2>
+                <form id="editClientForm">
+                    <label for="search">Search Client:</label>
+                    <input type="text" id="search" name="search" oninput="searchClients()" placeholder="Search by name">
+                    <div id="searchResults"></div>
+                    <label for="edit_name">Name:</label>
+                    <input type="text" id="edit_name" name="name" required>
+                    <label for="edit_phone">Phone:</label>
+                    <input type="text" id="edit_phone" name="phone" required>
+                    <label for="edit_email">Email:</label>
+                    <input type="email" id="edit_email" name="email" required>
+                    <label for="edit_contact_method">Preferred Contact Method:</label>
+                    <select id="edit_contact_method" name="contact_method" required>
+                        <option value="phone">Phone</option>
+                        <option value="email">Email</option>
+                        <option value="text">Text</option>
+                    </select>
+                    <label for="edit_street">Street and Number:</label>
+                    <input type="text" id="edit_street" name="street" required>
+                    <label for="edit_city">City/Town:</label>
+                    <input type="text" id="edit_city" name="city" required>
+                    <label for="edit_state">State:</label>
+                    <input type="text" id="edit_state" name="state" required>
+                    <label for="edit_postcode">Postcode:</label>
+                    <input type="text" id="edit_postcode" name="postcode" required>
+                    <button type="submit">Edit</button>
+                    <button type="reset">Clear</button>
+                </form>
+            </div>
+
+            <!-- Client Settings Tab -->
+            <div id="client_settings_tab" class="tab">
+                <h2>Archived Clients</h2>
+                <input type="text" id="archiveSearch" oninput="loadArchivedClients()" placeholder="Search Archived Clients">
+                <div id="archivedClients"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>
