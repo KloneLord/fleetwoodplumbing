@@ -71,8 +71,7 @@
             <div id="add_clients_tab" class="tab">
                 <form id="add_clients_form">
                     <label for="client_auth_code_input">Authentication Code:</label>
-                    <input type="text" id="client_auth_code_input" name="auth_code" required>
-                    <button type="button" onclick="validateClientAuthCode()">Validate Code</button>
+                    <input type="text" id="client_auth_code_input" name="auth_code" required readonly>
 
                     <label for="client_name_input">Username</label>
                     <input type="text" id="client_name_input" name="client_name" required>
@@ -108,97 +107,93 @@
 <script>
     // Function to generate authentication code
     async function generateAuthCode() {
-        const response = await fetch('/api/business/generate-code', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+        try {
+            const response = await fetch('/api/auth-code/generate-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
-        const data = await response.json();
-        if (response.ok) {
+
+            const data = await response.json();
             document.getElementById('auth_code_generate').value = data.authCode;
+            document.getElementById('auth_code_generate').readOnly = true; // Lock the input
             alert('Authentication code generated successfully!');
-        } else {
-            alert('Error: ' + data.error);
+        } catch (error) {
+            alert('Error: ' + error.message);
         }
     }
 
-    // Function to validate and register admin user
-    async function validateClientAuthCode() {
-        const authCode = document.getElementById('client_auth_code_input').value;
-        const response = await fetch('/api/business/validate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ authCode })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            alert('Authentication Code Validated');
-        } else {
-            alert('Error: ' + data.message);
-        }
-    }
+    // Function to submit business setup form
+    document.getElementById('business_setup_form').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent the default form submission
 
-    // Function to register admin user
-    async function registerAdminUser() {
-        const response = await fetch('/api/admin/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: document.getElementById('client_name_input').value,
-                email: document.getElementById('email_input').value,
-                password: document.getElementById('password_input').value,
-            })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            alert('Admin Registered Successfully');
-        } else {
-            alert('Error: ' + data.error);
-        }
-    }
+        const businessData = {
+            name: document.getElementById('business_name_input').value,
+            abn: document.getElementById('business_abn_input').value,
+            email: document.getElementById('business_email_input').value,
+            phone: document.getElementById('business_phone_input').value,
+            address: document.getElementById('business_address_input').value,
+            authCode: document.getElementById('auth_code_generate').value,
+        };
 
-    // Function to handle admin login
-    async function loginAdminUser() {
-        const response = await fetch('/api/admin/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: document.getElementById('employee_username_input').value,
-                password: document.getElementById('employee_password_input').value,
-            })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            alert('Login Successful');
-            // Save token to localStorage or cookies for authentication in subsequent requests
-            localStorage.setItem('token', data.token);
-        } else {
-            alert('Error: ' + data.error);
-        }
-    }
+        try {
+            const response = await fetch('/api/business/setup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(businessData)
+            });
 
-    // Add event listeners to forms
-    document.getElementById('business_setup_form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Call the generateAuthCode function when the form is submitted
-        // But ensure it doesn't generate a new code on form submit
+            const data = await response.json();
+            if (response.ok) {
+                alert('Business setup successful!');
+                // Switch to the admin account setup tab
+                showTab('add_clients_tab');
+                document.getElementById('client_auth_code_input').value = businessData.authCode;
+                document.getElementById('client_auth_code_input').readOnly = true; // Lock the input
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
     });
 
-    document.getElementById('add_clients_form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        registerAdminUser();
-    });
+    // Function to submit admin user setup form
+    document.getElementById('add_clients_form').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent the default form submission
 
-    document.getElementById('add_employees_form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        loginAdminUser();
+        const adminData = {
+            username: document.getElementById('client_name_input').value,
+            password: document.getElementById('password_input').value,
+            email: document.getElementById('email_input').value,
+            authCode: document.getElementById('client_auth_code_input').value,
+        };
+
+        try {
+            const response = await fetch('/api/business/create-admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(adminData)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Admin user created successfully!');
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
     });
 
     function showTab(tabId) {

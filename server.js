@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db_config.js';
@@ -10,6 +9,7 @@ import errorMiddleware from './middleware/error_middleware.js';
 
 import businessRoutes from './routes/business.js';
 import adminRoutes from './routes/admin.js';
+import authCodeRoutes from './routes/auth_code.js';
 
 // Resolve __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/business', businessRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth-code', authCodeRoutes);
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

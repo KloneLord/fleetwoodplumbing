@@ -6,7 +6,7 @@ const businessSchema = new mongoose.Schema({
     email: { type: String, required: true },
     phone: { type: String, required: true },
     address: { type: String, required: true },
-    authCode: { type: String, required: true, unique: true },
+    authCode: { type: String, required: true },
 }, { timestamps: true });
 
 const Business = mongoose.model('Business', businessSchema);

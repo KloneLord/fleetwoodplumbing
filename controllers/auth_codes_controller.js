@@ -1,4 +1,4 @@
-import AuthCode from '../models/auth_code_model.js';
+import AuthCode from '../models/auth_code.js';
 
 // Check if a code already exists in the database
 export async function checkDuplicateCode(code) {
