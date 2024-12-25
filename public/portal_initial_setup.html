@@ -7,38 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
-    <script type="module" src="./js/auth_codes.js"></script>
-    <script>
-        function showTab(tabId) {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.style.display = 'none';
-                tab.classList.remove('active');
-            });
-
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.style.display = 'block';
-                activeTab.classList.add('active');
-            }
-
-            const buttons = document.querySelectorAll('.tab-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('active');
-            });
-
-            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const tabId = urlParams.get('tab') || 'business_setup_tab';
-            showTab(tabId);
-        });
-    </script>
 </head>
 <body>
 <header>
@@ -71,7 +39,7 @@
                 <button data-tab="add_clients_tab" onclick="showTab('add_clients_tab')">Set up an admin account</button>
                 <button data-tab="add_employees_tab" onclick="showTab('add_employees_tab')">Admin Login</button>
             </div>
-            <div>
+            <div id="business_setup_tab" class="tab active">
                 <form id="business_setup_form">
                     <label for="business_name_input">Business Name:</label>
                     <input type="text" id="business_name_input" name="business_name" required>
@@ -98,7 +66,6 @@
                     </div>
                 </form>
             </div>
-
 
             <!-- Add Clients Tab -->
             <div id="add_clients_tab" class="tab">
@@ -138,7 +105,137 @@
         </div>
     </section>
 </main>
+<script>
+    // Function to generate authentication code
+    async function generateAuthCode() {
+        const response = await fetch('/api/business/generate-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (response.ok) {
+            document.getElementById('auth_code_generate').value = data.authCode;
+            alert('Authentication code generated successfully!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    }
 
+    // Function to validate and register admin user
+    async function validateClientAuthCode() {
+        const authCode = document.getElementById('client_auth_code_input').value;
+        const response = await fetch('/api/business/validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ authCode })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Authentication Code Validated');
+        } else {
+            alert('Error: ' + data.message);
+        }
+    }
+
+    // Function to register admin user
+    async function registerAdminUser() {
+        const response = await fetch('/api/admin/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: document.getElementById('client_name_input').value,
+                email: document.getElementById('email_input').value,
+                password: document.getElementById('password_input').value,
+            })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Admin Registered Successfully');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    }
+
+    // Function to handle admin login
+    async function loginAdminUser() {
+        const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: document.getElementById('employee_username_input').value,
+                password: document.getElementById('employee_password_input').value,
+            })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Login Successful');
+            // Save token to localStorage or cookies for authentication in subsequent requests
+            localStorage.setItem('token', data.token);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    }
+
+    // Add event listeners to forms
+    document.getElementById('business_setup_form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Call the generateAuthCode function when the form is submitted
+        // But ensure it doesn't generate a new code on form submit
+    });
+
+    document.getElementById('add_clients_form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        registerAdminUser();
+    });
+
+    document.getElementById('add_employees_form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        loginAdminUser();
+    });
+
+    function showTab(tabId) {
+        // Find all tab contents and hide them
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.style.display = 'none'; // Hide all tabs
+            tab.classList.remove('active'); // Remove active class
+        });
+
+        // Show the selected tab content
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) {
+            activeTab.style.display = 'block'; // Show the active tab
+            activeTab.classList.add('active'); // Add active class
+        }
+
+        // Reset styles for all tab buttons
+        const buttons = document.querySelectorAll('.tab-buttons button');
+        buttons.forEach(button => {
+            button.classList.remove('active'); // Remove active class from all buttons
+        });
+
+        // Highlight the active tab button
+        const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+        if (activeButton) {
+            activeButton.classList.add('active'); // Add active class to the current button
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Default to showing the first tab or a specific tab from the URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabId = urlParams.get('tab') || 'business_setup_tab'; // Default tab
+        showTab(tabId);
+    });
+</script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
 </footer>

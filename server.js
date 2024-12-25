@@ -1,15 +1,19 @@
+// server.js
 import express from 'express';
 import dotenv from 'dotenv';
-import connectDB from './config/db_config.js'; // Database connection
-import authCodeRoutes from './routes/auth_codes.js'; // Routes for authentication codes
+import connectDB from './config/db_config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import authMiddleware from './middleware/auth_middleware.js';
+import errorMiddleware from './middleware/error_middleware.js';
+
+import businessRoutes from './routes/business.js';
+import adminRoutes from './routes/admin.js';
 
 // Resolve __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Serve static files from the public directory
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -18,34 +22,33 @@ const app = express();
 // Connect to the database
 connectDB();
 
+// Middleware to serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Example base route
+// Routes
+app.use('/api/business', businessRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Handle favicon requests
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
+// Example route to check API status
 app.get('/', (req, res) => {
     res.send('Fleetwood Plumbing API is running...');
 });
 
-// API Routes
-app.use('/api/auth_codes', authCodeRoutes);
+// Error handling middleware should be the last middleware
+app.use(errorMiddleware);
 
-// Catch-all 404 middleware for undefined routes
+// Handle 404 errors
 app.use((req, res, next) => {
     const error = new Error(`Not Found - ${req.originalUrl}`);
     res.status(404);
     next(error);
-});
-
-// Global error handler middleware
-app.use((err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    res.status(statusCode).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-    });
 });
 
 // Start the server

@@ -1,6 +1,7 @@
-﻿const error_middleware = (err, req, res, next) => {
-    console.error(err.message);
-    res.status(500).json({ message: 'Internal server error' });
+﻿// error_middleware.js
+const errorMiddleware = (err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
 };
 
-export default error_middleware;
+export default errorMiddleware;
