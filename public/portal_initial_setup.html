@@ -172,9 +172,15 @@
         const adminData = {
             username: document.getElementById('client_name_input').value,
             password: document.getElementById('password_input').value,
+            repassword: document.getElementById('repassword_input').value,
             email: document.getElementById('email_input').value,
             authCode: document.getElementById('client_auth_code_input').value,
         };
+
+        if (adminData.password !== adminData.repassword) {
+            alert('Passwords do not match');
+            return;
+        }
 
         try {
             const response = await fetch('/api/business/create-admin', {

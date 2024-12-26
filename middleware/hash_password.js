@@ -1,10 +1,16 @@
-// hash_password.js
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
-const hashPassword = async (password) => {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
+// Middleware to hash passwords before saving to the database
+const hashPassword = async (req, res, next) => {
+    try {
+        if (req.body.password) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
+        }
+        next();
+    } catch (error) {
+        res.status(500).json({ error: 'Error hashing password' });
+    }
 };
 
 export default hashPassword;

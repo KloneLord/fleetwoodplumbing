@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import AdminUser from '../models/admin_user.js';
 import User from '../models/user.js';
+import AuthCode from '../models/auth_code.js';
 
 // Function to handle user login
 export const loginUser = async (req, res) => {
@@ -45,6 +46,85 @@ export const loginUser = async (req, res) => {
         req.session.user = { id: user._id, username: user.username, role: user.role, access: user.access };
 
         res.status(200).json({ token, user: { id: user._id, username: user.username, role: user.role, access: user.access } });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Function to handle user registration
+export const registerUser = async (req, res) => {
+    try {
+        const { username, email, password, repassword, phone, role, authCode } = req.body;
+
+        // Check if passwords match
+        if (password !== repassword) {
+            return res.status(400).json({ error: 'Passwords do not match' });
+        }
+
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
+
+        // Check if the provided auth code exists and is valid
+        const existingAuthCode = await AuthCode.findOne({ code: authCode });
+        if (!existingAuthCode) {
+            return res.status(400).json({ error: 'Invalid authentication code' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            username,
+            email,
+            password: hashedPassword, // Store the hashed password
+            phone,
+            role: role || 'client',
+            credentials: null,
+            access: 'basic',
+            archived: false,
+            created_by: null,
+            authCode,
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Function to handle admin user creation
+export const createAdminUser = async (req, res) => {
+    try {
+        const { username, email, password, authCode } = req.body;
+
+        // Check if the user already exists
+        const existingUser = await AdminUser.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Admin user already exists' });
+        }
+
+        // Check if the provided auth code exists and is valid
+        const existingAuthCode = await AuthCode.findOne({ code: authCode });
+        if (!existingAuthCode) {
+            return res.status(400).json({ error: 'Invalid authentication code' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newAdminUser = new AdminUser({
+            username,
+            email,
+            password: hashedPassword, // Store the hashed password
+            authCode,
+        });
+
+        await newAdminUser.save();
+        res.status(201).json({ message: 'Admin user created successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

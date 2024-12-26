@@ -1,13 +1,17 @@
 import { Router } from 'express';
-import { loginUser, registerUser } from '../controllers/auth_controller.js';
+import { loginUser, registerUser, createAdminUser } from '../controllers/auth_controller.js';
+import hashPassword from '../middleware/hash_password.js';
 
 const router = Router();
 
+// Register route
+router.post('/register', hashPassword, registerUser);
+
+// Create admin user route
+router.post('/business/create-admin', hashPassword, createAdminUser);
+
 // Login route
 router.post('/login', loginUser);
-
-// Register route
-router.post('/register', registerUser);
 
 // Get session information
 router.get('/session', (req, res) => {
