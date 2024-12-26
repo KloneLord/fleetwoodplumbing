@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container" style="width: 50%">
+            <form id="login_form">
+                <label for="login_username_input">Username</label>
+                <input type="text" id="login_username_input" name="username" required>
+
+                <label for="login_password_input">Password</label>
+                <input type="password" id="login_password_input" name="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </section>
+</main>
+<script>
+    document.getElementById('login_form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const loginData = {
+            username: document.getElementById('login_username_input').value,
+            password: document.getElementById('login_password_input').value,
+        };
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Login successful!');
+                localStorage.setItem('token', data.token);
+                window.location.href = 'portal_dashboard.html';
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+</script>
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+</body>
+</html>

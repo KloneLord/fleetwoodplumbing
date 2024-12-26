@@ -3,15 +3,12 @@ import dotenv from 'dotenv';
 import connectDB from './config/db_config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-import authMiddleware from './middleware/auth_middleware.js';
-import errorMiddleware from './middleware/error_middleware.js';
-
+import sessionMiddleware from './middleware/session_middleware.js';
 import businessRoutes from './routes/business.js';
 import adminRoutes from './routes/admin.js';
+import authRoutes from './routes/auth.js';
 import authCodeRoutes from './routes/auth_code.js';
 
-// Resolve __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -29,9 +26,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Use session middleware
+app.use(sessionMiddleware);
+
 // Routes
 app.use('/api/business', businessRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/auth-code', authCodeRoutes);
 
 // Handle favicon requests
@@ -43,13 +44,13 @@ app.get('/', (req, res) => {
 });
 
 // Error handling middleware should be the last middleware
-app.use(errorMiddleware);
+app.use((req, res, next) => {
+    res.status(500).send('Internal Server Error');
+});
 
 // Handle 404 errors
 app.use((req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
-    res.status(404);
-    next(error);
+    res.status(404).send('Not Found');
 });
 
 // Start the server
