@@ -8,6 +8,8 @@ export const loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
 
+        console.log('Received login request:', { username, password }); // Log received username and password
+
         // Validate request payload
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required' });
@@ -15,10 +17,12 @@ export const loginUser = async (req, res) => {
 
         // Check if the user exists in AdminUser collection
         let user = await AdminUser.findOne({ username });
+        console.log('AdminUser found:', user); // Log found AdminUser
 
         // If not found, check in the User collection
         if (!user) {
             user = await User.findOne({ username });
+            console.log('User found:', user); // Log found User
         }
 
         // If user not found in both collections
@@ -28,6 +32,8 @@ export const loginUser = async (req, res) => {
 
         // Check if the password is correct
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log('Password match:', isMatch); // Log password match result
+
         if (!isMatch) {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
