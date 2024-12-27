@@ -1,131 +1,119 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import AdminUser from '../models/admin_user.js';
+import { hashPassword } from '../middleware/hash_password.js';
 import User from '../models/user.js';
-import AuthCode from '../models/auth_code.js';
 
-// Function to handle user login
-export const loginUser = async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        console.log('Received login request:', { username, password }); // Log received username and password
-
-        // Validate request payload
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required' });
-        }
-
-        // Check if the user exists in AdminUser collection
-        let user = await AdminUser.findOne({ username });
-        console.log('AdminUser found:', user); // Log found AdminUser
-
-        // If not found, check in the User collection
-        if (!user) {
-            user = await User.findOne({ username });
-            console.log('User found:', user); // Log found User
-        }
-
-        // If user not found in both collections
-        if (!user) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-
-        // Check if the password is correct
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log('Password match:', isMatch); // Log password match result
-
-        if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-
-        // Generate a JWT token
-        const token = jwt.sign({ id: user._id, role: user.role, access: user.access, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        // Set session
-        req.session.user = { id: user._id, username: user.username, role: user.role, access: user.access };
-
-        res.status(200).json({ token, user: { id: user._id, username: user.username, role: user.role, access: user.access } });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-// Function to handle user registration
 export const registerUser = async (req, res) => {
     try {
-        const { username, email, password, repassword, phone, role, authCode } = req.body;
+        console.log('registerUser: Request received with body:', req.body);
+        const { username, email, password, phone, role, credentials, access, authCode } = req.body;
 
-        // Check if passwords match
-        if (password !== repassword) {
-            return res.status(400).json({ error: 'Passwords do not match' });
+        // Validate required fields
+        if (!username || !email || !password || !phone || !authCode) {
+            console.error('registerUser: Missing required fields');
+            return res.status(400).json({ error: 'All fields are required' });
         }
 
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
+        // Check if the user already exists by email or username
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
-        }
-
-        // Check if the provided auth code exists and is valid
-        const existingAuthCode = await AuthCode.findOne({ code: authCode });
-        if (!existingAuthCode) {
-            return res.status(400).json({ error: 'Invalid authentication code' });
+            console.error('registerUser: User with this email or username already exists');
+            return res.status(400).json({ error: 'User with this email or username already exists' });
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = hashPassword(password);
+        console.log('registerUser: Password hashed');
 
         const newUser = new User({
             username,
             email,
-            password: hashedPassword, // Store the hashed password
+            password: hashedPassword,
             phone,
             role: role || 'client',
-            credentials: null,
-            access: 'basic',
-            archived: false,
-            created_by: null,
+            credentials: credentials || null,
+            access: access || 'basic',
             authCode,
         });
 
         await newUser.save();
+        console.log('registerUser: User saved to database');
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        console.error('Error registering user:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const loginUser = async (req, res) => {
+    try {
+        console.log('loginUser: Request received with body:', req.body);
+        const { email, password } = req.body;
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            console.error('loginUser: Invalid email or password');
+            return res.status(400).json({ error: 'Invalid email or password' });
+        }
+
+        // Verify the password
+        const isMatch = verifyPassword(password, user.password);
+        if (!isMatch) {
+            console.error('loginUser: Invalid email or password');
+            return res.status(400).json({ error: 'Invalid email or password' });
+        }
+
+        // Generate a JWT token
+        const token = jwt.sign({ id: user._id, role: user.role, access: user.access, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        console.log('loginUser: JWT token generated');
+
+        // Set session
+        req.session.user = { id: user._id, username: user.username, role: user.role, access: user.access };
+        console.log('loginUser: Session set');
+
+        res.status(200).json({ token, user: { id: user._id, username: user.username, role: user.role, access: user.access } });
+    } catch (error) {
+        console.error('Error logging in user:', error); // Log the error for debugging
         res.status(500).json({ error: error.message });
     }
 };
 
-// Function to handle admin user creation
 export const createAdminUser = async (req, res) => {
     try {
-        const { username, email, password, authCode } = req.body;
+        console.log('createAdminUser: Request received with body:', req.body);
+        const { username, email, password, phone, authCode } = req.body;
 
-        // Check if the user already exists
-        const existingUser = await AdminUser.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: 'Admin user already exists' });
+        // Validate required fields
+        if (!username || !email || !password || !phone || !authCode) {
+            console.error('createAdminUser: Missing required fields');
+            return res.status(400).json({ error: 'All fields are required' });
         }
 
-        // Check if the provided auth code exists and is valid
-        const existingAuthCode = await AuthCode.findOne({ code: authCode });
-        if (!existingAuthCode) {
-            return res.status(400).json({ error: 'Invalid authentication code' });
+        // Check if the admin user already exists by email or username
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            console.error('createAdminUser: Admin user with this email or username already exists');
+            return res.status(400).json({ error: 'Admin user with this email or username already exists' });
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = hashPassword(password);
+        console.log('createAdminUser: Password hashed');
 
-        const newAdminUser = new AdminUser({
+        const newAdminUser = new User({
             username,
             email,
-            password: hashedPassword, // Store the hashed password
+            password: hashedPassword,
+            phone,
+            role: 'admin',
+            access: 'full',
             authCode,
         });
 
         await newAdminUser.save();
+        console.log('createAdminUser: Admin user saved to database');
         res.status(201).json({ message: 'Admin user created successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error creating admin user:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
