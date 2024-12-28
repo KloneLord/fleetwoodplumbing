@@ -37,7 +37,6 @@
             <div class="tab-buttons">
                 <button data-tab="business_setup_tab" class="active" onclick="showTab('business_setup_tab')">Set up your business</button>
                 <button data-tab="add_clients_tab" onclick="showTab('add_clients_tab')">Set up an admin account</button>
-                <button data-tab="add_employees_tab" onclick="showTab('add_employees_tab')">Admin Login</button>
             </div>
             <div id="business_setup_tab" class="tab active">
                 <form id="business_setup_form">
@@ -69,12 +68,9 @@
 
             <!-- Add Clients Tab -->
             <div id="add_clients_tab" class="tab">
-                <form id="add_clients_form">
-                    <label for="client_auth_code_input">Authentication Code:</label>
-                    <input type="text" id="client_auth_code_input" name="auth_code" required readonly>
-
-                    <label for="client_name_input">Username</label>
-                    <input type="text" id="client_name_input" name="username" required>
+                <form id="admin_setup_form">
+                    <label for="admin_name_input">Username</label>
+                    <input type="text" id="admin_name_input" name="username" required>
 
                     <label for="password_input">Password</label>
                     <input type="password" id="password_input" name="password" required>
@@ -82,14 +78,8 @@
                     <label for="repassword_input">Repeat Password</label>
                     <input type="password" id="repassword_input" name="repassword" required>
 
-                    <label for="email_input">Email</label>
-                    <input type="email" id="email_input" name="email" required>
-
-                    <label for="phone_input">Phone</label>
-                    <input type="tel" id="phone_input" name="phone" required>
-
-                    <label for="credentials_input">Credentials</label>
-                    <input type="text" id="credentials_input" name="credentials">
+                    <label for="auth_code_input">Authentication Code</label>
+                    <input type="text" id="auth_code_input" name="authCode" required>
 
                     <div style="margin-top: 20px;">
                         <button type="submit">Register</button>
@@ -98,22 +88,13 @@
                 </form>
             </div>
 
-            <!-- Add Employees Tab -->
-            <div id="add_employees_tab" class="tab">
-                <form id="add_employees_form">
-                    <label for="employee_username_input">Username</label>
-                    <input type="text" id="employee_username_input" name="username" required>
-
-                    <label for="employee_password_input">Password:</label>
-                    <input type="password" id="employee_password_input" name="password" required>
-
-                    <button type="submit">Login</button>
-                </form>
-            </div>
         </div>
     </section>
 </main>
 <script>
+    // Global variable to store the generated auth code
+    let generatedAuthCode = '';
+
     // Function to generate authentication code
     async function generateAuthCode() {
         try {
@@ -129,7 +110,8 @@
             }
 
             const data = await response.json();
-            document.getElementById('auth_code_generate').value = data.authCode;
+            generatedAuthCode = data.authCode; // Store the generated code globally
+            document.getElementById('auth_code_generate').value = generatedAuthCode;
             document.getElementById('auth_code_generate').readOnly = true; // Lock the input
             alert('Authentication code generated successfully!');
         } catch (error) {
@@ -147,7 +129,7 @@
             email: document.getElementById('business_email_input').value,
             phone: document.getElementById('business_phone_input').value,
             address: document.getElementById('business_address_input').value,
-            authCode: document.getElementById('auth_code_generate').value,
+            authCode: generatedAuthCode, // Use the stored auth code
         };
 
         try {
@@ -164,8 +146,9 @@
                 alert('Business setup successful!');
                 // Switch to the admin account setup tab
                 showTab('add_clients_tab');
-                document.getElementById('client_auth_code_input').value = businessData.authCode;
-                document.getElementById('client_auth_code_input').readOnly = true; // Lock the input
+                // Populate the admin form's auth code field
+                document.getElementById('auth_code_input').value = generatedAuthCode;
+                document.getElementById('auth_code_input').readOnly = true; // Lock the input
             } else {
                 alert('Error: ' + data.error);
             }
@@ -174,20 +157,45 @@
         }
     });
 
-    // Function to submit admin user setup form
-    document.getElementById('add_clients_form').addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the default form submission
+    // Function to show the correct tab
+    function showTab(tabId) {
+        // Hide all tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.style.display = 'none';
+            tab.classList.remove('active');
+        });
+
+        // Show the selected tab
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) {
+            activeTab.style.display = 'block';
+            activeTab.classList.add('active');
+        }
+
+        // Update tab button styles
+        const buttons = document.querySelectorAll('.tab-buttons button');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+    }
+
+    // Set up the admin registration form
+    document.getElementById('admin_setup_form').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
         const adminData = {
-            username: document.getElementById('client_name_input').value,
+            username: document.getElementById('admin_name_input').value,
             password: document.getElementById('password_input').value,
             repassword: document.getElementById('repassword_input').value,
-            email: document.getElementById('email_input').value,
-            phone: document.getElementById('phone_input').value,
-            credentials: document.getElementById('credentials_input').value,
-            authCode: document.getElementById('client_auth_code_input').value,
-            role: 'admin', // Set role to admin
-            access: 'full', // Set access to full
+            authCode: document.getElementById('auth_code_input').value,
+            role: 'admin',
+            access: 'full',
         };
 
         if (adminData.password !== adminData.repassword) {
@@ -196,60 +204,28 @@
         }
 
         try {
-            const response = await fetch('/api/auth/register', { // Corrected endpoint
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(adminData),
             });
 
             const data = await response.json();
-            if (response.ok) {
-                alert('Admin user created successfully!');
-            } else {
-                alert(`Error: ${data.error}`);
-            }
+            if (!response.ok) throw new Error(data.error || 'Failed to create admin account.');
+
+            alert('Admin account created successfully!');
         } catch (error) {
-            alert(`Error: ${error.message}`);
+            alert('Error creating admin account: ' + error.message);
         }
     });
 
-
-    function showTab(tabId) {
-        // Find all tab contents and hide them
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.style.display = 'none'; // Hide all tabs
-            tab.classList.remove('active'); // Remove active class
-        });
-
-        // Show the selected tab content
-        const activeTab = document.getElementById(tabId);
-        if (activeTab) {
-            activeTab.style.display = 'block'; // Show the active tab
-            activeTab.classList.add('active'); // Add active class
-        }
-
-        // Reset styles for all tab buttons
-        const buttons = document.querySelectorAll('.tab-buttons button');
-        buttons.forEach(button => {
-            button.classList.remove('active'); // Remove active class from all buttons
-        });
-
-        // Highlight the active tab button
-        const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-        if (activeButton) {
-            activeButton.classList.add('active'); // Add active class to the current button
-        }
-    }
-
+    // Ensure the correct tab is shown on page load
     document.addEventListener('DOMContentLoaded', () => {
-        // Default to showing the first tab or a specific tab from the URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const tabId = urlParams.get('tab') || 'business_setup_tab'; // Default tab
+        const tabId = urlParams.get('tab') || 'business_setup_tab';
         showTab(tabId);
     });
+
 </script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>

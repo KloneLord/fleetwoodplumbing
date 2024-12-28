@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetwood Plumbing - Client Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/colors.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+  </div>
+</header>
+
+<main>
+  <section class="the-container">
+    <h1>Client Registration</h1>
+    <form id="client_registration_form">
+      <label for="client_name_input">Username</label>
+      <input type="text" id="client_name_input" name="username" required>
+
+      <label for="password_input">Password</label>
+      <input type="password" id="password_input" name="password" required>
+
+      <label for="auth_code_input">Authentication Code</label>
+      <input type="text" id="auth_code_input" name="authCode" required>
+
+      <div style="margin-top: 20px;">
+        <button type="submit">Register</button>
+        <button type="reset">Reset</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<script>
+  document.getElementById('client_registration_form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const clientData = {
+      username: document.getElementById('client_name_input').value,
+      password: document.getElementById('password_input').value,
+      authCode: document.getElementById('auth_code_input').value,
+      role: 'client',
+      access: 'client',
+    };
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clientData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Client registered successfully!');
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  });
+</script>
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved.</p>
+</footer>
+</body>
+</html>
