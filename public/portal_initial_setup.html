@@ -196,24 +196,25 @@
         }
 
         try {
-            const response = await fetch('/api/users/register', {
+            const response = await fetch('/api/auth/register', { // Corrected endpoint
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(adminData)
+                body: JSON.stringify(adminData),
             });
 
             const data = await response.json();
             if (response.ok) {
                 alert('Admin user created successfully!');
             } else {
-                alert('Error: ' + data.error);
+                alert(`Error: ${data.error}`);
             }
         } catch (error) {
-            alert('Error: ' + error.message);
+            alert(`Error: ${error.message}`);
         }
     });
+
 
     function showTab(tabId) {
         // Find all tab contents and hide them

@@ -1,4 +1,3 @@
-// auth_middleware.js
 import jwt from 'jsonwebtoken';
 
 const authMiddleware = (req, res, next) => {
@@ -13,6 +12,7 @@ const authMiddleware = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
+        console.error('Invalid token:', error);
         res.status(401).json({ error: 'Invalid token' });
     }
 };

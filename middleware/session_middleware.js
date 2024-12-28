@@ -3,11 +3,13 @@ import session from 'express-session';
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Only save session if it’s modified
     cookie: {
         secure: false, // Set to true if using HTTPS
-        sameSite: 'lax' // Modify this to 'none' if needed for cross-site requests
-    }
+        httpOnly: true,
+        maxAge: 3600000, // 1 hour
+        sameSite: 'lax',
+    },
 });
 
 export default sessionMiddleware;

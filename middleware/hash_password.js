@@ -1,4 +1,4 @@
-import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import { randomBytes, scryptSync } from 'crypto';
 
 // Function to hash a password using Scrypt and a salt
 export const hashPassword = (plainPassword) => {
@@ -19,24 +19,17 @@ export const hashPassword = (plainPassword) => {
     }
 };
 
-// Function to verify a password against a stored hash
-export const verifyPassword = (plainPassword, storedHash) => {
+// Middleware to hash the password in the request body
+export const hashPasswordMiddleware = (req, res, next) => {
     try {
-        console.log('verifyPassword: Verifying password');
-        // Extract the salt and hashed password from the stored hash
-        const [salt, hashedPassword] = storedHash.split(':');
-
-        // Hash the input password with the same salt
-        const keyLength = 64;
-        const inputHash = scryptSync(plainPassword, salt, keyLength);
-
-        // Convert the stored hash to a Buffer
-        const storedBuffer = Buffer.from(hashedPassword, 'hex');
-
-        // Compare the hashes using a timing-safe comparison
-        return timingSafeEqual(inputHash, storedBuffer);
+        if (req.body && req.body.password) {
+            req.body.password = hashPassword(req.body.password);
+            next();
+        } else {
+            console.error('Password is required');
+        }
     } catch (error) {
-        console.error('Error verifying password:', error);
-        throw error;
+        console.error('Error in hashPasswordMiddleware:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };

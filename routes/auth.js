@@ -1,6 +1,10 @@
+import * as authController from '../controllers/auth_controller.js';
+console.log(authController);
+
 import { Router } from 'express';
 import { loginUser, registerUser, createAdminUser } from '../controllers/auth_controller.js';
 import { hashPassword } from '../middleware/hash_password.js';
+
 
 const router = Router();
 

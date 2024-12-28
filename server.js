@@ -17,7 +17,12 @@ dotenv.config(); // Load environment variables from .env file
 const app = express();
 
 // Connect to the database
-connectDB();
+connectDB()
+    .then(() => console.log('Database connected successfully'))
+    .catch((err) => {
+        console.error('Database connection error:', err);
+        process.exit(1); // Exit the application if the database connection fails
+    });
 
 // Middleware to serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -43,18 +48,29 @@ app.get('/', (req, res) => {
     res.send('Fleetwood Plumbing API is running...');
 });
 
-// Error handling middleware should be the last middleware
-app.use((req, res, next) => {
-    res.status(500).send('Internal Server Error');
+// Catch-all for unhandled routes (404 errors)
+app.use((req, res) => {
+    res.status(404).json({ error: 'Not Found' });
 });
 
-// Handle 404 errors
-app.use((req, res, next) => {
-    res.status(404).send('Not Found');
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Error:', err.stack || err);
+    res.status(500).json({ error: 'Internal Server Error' });
 });
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });

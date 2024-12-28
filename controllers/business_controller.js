@@ -1,6 +1,6 @@
 import Business from '../models/business.js';
 import AuthCode from '../models/auth_code.js';
-import AdminUser from '../models/admin_user.js'; // Assuming this is the admin users model
+import AdminUser from '../models/user.js'; // Assuming this is the admin users model
 
 // Function to set up a new business
 export const setupBusiness = async (req, res) => {
