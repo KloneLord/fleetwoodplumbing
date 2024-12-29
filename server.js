@@ -8,6 +8,8 @@ import businessRoutes from './routes/business.js';
 import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
 import authCodeRoutes from './routes/auth_code.js';
+import clientRoutes from './routes/client_routes.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +41,8 @@ app.use('/api/business', businessRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth-code', authCodeRoutes);
+app.use('/api/clients', clientRoutes);
+
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

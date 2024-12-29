@@ -3,10 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetwood Plumbing - Clients</title>
+    <title>Fleetwood Plumbing - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
+    <script type="module" src="js/clients.js" defer></script>
+    <script>
+        function showTab(tabId) {
+            // Find all tab contents and hide them
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.style.display = 'none'; // Hide all tabs
+                tab.classList.remove('active'); // Remove active class
+            });
+
+            // Show the selected tab content
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.style.display = 'block'; // Show the active tab
+                activeTab.classList.add('active'); // Add active class
+            }
+
+            // Reset styles for all tab buttons
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active'); // Remove active class from all buttons
+            });
+
+            // Highlight the active tab button
+            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active'); // Add active class to the current button
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Default to showing the first tab or a specific tab from the URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabId = urlParams.get('tab') || 'temp_1_tab'; // Default tab
+            showTab(tabId);
+        });
+    </script>
 </head>
 <body>
 <header>
@@ -24,8 +61,7 @@
                 <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
                 <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
                 <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
-                <button onclick="window.location.href='portal_settings.html'">Settings</button>
-                <button onclick="window.location.href='portal_log_out.html'">Log Out</button>
+                <button onclick="logOut()">Log Out</button>
             </div>
         </nav>
     </div>
@@ -39,97 +75,224 @@
                 <button data-tab="client_list_tab" class="active" onclick="showTab('client_list_tab')">Client List</button>
                 <button data-tab="add_client_tab" onclick="showTab('add_client_tab')">Add a Client</button>
                 <button data-tab="edit_client_tab" onclick="showTab('edit_client_tab')">Edit a Client</button>
-                <button data-tab="client_settings_tab" onclick="showTab('client_settings_tab')">Client Settings</button>
+                <button data-tab="client_others_tab" onclick="showTab('client_others_tab')">Client Others</button>
             </div>
 
             <!-- Client List Tab -->
             <div id="client_list_tab" class="tab active">
                 <h2>Client List</h2>
-                <table id="clientList">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>View/Edit</th>
-                        <th>Select</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <input type="text" id="clientSearch" placeholder="Search clients..." oninput="filterClientList()"/>
+                <div class="inner-container" style="width:100%">
+                    <table id="clientsTable">
+                        <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Full Name</th>
+                            <th>Primary Phone</th>
+                            <th>Email Address</th>
+                            <th>Preferred Contact Method</th>
+                            <th>Residential Address</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Rows will be dynamically populated via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" onclick="archiveClients()">Archive Selected</button>
+                <button type="button" onclick="deleteClients()">Delete Selected</button>
             </div>
 
             <!-- Add Client Tab -->
             <div id="add_client_tab" class="tab">
-                <h2>Add a Client</h2>
-                <form id="addClientForm">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required>
-                    <label for="phone">Phone:</label>
-                    <input type="text" id="phone" name="phone" required>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                    <label for="contact_method">Preferred Contact Method:</label>
-                    <select id="contact_method" name="contact_method" required>
-                        <option value="phone">Phone</option>
-                        <option value="email">Email</option>
-                        <option value="text">Text</option>
+                <h2>Add Client</h2>
+                <form id="clientDetailsForm">
+                    <!-- Personal Information -->
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
+
+                    <!-- Contact Information -->
+                    <label for="primaryPhone">Primary Phone Number:</label>
+                    <input type="tel" id="primaryPhone" name="primaryPhone" placeholder="Primary Phone Number" required>
+
+                    <label for="secondaryPhone">Secondary Phone Number:</label>
+                    <input type="tel" id="secondaryPhone" name="secondaryPhone" placeholder="Secondary Phone Number">
+
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" placeholder="Email Address" required>
+
+                    <label for="preferredContactMethod">Preferred Contact Method:</label>
+                    <select id="preferredContactMethod" name="preferredContactMethod" required>
+                        <option value="Phone">Phone</option>
+                        <option value="Email">Email</option>
+                        <option value="SMS">SMS</option>
                     </select>
-                    <label for="street">Street and Number:</label>
-                    <input type="text" id="street" name="street" required>
-                    <label for="city">City/Town:</label>
-                    <input type="text" id="city" name="city" required>
-                    <label for="state">State:</label>
-                    <input type="text" id="state" name="state" required>
-                    <label for="postcode">Postcode:</label>
-                    <input type="text" id="postcode" name="postcode" required>
-                    <button type="submit">Add</button>
-                    <button type="reset">Clear</button>
+
+                    <!-- Residential Address -->
+                    <fieldset>
+                        <legend>Residential Address</legend>
+                        <label for="resStreet">Street Address:</label>
+                        <input type="text" id="resStreet" name="resStreet" placeholder="Street Address" required>
+
+                        <label for="resCity">City/Town:</label>
+                        <input type="text" id="resCity" name="resCity" placeholder="City/Town" required>
+
+                        <label for="resState">State/Province:</label>
+                        <input type="text" id="resState" name="resState" placeholder="State/Province" required>
+
+                        <label for="resZip">ZIP/Postal Code:</label>
+                        <input type="text" id="resZip" name="resZip" placeholder="ZIP/Postal Code" required>
+
+                        <label for="resCountry">Country:</label>
+                        <input type="text" id="resCountry" name="resCountry" placeholder="Country" required>
+                    </fieldset>
+
+                    <!-- Postal Address -->
+                    <fieldset>
+                        <legend>Postal Address</legend>
+                        <label for="postStreet">Street Address:</label>
+                        <input type="text" id="postStreet" name="postStreet" placeholder="Street Address" required>
+
+                        <label for="postCity">City/Town:</label>
+                        <input type="text" id="postCity" name="postCity" placeholder="City/Town" required>
+
+                        <label for="postState">State/Province:</label>
+                        <input type="text" id="postState" name="postState" placeholder="State/Province" required>
+
+                        <label for="postZip">ZIP/Postal Code:</label>
+                        <input type="text" id="postZip" name="postZip" placeholder="ZIP/Postal Code" required>
+
+                        <label for="postCountry">Country:</label>
+                        <input type="text" id="postCountry" name="postCountry" placeholder="Country" required>
+                        <button type="button" onclick="copyAddressToPostal()">Copy Residential Address</button>
+                    </fieldset>
+
+                    <!-- Additional Information -->
+                    <input type="hidden" id="archived" name="archived" value="false">
+
+                    <label for="clientId">Client ID:</label>
+                    <input type="text" id="clientId" name="clientId" placeholder="Client ID" required readonly>
+
+                    <!-- Submit Button -->
+                    <button type="submit">Save Client Details</button>
                 </form>
             </div>
 
             <!-- Edit Client Tab -->
             <div id="edit_client_tab" class="tab">
-                <h2>Edit a Client</h2>
-                <form id="editClientForm">
-                    <label for="search">Search Client:</label>
-                    <input type="text" id="search" name="search" oninput="searchClients()" placeholder="Search by name">
-                    <div id="searchResults"></div>
-                    <label for="edit_name">Name:</label>
-                    <input type="text" id="edit_name" name="name" required>
-                    <label for="edit_phone">Phone:</label>
-                    <input type="text" id="edit_phone" name="phone" required>
-                    <label for="edit_email">Email:</label>
-                    <input type="email" id="edit_email" name="email" required>
-                    <label for="edit_contact_method">Preferred Contact Method:</label>
-                    <select id="edit_contact_method" name="contact_method" required>
-                        <option value="phone">Phone</option>
-                        <option value="email">Email</option>
-                        <option value="text">Text</option>
+                <h2>Edit Client</h2>
+                <input type="text" id="editClientSearch" placeholder="Search clients..." oninput="filterEditClientList()" />
+
+                <div id="editClientList" style="overflow-y: auto; max-height: 300px; border: 1px solid #ccc; padding: 10px;">
+                    <!-- Dynamically populated client rows -->
+                </div>
+
+                <form id="edit_client_form">
+                    <h3>Edit Client Details</h3>
+                    <label for="editFullName">Full Name:</label>
+                    <input type="text" id="editFullName" name="fullName" required>
+
+                    <label for="editPrimaryPhone">Primary Phone Number:</label>
+                    <input type="tel" id="editPrimaryPhone" name="primaryPhone" required>
+
+                    <label for="editEmail">Email Address:</label>
+                    <input type="email" id="editEmail" name="email" required>
+
+                    <label for="editPreferredContactMethod">Preferred Contact Method:</label>
+                    <select id="editPreferredContactMethod" name="preferredContactMethod" required>
+                        <option value="Phone">Phone</option>
+                        <option value="Email">Email</option>
+                        <option value="SMS">SMS</option>
                     </select>
-                    <label for="edit_street">Street and Number:</label>
-                    <input type="text" id="edit_street" name="street" required>
-                    <label for="edit_city">City/Town:</label>
-                    <input type="text" id="edit_city" name="city" required>
-                    <label for="edit_state">State:</label>
-                    <input type="text" id="edit_state" name="state" required>
-                    <label for="edit_postcode">Postcode:</label>
-                    <input type="text" id="edit_postcode" name="postcode" required>
-                    <button type="submit">Edit</button>
-                    <button type="reset">Clear</button>
+
+                    <fieldset>
+                        <legend>Residential Address</legend>
+                        <label for="editResStreet">Street Address:</label>
+                        <input type="text" id="editResStreet" name="resStreet" required>
+                        <label for="editResCity">City/Town:</label>
+                        <input type="text" id="editResCity" name="resCity" required>
+                        <label for="editResState">State/Province:</label>
+                        <input type="text" id="editResState" name="resState" required>
+                        <label for="editResZip">ZIP/Postal Code:</label>
+                        <input type="text" id="editResZip" name="resZip" required>
+                        <label for="editResCountry">Country:</label>
+                        <input type="text" id="editResCountry" name="resCountry" required>
+                    </fieldset>
+
+                    <button type="submit">Save Changes</button>
                 </form>
             </div>
 
-            <!-- Client Settings Tab -->
-            <div id="client_settings_tab" class="tab">
-                <h2>Archived Clients</h2>
-                <input type="text" id="archiveSearch" oninput="loadArchivedClients()" placeholder="Search Archived Clients">
-                <div id="archivedClients"></div>
+            <!-- Client Others Tab -->
+            <div id="client_others_tab" class="tab">
+                <h2>Clients other actions</h2>
+                <input type="text" id="archivedClientSearch" placeholder="Search clients..." oninput="filterArchivedClientList()" />
+                <table id="archivedClientsTable">
+                    <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Full Name</th>
+                        <th>Primary Phone</th>
+                        <th>Email Address</th>
+                        <th>Preferred Contact Method</th>
+                        <th>Residential Address</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Example row, dynamic rows to be generated via JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch session information from the server
+        fetch('/api/auth/session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user) {
+                    document.getElementById('username').innerText = data.user.username;
+                    document.getElementById('role').innerText = data.user.role;
+                    document.getElementById('access').innerText = data.user.access;
+                } else {
+                    alert('You are not logged in. Redirecting to login page.');
+                    window.location.href = 'portal_registration.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching session information:', error);
+                alert('An error occurred. Please try again.');
+            });
 
+        // Fetch and display
+        fetchClientList();
+
+        // Add event listener for form submission
+        document.getElementById('clientDetailsForm').addEventListener('submit', saveClientDetails);
+        document.getElementById('edit_client_form').addEventListener('submit', updateClientDetails);
+    });
+
+    async function logOut() {
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Failed to log out');
+
+            alert('You have been logged out successfully!');
+            window.location.href = 'portal_login.html'; // Redirect to login page
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+            alert('An error occurred while logging out. Please try again.');
+        }
+    }
+</script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
 </footer>

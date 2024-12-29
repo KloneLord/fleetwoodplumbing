@@ -1,27 +1,16 @@
+// routes/client_routes.js
+
 import express from 'express';
-import {
-    getClients,
-    getClientById,
-    createClient,
-    updateClient,
-    reactivateClient,
-} from '../controllers/clients_controller.js';
+import { addClient, getClients, updateClient, archiveClients, deleteClients, getArchivedClients, reinstateClient } from '../controllers/client_controller.js';
 
 const router = express.Router();
 
-// Route to fetch active or archived clients
-router.get('/', getClients);
-
-// Route to fetch a single client by ID
-router.get('/:id', getClientById);
-
-// Route to create a new client
-router.post('/', createClient);
-
-// Route to update an existing client
-router.put('/:id', updateClient);
-
-// Route to reactivate an archived client
-router.post('/:id/reactivate', reactivateClient);
+router.post('/add', addClient);
+router.get('/list', getClients);
+router.put('/update/:id', updateClient);
+router.post('/archive', archiveClients);
+router.delete('/delete', deleteClients);
+router.get('/archived', getArchivedClients);
+router.post('/reinstate', reinstateClient);
 
 export default router;

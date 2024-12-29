@@ -62,7 +62,7 @@
                 <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
                 <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
                 <button onclick="window.location.href='portal_settings.html'">Settings</button>
-                <button onclick="window.location.href='portal_log_out.html'">Log Out</button>
+                <button onclick="logOut()">Log Out</button>
             </div>
         </nav>
     </div>
@@ -118,9 +118,47 @@
         </div>
     </section>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch session information from the server
+        fetch('/api/auth/session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user) {
+                    document.getElementById('username').innerText = data.user.username;
+                    document.getElementById('role').innerText = data.user.role;
+                    document.getElementById('access').innerText = data.user.access;
+                } else {
+                    alert('You are not logged in. Redirecting to login page.');
+                    window.location.href = 'portal_login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching session information:', error);
+                alert('An error occurred. Please try again.');
+            });
+    });
 
+    async function logOut() {
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Failed to log out');
+
+            alert('You have been logged out successfully!');
+            window.location.href = 'portal_login.html'; // Redirect to login page
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+            alert('An error occurred while logging out. Please try again.');
+        }
+    }
+</script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+    <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
 </footer>
 </body>
 </html>

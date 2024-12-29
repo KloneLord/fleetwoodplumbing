@@ -33,4 +33,17 @@ router.get('/session', (req, res) => {
     }
 });
 
+router.post('/logout', (req, res) => {
+    console.log('logout: User logging out');
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('logout: Error destroying session', err);
+            return res.status(500).json({ error: 'Failed to log out' });
+        }
+        res.clearCookie('connect.sid'); // Clear the session cookie
+        console.log('logout: Session destroyed and cookie cleared');
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
+
 export default router;
