@@ -7,8 +7,13 @@ import sessionMiddleware from './middleware/session_middleware.js';
 import businessRoutes from './routes/business.js';
 import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
-import authCodeRoutes from './routes/auth_code.js';
 import clientRoutes from './routes/client_routes.js';
+import inventoryRoutes from './routes/inventory_routes.js';
+import authCodeRoutes from './routes/authCodeRoutes.js';
+
+// Other imports and middleware setup
+
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +47,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth-code', authCodeRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 
 // Handle favicon requests

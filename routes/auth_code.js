@@ -5,7 +5,7 @@ import crypto from 'crypto';
 const router = express.Router();
 
 // Generate a unique 16-character authentication code
-const generateAuthCode = async () => {
+export const generateAuthCode = async () => {
     let authCode;
     let isUnique = false;
 

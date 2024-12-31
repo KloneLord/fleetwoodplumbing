@@ -1,0 +1,290 @@
+// Function to show the selected tab
+function showTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.style.display = 'none';
+        tab.classList.remove('active');
+    });
+
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+        activeTab.classList.add('active');
+    }
+
+    const buttons = document.querySelectorAll('.tab-buttons button');
+    buttons.forEach(button => {
+        button.classList.remove('active');
+    });
+
+    const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+}
+
+// Function to generate an auth code
+async function generateAuthCode(requestSource = 'inventory') {
+    try {
+        const response = await fetch('/api/auth-code/generate-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page: requestSource }),
+        });
+
+        if (!response.ok) throw new Error('Failed to generate auth code.');
+
+        const { authCode } = await response.json();
+        return authCode;
+    } catch (error) {
+        console.error('Error generating auth code:', error);
+        throw error;
+    }
+}
+
+// Initialize Forms
+async function initializeForms() {
+    document.getElementById('addItemId').value = await generateAuthCode();
+    await fetchInventoryList();
+}
+
+// Event listener for DOMContentLoaded
+document.addEventListener('DOMContentLoaded', initializeForms);
+
+// Add Item Form: Selling Price Calculation
+const addCostPriceInput = document.getElementById('addCostPrice');
+const addMarkupInput = document.getElementById('addMarkup');
+const addGstInput = document.getElementById('addGst');
+const addSellingPriceInput = document.getElementById('addSellingPrice');
+
+function updateAddSellingPrice() {
+    const costPrice = parseFloat(addCostPriceInput.value) || 0;
+    const markup = parseFloat(addMarkupInput.value) || 0;
+    const gst = parseFloat(addGstInput.value) || 0;
+
+    const baseSellingPrice = costPrice + (costPrice * (markup / 100));
+    const sellingPrice = baseSellingPrice + (baseSellingPrice * (gst / 100));
+
+    addSellingPriceInput.value = sellingPrice.toFixed(2);
+}
+
+addCostPriceInput.addEventListener('input', updateAddSellingPrice);
+addMarkupInput.addEventListener('input', updateAddSellingPrice);
+addGstInput.addEventListener('input', updateAddSellingPrice);
+
+// Edit Item Form: Selling Price Calculation
+const editCostPriceInput = document.getElementById('editCostPrice');
+const editMarkupInput = document.getElementById('editMarkup');
+const editGstInput = document.getElementById('editGst');
+const editSellingPriceInput = document.getElementById('editSellingPrice');
+
+function updateEditSellingPrice() {
+    const costPrice = parseFloat(editCostPriceInput.value) || 0;
+    const markup = parseFloat(editMarkupInput.value) || 0;
+    const gst = parseFloat(editGstInput.value) || 0;
+
+    const baseSellingPrice = costPrice + (costPrice * (markup / 100));
+    const sellingPrice = baseSellingPrice + (baseSellingPrice * (gst / 100));
+
+    editSellingPriceInput.value = sellingPrice.toFixed(2);
+}
+
+editCostPriceInput.addEventListener('input', updateEditSellingPrice);
+editMarkupInput.addEventListener('input', updateEditSellingPrice);
+editGstInput.addEventListener('input', updateEditSellingPrice);
+
+// Add Item Form Submission
+document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const itemData = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/api/inventory/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(itemData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save item.');
+        }
+
+        alert('Item saved successfully!');
+        e.target.reset();
+        document.getElementById('addItemId').value = await generateAuthCode();
+    } catch (error) {
+        console.error('Error saving item:', error);
+    }
+});
+
+// Edit Item Form Submission
+document.getElementById('editItemForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const itemData = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/api/inventory/edit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(itemData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update item: ${errorText}`);
+        }
+
+        alert('Item updated successfully!');
+        await fetchInventoryList(); // Refresh inventory list
+        showTab('inventory_list_tab'); // Go back to the list tab
+    } catch (error) {
+        console.error('Error updating item:', error);
+        alert(`Error updating item: ${error.message}`);
+    }
+});
+
+
+// Function to fetch the inventory list
+// Function to fetch the inventory list
+async function fetchInventoryList() {
+    try {
+        const response = await fetch('/api/inventory/list');
+        if (!response.ok) throw new Error('Failed to fetch inventory.');
+
+        const items = await response.json();
+        const tbody = document.querySelector('#inventoryTable tbody');
+        tbody.innerHTML = '';
+
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7">No items found.</td></tr>';
+            return;
+        }
+
+        items.forEach((item) => {
+            const row = document.createElement('tr');
+            row.dataset.item = JSON.stringify(item); // Store the full item data as JSON
+            row.innerHTML = `
+                <td><input type="checkbox" name="selectItem" value="${item.itemId}"></td>
+                <td>${item.itemId}</td>
+                <td>${item.itemName}</td>
+                <td>${item.stockLevel}</td>
+                <td>${item.minStockLevel}</td>
+                <td>${item.warehouse}</td>
+                <td><button onclick="editItem('${item.itemId}')">Edit</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching inventory list:', error);
+    }
+}
+
+// Function to edit an item
+async function editItem(itemId) {
+    showTab('edit_item_tab'); // Switch to the edit tab
+
+    try {
+        console.log('Fetching details for itemId:', itemId);
+
+        // Fetch item details from the backend
+        const response = await fetch(`/api/inventory/item/${itemId}`);
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Item not found. Please verify the item ID.');
+            }
+            throw new Error('Failed to fetch item details.');
+        }
+
+        const item = await response.json();
+
+        // Populate the edit form fields
+        document.getElementById('editItemId').value = item.itemId || '';
+        document.getElementById('editItemName').value = item.itemName || '';
+        document.getElementById('editBarcode').value = item.barcode || '';
+        document.getElementById('editQrCode').value = item.qrCode || '';
+        document.getElementById('editCategory').value = item.category || '';
+        document.getElementById('editStockLevel').value = item.stockLevel || 0;
+        document.getElementById('editMinStockLevel').value = item.minStockLevel || 0;
+        document.getElementById('editWarehouse').value = item.warehouse || '';
+        document.getElementById('editCostPrice').value = item.costPrice || 0.0;
+        document.getElementById('editMarkup').value = item.markupPercentage || 0.0;
+        document.getElementById('editGst').value = item.gst || 0.0;
+        document.getElementById('editSellingPrice').value = item.sellingPrice || 0.0;
+
+    } catch (error) {
+        console.error('Error fetching item details:', error);
+        alert(error.message);
+    }
+}
+
+
+
+// Function to filter the inventory list
+function filterInventoryList() {
+    const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
+    const rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+    rows.forEach(row => {
+        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        if (itemName.includes(searchValue)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Function to select all rows
+function selectAllRows(checkbox) {
+    const checkboxes = document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+}
+
+// Function to delete selected items
+async function deleteSelectedItems() {
+    const selectedIds = Array.from(document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]:checked'))
+        .map(cb => cb.closest('tr').querySelector('td:nth-child(3)').textContent);
+
+    try {
+        const response = await fetch('/api/inventory/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds })
+        });
+
+        if (!response.ok) throw new Error('Failed to delete items');
+
+        await fetchInventoryList();
+    } catch (error) {
+        console.error('Error deleting items:', error);
+    }
+}
+
+// CSV Upload Form Event Listener
+document.getElementById('uploadCsvForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    const fileInput = document.getElementById('csvFile');
+    formData.append('csvFile', fileInput.files[0]);
+
+    try {
+        const response = await fetch('/api/inventory/upload-csv', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to upload CSV file: ${errorText}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        await fetchInventoryList();
+    } catch (error) {
+        console.error('Error uploading CSV file:', error);
+        alert(`Error uploading CSV file: ${error.message}`);
+    }
+});

@@ -1,6 +1,13 @@
 /* Layout and Structure */
 
 /* Full-width section at the top */
+
+
+body {
+    font-family: 'Verdana', sans-serif;
+}
+
+
 .the-container {
     width: 100%;
     min-height: 100vh; /* Full viewport height */
@@ -194,17 +201,66 @@ nav ul li a:hover {
 footer {
     text-align: center;
     padding: 1rem 2rem;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     width: 100%; /* Full width */
     margin-top: auto; /* Pushes footer to the bottom */
 }
 
 footer a {
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 300;
 }
 
 footer a:hover {
     text-decoration: underline;
+}
+/* Add this to your styles/layout.css or styles/colors.css file */
+/* Style for the table header */
+#inventoryTable thead {
+    background-color: dodgerblue; /* Blue background for the header */
+    width: 100%; /* Ensure the header spans the full width */
+}
+
+#inventoryTable th {
+    color: white; /* White text color for better contrast */
+    padding: 10px; /* Add some padding for better spacing */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Optional: Add a border to the header cells */
+}
+
+/* Ensure columns are spread out evenly */
+#inventoryTable {
+    width: 100%; /* Ensure the table spans the full width */
+    table-layout: fixed; /* Ensure columns are evenly distributed */
+}
+
+#inventoryTable th,
+#inventoryTable td {
+    width: auto; /* Let the table automatically adjust the column widths */
+}
+#inventoryTable th, #inventoryTable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#inventoryTable th {
+    background-color: #2196F3;
+}
+
+#inventoryTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+/* Alternating row colors */
+#inventoryTable tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+#inventoryTable tbody tr:nth-child(even) {
+    background-color: #e6f7ff; /* Light blue background for even rows */
+}
+/* Move delete button to the top */
+.delete-button-container {
+    text-align: right;
+    margin-bottom: 10px;
 }

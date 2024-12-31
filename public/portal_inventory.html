@@ -3,47 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetwood Plumbing - Dashboard</title>
+    <title>Fleetwood Plumbing - Inventory Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
-
-    <script>
-        function showTab(tabId) {
-            // Find all tab contents and hide them
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.style.display = 'none'; // Hide all tabs
-                tab.classList.remove('active'); // Remove active class
-            });
-
-            // Show the selected tab content
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.style.display = 'block'; // Show the active tab
-                activeTab.classList.add('active'); // Add active class
-            }
-
-            // Reset styles for all tab buttons
-            const buttons = document.querySelectorAll('.tab-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('active'); // Remove active class from all buttons
-            });
-
-            // Highlight the active tab button
-            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active'); // Add active class to the current button
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Default to showing the first tab or a specific tab from the URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const tabId = urlParams.get('tab') || 'temp_1_tab'; // Default tab
-            showTab(tabId);
-        });
-    </script>
+    <script async src="js/inventory.js"></script>
 </head>
 <body>
 <header>
@@ -61,7 +25,6 @@
                 <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
                 <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
                 <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
-                <button onclick="window.location.href='portal_settings.html'">Settings</button>
                 <button onclick="logOut()">Log Out</button>
             </div>
         </nav>
@@ -73,72 +36,392 @@
         <div class="inner-container">
             <!-- Tab Buttons -->
             <div class="tab-buttons">
-                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Template 1</button>
-                <button data-tab="temp_2_tab" onclick="showTab('temp_2_tab')">Template 2</button>
-                <button data-tab="temp_3_tab" onclick="showTab('temp_3_tab')">Template 3</button>
-                <button data-tab="temp_4_tab" onclick="showTab('temp_4_tab')">Template 4</button>
+                <button data-tab="inventory_list_tab" class="active" onclick="showTab('inventory_list_tab')">Inventory List</button>
+                <button data-tab="add_item_tab" onclick="showTab('add_item_tab')">Add Item</button>
+                <button data-tab="edit_item_tab" onclick="showTab('edit_item_tab')">Edit</button>
+                <button data-tab="misc_tab" onclick="showTab('misc_tab')">Misc</button>
             </div>
 
-            <!-- Tab Content -->
-            <div id="temp_1_tab" class="tab active">
-                <h2>Template 1</h2>
-                <form id="temp_1_form">
-                    <label for="temp_1_input">Input:</label>
-                    <input type="text" id="temp_1_input" name="temp_1_input" required>
-                    <button type="submit">Submit</button>
+            <!-- Inventory List Tab -->
+            <div id="inventory_list_tab" class="tab active">
+                <h2>Inventory List</h2>
+                <div class="delete-button-container">
+                    <button id="deleteSelected" class="styled-button">Delete Selected</button>
+                </div>
+                <div>
+                    <input type="text" id="inventorySearch" placeholder="Search inventory..." oninput="filterInventoryList()" />
+                </div>
+                <table id="inventoryTable">
+                    <thead>
+                    <tr>
+                        <th style="width: 5%;"><input type="checkbox" id="selectAll" onclick="selectAllRows(this)" /></th>
+                        <th style="width: 15%;">Item ID</th>
+                        <th style="width: 25%;">Description</th>
+                        <th style="width: 10%;">Stock Level</th>
+                        <th style="width: 10%;">Minimum Level</th>
+                        <th style="width: 20%;">Warehouse Location</th>
+                        <th style="width: 15%;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="7">No items found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add Item Tab -->
+            <div id="add_item_tab" class="tab">
+                <h2>Add Inventory Item</h2>
+                <form id="addItemForm">
+                    <!-- Item Details -->
+                    <fieldset>
+                        <legend>Item Details</legend>
+                        <label for="addItemName">Item Name:</label>
+                        <input type="text" id="addItemName" name="itemName" placeholder="Item Name" required>
+
+                        <label for="addItemId">Item ID:</label>
+                        <input type="text" id="addItemId" name="itemId" placeholder="Item ID" readonly>
+
+                        <label for="addBarcode">Barcode:</label>
+                        <input type="text" id="addBarcode" name="barcode" placeholder="Barcode">
+
+                        <label for="addQrCode">QR Code:</label>
+                        <input type="text" id="addQrCode" name="qrCode" placeholder="QR Code">
+
+                        <label for="addCategory">Category:</label>
+                        <input type="text" id="addCategory" name="category" placeholder="Category">
+                    </fieldset>
+
+                    <!-- Stock Details -->
+                    <fieldset>
+                        <legend>Stock Details</legend>
+                        <label for="addStockLevel">Stock Level:</label>
+                        <input type="number" id="addStockLevel" name="stockLevel" placeholder="Stock Level" min="0" required>
+
+                        <label for="addMinStockLevel">Minimum Stock Level:</label>
+                        <input type="number" id="addMinStockLevel" name="minStockLevel" placeholder="Minimum Stock Level" min="0" required>
+                    </fieldset>
+
+                    <!-- Location Details -->
+                    <fieldset>
+                        <legend>Location Details</legend>
+                        <label for="addWarehouse">Warehouse Location:</label>
+                        <input type="text" id="addWarehouse" name="warehouse" placeholder="Warehouse Location" required>
+                    </fieldset>
+
+                    <!-- Pricing Details -->
+                    <fieldset>
+                        <legend>Pricing Details</legend>
+                        <label for="addCostPrice">Cost Price ($):</label>
+                        <input type="number" id="addCostPrice" name="costPrice" placeholder="Cost Price" step="0.01" min="0" required>
+
+                        <label for="addMarkup">Markup Percentage (%):</label>
+                        <input type="number" id="addMarkup" name="markupPercentage" placeholder="Markup Percentage" step="0.01" min="0" required>
+
+                        <label for="addGst">GST (%):</label>
+                        <input type="number" id="addGst" name="gst" placeholder="GST" step="10.00" min="0" max="10" value="10">
+
+                        <label for="addSellingPrice">Selling Price incl GST($):</label>
+                        <input type="number" id="addSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
+                    </fieldset>
+
+                    <button type="submit">Save Item</button>
                 </form>
             </div>
 
-            <div id="temp_2_tab" class="tab">
-                <h2>Template 2</h2>
-                <form id="temp_2_form">
-                    <label for="temp_2_input">Input:</label>
-                    <input type="text" id="temp_2_input" name="temp_2_input" required>
-                    <button type="submit">Submit</button>
+            <!-- Edit Item Tab -->
+            <div id="edit_item_tab" class="tab">
+                <h2>Edit Inventory Item</h2>
+                <form id="editItemForm">
+                    <fieldset>
+                        <legend>Item Details</legend>
+                        <label for="editItemId">Item ID:</label>
+                        <input type="text" id="editItemId" name="itemId" placeholder="Item ID" required>
+
+                        <label for="editItemName">Item Name:</label>
+                        <input type="text" id="editItemName" name="itemName" placeholder="Item Name" required>
+
+                        <!-- Add other fields as necessary -->
+                        <label for="editBarcode">Barcode:</label>
+                        <input type="text" id="editBarcode" name="barcode" placeholder="Barcode">
+
+                        <label for="editQrCode">QR Code:</label>
+                        <input type="text" id="editQrCode" name="qrCode" placeholder="QR Code">
+
+                        <label for="editCategory">Category:</label>
+                        <input type="text" id="editCategory" name="category" placeholder="Category">
+
+                        <label for="editStockLevel">Stock Level:</label>
+                        <input type="number" id="editStockLevel" name="stockLevel" placeholder="Stock Level" min="0" required>
+
+                        <label for="editMinStockLevel">Minimum Stock Level:</label>
+                        <input type="number" id="editMinStockLevel" name="minStockLevel" placeholder="Minimum Stock Level" min="0" required>
+
+                        <label for="editWarehouse">Warehouse Location:</label>
+                        <input type="text" id="editWarehouse" name="warehouse" placeholder="Warehouse Location" required>
+
+                        <label for="editCostPrice">Cost Price ($):</label>
+                        <input type="number" id="editCostPrice" name="costPrice" placeholder="Cost Price" step="0.01" min="0" required>
+
+                        <label for="editMarkup">Markup Percentage (%):</label>
+                        <input type="number" id="editMarkup" name="markupPercentage" placeholder="Markup Percentage" step="0.01" min="0" required>
+
+                        <label for="editGst">GST (%):</label>
+                        <input type="number" id="editGst" name="gst" placeholder="GST" step="10.00" min="0" max="10" value="10">
+
+                        <label for="editSellingPrice">Selling Price incl GST($):</label>
+                        <input type="number" id="editSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
+                    </fieldset>
+
+                    <button type="submit">Update Item</button>
                 </form>
             </div>
 
-            <div id="temp_3_tab" class="tab">
-                <h2>Template 3</h2>
-                <form id="temp_3_form">
-                    <label for="temp_3_input">Input:</label>
-                    <input type="text" id="temp_3_input" name="temp_3_input" required>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+            <!-- Misc Tab -->
+            <div id="misc_tab" class="tab">
+                <h2>Miscellaneous</h2>
 
-            <div id="temp_4_tab" class="tab">
-                <h2>Template 4</h2>
-                <form id="temp_4_form">
-                    <label for="temp_4_input">Input:</label>
-                    <input type="text" id="temp_4_input" name="temp_4_input" required>
-                    <button type="submit">Submit</button>
+                <h2>Upload CSV File</h2>
+                <form id="uploadCsvForm" enctype="multipart/form-data">
+                    <label for="csvFile">Upload CSV:</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
+                    <button type="submit">Upload</button>
                 </form>
+                <a href="template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
             </div>
         </div>
     </section>
 </main>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Fetch session information from the server
-        fetch('/api/auth/session')
-            .then(response => response.json())
-            .then(data => {
-                if (data.user) {
-                    document.getElementById('username').innerText = data.user.username;
-                    document.getElementById('role').innerText = data.user.role;
-                    document.getElementById('access').innerText = data.user.access;
-                } else {
-                    alert('You are not logged in. Redirecting to login page.');
-                    window.location.href = 'portal_login.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching session information:', error);
-                alert('An error occurred. Please try again.');
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+    <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
+</footer>
+<script type="module">
+    // Function to show the selected tab
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.style.display = 'none';
+            tab.classList.remove('active');
+        });
+
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) {
+            activeTab.style.display = 'block';
+            activeTab.classList.add('active');
+        }
+
+        const buttons = document.querySelectorAll('.tab-buttons button');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+    }
+
+    // Function to generate an auth code
+    async function generateAuthCode(requestSource = 'inventory') {
+        try {
+            const response = await fetch('/api/auth-code/generate-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: requestSource }),
             });
+
+            if (!response.ok) throw new Error('Failed to generate auth code.');
+
+            const { authCode } = await response.json();
+            return authCode;
+        } catch (error) {
+            console.error('Error generating auth code:', error);
+            throw error;
+        }
+    }
+
+    // Function to fetch the inventory list
+    async function fetchInventoryList() {
+        try {
+            const response = await fetch('/api/inventory/list');
+            if (!response.ok) throw new Error('Failed to fetch inventory.');
+
+            const items = await response.json();
+            const tbody = document.querySelector('#inventoryTable tbody');
+            tbody.innerHTML = '';
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No items found.</td></tr>';
+                return;
+            }
+
+            items.forEach((item) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" name="selectItem" value="${item.itemId}"></td>
+                    <td>${item.itemName}</td>
+                    <td>${item.itemId}</td>
+                    <td>${item.stockLevel}</td>
+                    <td>${item.minStockLevel}</td>
+                    <td>${item.warehouse}</td>
+                    <td><button onclick="editItem('${item.itemId}')">Edit</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching inventory list:', error);
+        }
+    }
+
+    // Function to filter the inventory list
+    async function filterInventoryList() {
+        const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
+        const rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+        rows.forEach(row => {
+            const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (itemName.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Function to select all rows
+    function selectAllRows(checkbox) {
+        const checkboxes = document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    }
+
+    // Function to delete selected items
+    async function deleteSelectedItems() {
+        const selectedIds = Array.from(document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]:checked'))
+            .map(cb => cb.closest('tr').querySelector('td:nth-child(3)').textContent);
+
+        try {
+            const response = await fetch('/api/inventory/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedIds })
+            });
+
+            if (!response.ok) throw new Error('Failed to delete items');
+
+            await fetchInventoryList();
+        } catch (error) {
+            console.error('Error deleting items:', error);
+        }
+    }
+
+    // Function to edit an item
+    function editItem(itemId) {
+        showTab('edit_item_tab');
+        const row = document.querySelector(`#inventoryTable tbody tr td:nth-child(3):contains(${itemId})`).closest('tr');
+
+        document.getElementById('editItemId').value = row.querySelector('td:nth-child(3)').textContent;
+        document.getElementById('editItemName').value = row.querySelector('td:nth-child(2)').textContent;
+        document.getElementById('editBarcode').value = row.querySelector('td:nth-child(4)').textContent;
+        document.getElementById('editQrCode').value = row.querySelector('td:nth-child(5)').textContent;
+        document.getElementById('editCategory').value = row.querySelector('td:nth-child(6)').textContent;
+        document.getElementById('editStockLevel').value = row.querySelector('td:nth-child(7)').textContent;
+        document.getElementById('editMinStockLevel').value = row.querySelector('td:nth-child(8)').textContent;
+        document.getElementById('editWarehouse').value = row.querySelector('td:nth-child(9)').textContent;
+        document.getElementById('editCostPrice').value = row.querySelector('td:nth-child(10)').textContent;
+        document.getElementById('editMarkup').value = row.querySelector('td:nth-child(11)').textContent;
+        document.getElementById('editGst').value = row.querySelector('td:nth-child(12)').textContent;
+        document.getElementById('editSellingPrice').value = row.querySelector('td:nth-child(13)').textContent;
+    }
+
+    // Event listener for DOM content loaded
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            document.getElementById('addItemId').value = await generateAuthCode();
+            await fetchInventoryList();
+        } catch (error) {
+            console.error('Error initializing item ID:', error);
+        }
+
+        document.getElementById('inventorySearch').addEventListener('input', filterInventoryList);
+        document.getElementById('selectAll').addEventListener('click', (e) => selectAllRows(e.target));
+        document.getElementById('deleteSelected').addEventListener('click', deleteSelectedItems);
+
+        const costPriceInput = document.getElementById('addCostPrice');
+        const markupInput = document.getElementById('addMarkup');
+        const gstInput = document.getElementById('addGst');
+        const sellingPriceInput = document.getElementById('addSellingPrice');
+
+        function updateSellingPrice() {
+            const costPrice = parseFloat(costPriceInput.value) || 0;
+            const markup = parseFloat(markupInput.value) || 0;
+            const gst = parseFloat(gstInput.value) || 0;
+
+            const baseSellingPrice = costPrice + (costPrice * (markup / 100));
+            const sellingPrice = baseSellingPrice + (baseSellingPrice * (gst / 100));
+
+            sellingPriceInput.value = sellingPrice.toFixed(2);
+        }
+
+        costPriceInput.addEventListener('input', updateSellingPrice);
+        markupInput.addEventListener('input', updateSellingPrice);
+        gstInput.addEventListener('input', updateSellingPrice);
+
+        document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const itemData = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/inventory/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(itemData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save item.');
+                }
+
+                alert('Item saved successfully!');
+                e.target.reset();
+            } catch (error) {
+                console.error('Error saving item:', error);
+            }
+        });
     });
 
+    // Event listener for CSV upload form
+    document.getElementById('uploadCsvForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.getElementById('csvFile');
+        formData.append('csvFile', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/api/inventory/upload-csv', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to upload CSV file: ${errorText}`);
+            }
+
+            const result = await response.json();
+            alert(result.message);
+            // Optionally, refresh the inventory list after upload
+            await fetchInventoryList();
+        } catch (error) {
+            console.error('Error uploading CSV file:', error);
+            alert(`Error uploading CSV file: ${error.message}`);
+        }
+    });
+
+    // Function to log out
     async function logOut() {
         try {
             const response = await fetch('/api/auth/logout', {
@@ -155,10 +438,26 @@
             alert('An error occurred while logging out. Please try again.');
         }
     }
+
+    // Fetch session information and initialize the page
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const sessionResponse = await fetch('/api/auth/session');
+            const sessionData = await sessionResponse.json();
+
+            if (sessionData.user) {
+                document.getElementById('username').innerText = sessionData.user.username;
+                document.getElementById('role').innerText = sessionData.user.role;
+                document.getElementById('access').innerText = sessionData.user.access;
+            } else {
+                alert('You are not logged in. Redirecting to login page.');
+                window.location.href = 'portal_registration.html';
+            }
+        } catch (error) {
+            console.error('Error fetching session information:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
 </script>
-<footer>
-    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
-    <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
-</footer>
 </body>
 </html>

@@ -1,10 +1,10 @@
-// public/js/clients.js
-
 async function fetchClientList() {
     console.log('Fetching client list...');
     try {
         const response = await fetch('/api/clients/list');
-        if (!response.ok) console.error('Failed to fetch client list');
+        if (!response.ok) {
+            throw new Error('Failed to fetch client list: ' + response.statusText);
+        }
         const clients = await response.json();
         console.log('Client list fetched successfully:', clients);
         populateClientList(clients);
@@ -17,6 +17,10 @@ function populateClientList(clients) {
     console.log('Populating client list...');
     const tbody = document.querySelector('#clientsTable tbody');
     tbody.innerHTML = '';
+    if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7">No clients found.</td></tr>';
+        return;
+    }
     clients.forEach(client => {
         console.log('Adding client to table:', client);
         const row = document.createElement('tr');
@@ -38,7 +42,6 @@ function populateClientList(clients) {
     console.log('Client list populated.');
 }
 
-
 async function saveClientDetails(clientDetails) {
     console.log('Saving client details...', clientDetails);
     try {
@@ -47,7 +50,9 @@ async function saveClientDetails(clientDetails) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(clientDetails),
         });
-        if (!response.ok) console.error('Failed to save client details');
+        if (!response.ok) {
+            throw new Error('Failed to save client details: ' + response.statusText);
+        }
         alert('Client details saved successfully!');
         console.log('Client details saved successfully.');
         await fetchClientList();
@@ -64,7 +69,9 @@ async function updateClientDetails(clientId, clientDetails) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(clientDetails),
         });
-        if (!response.ok) console.error('Failed to update client details');
+        if (!response.ok) {
+            throw new Error('Failed to update client details: ' + response.statusText);
+        }
         alert('Client details updated successfully!');
         console.log('Client details updated successfully.');
         await fetchClientList();
@@ -81,7 +88,9 @@ async function archiveClient(clientId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientIds: [clientId] }),
         });
-        if (!response.ok) console.error('Failed to archive client');
+        if (!response.ok) {
+            throw new Error('Failed to archive client: ' + response.statusText);
+        }
         alert('Client archived successfully!');
         console.log('Client archived successfully.');
         await fetchClientList();
@@ -98,7 +107,9 @@ async function deleteClient(clientId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientIds: [clientId] }),
         });
-        if (!response.ok) console.error('Failed to delete client');
+        if (!response.ok) {
+            throw new Error('Failed to delete client: ' + response.statusText);
+        }
         alert('Client deleted successfully!');
         console.log('Client deleted successfully.');
         await fetchClientList();
@@ -110,13 +121,19 @@ async function deleteClient(clientId) {
 async function archiveClients() {
     const selectedClientIds = Array.from(document.querySelectorAll('.selectClient:checked')).map(checkbox => checkbox.dataset.id);
     console.log('Archiving selected clients with IDs:', selectedClientIds);
+    if (selectedClientIds.length === 0) {
+        alert('No clients selected for archiving.');
+        return;
+    }
     try {
         const response = await fetch('/api/clients/archive', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientIds: selectedClientIds }),
         });
-        if (!response.ok) console.error('Failed to archive clients');
+        if (!response.ok) {
+            throw new Error('Failed to archive clients: ' + response.statusText);
+        }
         alert('Clients archived successfully!');
         console.log('Clients archived successfully.');
         await fetchClientList();
@@ -128,13 +145,19 @@ async function archiveClients() {
 async function deleteClients() {
     const selectedClientIds = Array.from(document.querySelectorAll('.selectClient:checked')).map(checkbox => checkbox.dataset.id);
     console.log('Deleting selected clients with IDs:', selectedClientIds);
+    if (selectedClientIds.length === 0) {
+        alert('No clients selected for deletion.');
+        return;
+    }
     try {
         const response = await fetch('/api/clients/delete', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientIds: selectedClientIds }),
         });
-        if (!response.ok) console.error('Failed to delete clients');
+        if (!response.ok) {
+            throw new Error('Failed to delete clients: ' + response.statusText);
+        }
         alert('Clients deleted successfully!');
         console.log('Clients deleted successfully.');
         await fetchClientList();
@@ -143,12 +166,13 @@ async function deleteClients() {
     }
 }
 
-// Fetch and display archived clients
 async function fetchArchivedClients() {
     console.log('Fetching archived clients...');
     try {
         const response = await fetch('/api/clients/archived');
-        if (!response.ok) console.error('Failed to fetch archived clients');
+        if (!response.ok) {
+            throw new Error('Failed to fetch archived clients: ' + response.statusText);
+        }
         const clients = await response.json();
         console.log('Archived clients fetched successfully:', clients);
         populateArchivedClientList(clients);
@@ -161,6 +185,10 @@ function populateArchivedClientList(clients) {
     console.log('Populating archived client list...');
     const tbody = document.querySelector('#archivedClientsTable tbody');
     tbody.innerHTML = '';
+    if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7">No archived clients found.</td></tr>';
+        return;
+    }
     clients.forEach(client => {
         console.log('Adding archived client to table:', client);
         const row = document.createElement('tr');
@@ -188,7 +216,9 @@ async function reinstateClient(clientId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientId }),
         });
-        if (!response.ok) console.error('Failed to reinstate client');
+        if (!response.ok) {
+            throw new Error('Failed to reinstate client: ' + response.statusText);
+        }
         alert('Client reinstated successfully!');
         console.log('Client reinstated successfully.');
         await fetchArchivedClients();
@@ -197,12 +227,13 @@ async function reinstateClient(clientId) {
     }
 }
 
-// Generate unique client ID
 async function generateUniqueClientId() {
     console.log('Generating unique client ID...');
     try {
         const response = await fetch('/api/clients/generate-id');
-        if (!response.ok) console.error('Failed to generate unique client ID');
+        if (!response.ok) {
+            throw new Error('Failed to generate unique client ID: ' + response.statusText);
+        }
         const { clientId } = await response.json();
         console.log('Generated unique client ID:', clientId);
         return clientId;
@@ -211,14 +242,11 @@ async function generateUniqueClientId() {
     }
 }
 
-// View client details
 function viewClient(clientId) {
     console.log('Viewing client with ID:', clientId);
-    // Implement view client details functionality
     alert(`Viewing client with ID: ${clientId}`);
 }
 
-// Copy residential address to postal address
 function copyAddressToPostal() {
     console.log('Copying residential address to postal address...');
     document.getElementById('postStreet').value = document.getElementById('resStreet').value;
@@ -249,10 +277,8 @@ function filterEditClientList(query) {
     });
 }
 
-// Initialize event listeners and fetch initial data
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded. Initializing...');
-    // Fetch session information from the server
     fetch('/api/auth/session')
         .then(response => response.json())
         .then(data => {
@@ -280,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error occurred while fetching client list:', error);
         });
 
-    // Add event listener for form submission
     document.getElementById('clientDetailsForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         console.log('Form submission detected. Preparing to save client details...');
@@ -307,45 +332,28 @@ document.addEventListener('DOMContentLoaded', () => {
         await saveClientDetails(clientDetails);
     });
 
-    // Add event listener for client search
     document.getElementById('clientSearch').addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         console.log('Client search input detected:', query);
         filterClientList(query);
     });
 
-    // Add event listener for edit client search
     document.getElementById('editClientSearch').addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         console.log('Edit client search input detected:', query);
         filterEditClientList(query);
     });
 
-    // Add event listener for archive button
-    document.getElementById('archiveButton').addEventListener('click', () => {
+    document.getElementById('archiveButton').addEventListener('click', async () => {
         console.log('Archive button clicked.');
-        archiveClients()
-            .then(() => {
-                console.log('Selected clients have been archived successfully.');
-            })
-            .catch(error => {
-                console.error('Error occurred while archiving selected clients:', error);
-            });
+        await archiveClients();
     });
 
-    // Add event listener for delete button
-    document.getElementById('deleteButton').addEventListener('click', () => {
+    document.getElementById('deleteButton').addEventListener('click', async () => {
         console.log('Delete button clicked.');
-        deleteClients()
-            .then(() => {
-                console.log('Selected clients have been deleted successfully.');
-            })
-            .catch(error => {
-                console.error('Error occurred while deleting selected clients:', error);
-            });
+        await deleteClients();
     });
 
-    // Fetch archived clients for the "Clients other actions" tab
     fetchArchivedClients()
         .then(() => {
             console.log('Archived client list has been fetched and populated.');

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Inventory Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+    <script src="scripts/inventory.js" type="module"></script>
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+        <nav>
+            <div class="menu-buttons">
+                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+                <button onclick="window.location.href='portal_clients.html'">Clients</button>
+                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+                <button onclick="window.location.href='portal_projects.html'">Projects</button>
+                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+                <button onclick="window.location.href='portal_orders.html'">Orders</button>
+                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="logOut()">Log Out</button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button data-tab="inventory_list_tab" class="active" onclick="showTab('inventory_list_tab')">Inventory List</button>
+                <button data-tab="add_item_tab" onclick="showTab('add_item_tab')">Add Item</button>
+                <button data-tab="edit_item_tab" onclick="showTab('edit_item_tab')">Edit</button>
+                <button data-tab="misc_tab" onclick="showTab('misc_tab')">Misc</button>
+            </div>
+
+            <!-- Inventory List Tab -->
+            <div id="inventory_list_tab" class="tab active">
+                <h2>Inventory List</h2>
+                <div>
+                    <input type="text" id="inventorySearch" placeholder="Search inventory..." oninput="filterInventoryList()" />
+                </div>
+                <table id="inventoryTable">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" onclick="selectAllRows(this)" /></th>
+                        <th>Item Name</th>
+                        <th>Item ID</th>
+                        <th>Stock Level</th>
+                        <th>Minimum Level</th>
+                        <th>Warehouse Location</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="7">No items found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button onclick="deleteSelectedItems()">Delete Selected</button>
+            </div>
+
+            <!-- Add Item Tab -->
+            <div id="add_item_tab" class="tab">
+                <h2>Add Inventory Item</h2>
+                <form id="addItemForm">
+                    <!-- Item Details -->
+                    <fieldset>
+                        <legend>Item Details</legend>
+                        <label for="addItemName">Item Name:</label>
+                        <input type="text" id="addItemName" name="itemName" placeholder="Item Name" required>
+
+                        <label for="addItemId">Item ID:</label>
+                        <input type="text" id="addItemId" name="itemId" placeholder="Item ID" readonly>
+
+                        <label for="addBarcode">Barcode:</label>
+                        <input type="text" id="addBarcode" name="barcode" placeholder="Barcode">
+
+                        <label for="addQrCode">QR Code:</label>
+                        <input type="text" id="addQrCode" name="qrCode" placeholder="QR Code">
+
+                        <label for="addCategory">Category:</label>
+                        <input type="text" id="addCategory" name="category" placeholder="Category">
+                    </fieldset>
+
+                    <!-- Stock Details -->
+                    <fieldset>
+                        <legend>Stock Details</legend>
+                        <label for="addStockLevel">Stock Level:</label>
+                        <input type="number" id="addStockLevel" name="stockLevel" placeholder="Stock Level" min="0" required>
+
+                        <label for="addMinStockLevel">Minimum Stock Level:</label>
+                        <input type="number" id="addMinStockLevel" name="minStockLevel" placeholder="Minimum Stock Level" min="0" required>
+                    </fieldset>
+
+                    <!-- Location Details -->
+                    <fieldset>
+                        <legend>Location Details</legend>
+                        <label for="addWarehouse">Warehouse Location:</label>
+                        <input type="text" id="addWarehouse" name="warehouse" placeholder="Warehouse Location" required>
+                    </fieldset>
+
+                    <!-- Pricing Details -->
+                    <fieldset>
+                        <legend>Pricing Details</legend>
+                        <label for="addCostPrice">Cost Price ($):</label>
+                        <input type="number" id="addCostPrice" name="costPrice" placeholder="Cost Price" step="0.01" min="0" required>
+
+                        <label for="addMarkup">Markup Percentage (%):</label>
+                        <input type="number" id="addMarkup" name="markupPercentage" placeholder="Markup Percentage" step="0.01" min="0" required>
+
+                        <label for="addGst">GST (%):</label>
+                        <input type="number" id="addGst" name="gst" placeholder="GST" step="10.00" min="0" max="10" value="10">
+
+                        <label for="addSellingPrice">Selling Price incl GST($):</label>
+                        <input type="number" id="addSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
+                    </fieldset>
+
+                    <button type="submit">Save Item</button>
+                </form>
+            </div>
+
+            <!-- Edit Item Tab -->
+            <div id="edit_item_tab" class="tab">
+                <h2>Edit Inventory Item</h2>
+                <form id="editItemForm">
+                    <fieldset>
+                        <legend>Item Details</legend>
+                        <label for="editItemId">Item ID:</label>
+                        <input type="text" id="editItemId" name="itemId" placeholder="Item ID" required>
+
+                        <label for="editItemName">Item Name:</label>
+                        <input type="text" id="editItemName" name="itemName" placeholder="Item Name" required>
+
+                        <!-- Add other fields as necessary -->
+                        <label for="editBarcode">Barcode:</label>
+                        <input type="text" id="editBarcode" name="barcode" placeholder="Barcode">
+
+                        <label for="editQrCode">QR Code:</label>
+                        <input type="text" id="editQrCode" name="qrCode" placeholder="QR Code">
+
+                        <label for="editCategory">Category:</label>
+                        <input type="text" id="editCategory" name="category" placeholder="Category">
+
+                        <label for="editStockLevel">Stock Level:</label>
+                        <input type="number" id="editStockLevel" name="stockLevel" placeholder="Stock Level" min="0" required>
+
+                        <label for="editMinStockLevel">Minimum Stock Level:</label>
+                        <input type="number" id="editMinStockLevel" name="minStockLevel" placeholder="Minimum Stock Level" min="0" required>
+
+                        <label for="editWarehouse">Warehouse Location:</label>
+                        <input type="text" id="editWarehouse" name="warehouse" placeholder="Warehouse Location" required>
+
+                        <label for="editCostPrice">Cost Price ($):</label>
+                        <input type="number" id="editCostPrice" name="costPrice" placeholder="Cost Price" step="0.01" min="0" required>
+
+                        <label for="editMarkup">Markup Percentage (%):</label>
+                        <input type="number" id="editMarkup" name="markupPercentage" placeholder="Markup Percentage" step="0.01" min="0" required>
+
+                        <label for="editGst">GST (%):</label>
+                        <input type="number" id="editGst" name="gst" placeholder="GST" step="10.00" min="0" max="10" value="10">
+
+                        <label for="editSellingPrice">Selling Price incl GST($):</label>
+                        <input type="number" id="editSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
+                    </fieldset>
+
+                    <button type="submit">Update Item</button>
+                </form>
+            </div>
+
+            <!-- Misc Tab -->
+            <div id="misc_tab" class="tab">
+                <h2>Miscellaneous</h2>
+
+                <h2>Upload CSV File</h2>
+                <form id="uploadCsvForm" enctype="multipart/form-data">
+                    <label for="csvFile">Upload CSV:</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
+                    <button type="submit">Upload</button>
+                </form>
+                <a href="template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
+            </div>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+    <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
+</footer>
+</body>
+</html>

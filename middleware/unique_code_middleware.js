@@ -1,5 +1,3 @@
-// middleware/unique_code_middleware.js
-
 import Client from '../models/client_model.js';
 
 export const generateUniqueClientId = async () => {
@@ -16,10 +14,15 @@ export const generateUniqueClientId = async () => {
     let isUnique = false;
 
     while (!isUnique) {
-        clientId = generateCode();
-        const existingClient = await Client.findOne({ clientId });
-        if (!existingClient) {
-            isUnique = true;
+        try {
+            clientId = generateCode();
+            const existingClient = await Client.findOne({ clientId });
+            if (!existingClient) {
+                isUnique = true;
+            }
+        } catch (error) {
+            console.error('Error checking client ID uniqueness:', error);
+            throw new Error('Failed to generate unique client ID');
         }
     }
 

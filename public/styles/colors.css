@@ -112,3 +112,29 @@ footer a {
 footer a:hover {
     color: white; /* White hover */
 }
+.styled-button {
+    background-color: #2196F3; /* Main background color */
+    color: #FFFFFF; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 12px 24px; /* Padding for size */
+    font-size: 14px; /* Font size */
+    font-weight: bold; /* Make the text bold */
+
+    letter-spacing: 1px; /* Add some spacing between letters */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.styled-button:hover {
+    background-color: #1976D2; /* Slightly darker blue on hover */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3); /* More shadow on hover */
+    transform: translateY(-2px); /* Lift the button slightly on hover */
+}
+
+.styled-button:active {
+    background-color: #1565C0; /* Even darker blue for active state */
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Reduce shadow on click */
+    transform: translateY(1px); /* Press down effect */
+}
