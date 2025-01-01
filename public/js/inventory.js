@@ -145,8 +145,6 @@ document.getElementById('editItemForm').addEventListener('submit', async (e) => 
     }
 });
 
-
-// Function to fetch the inventory list
 // Function to fetch the inventory list
 async function fetchInventoryList() {
     try {
@@ -163,23 +161,60 @@ async function fetchInventoryList() {
         }
 
         items.forEach((item) => {
-            const row = document.createElement('tr');
-            row.dataset.item = JSON.stringify(item); // Store the full item data as JSON
-            row.innerHTML = `
-                <td><input type="checkbox" name="selectItem" value="${item.itemId}"></td>
-                <td>${item.itemId}</td>
-                <td>${item.itemName}</td>
-                <td>${item.stockLevel}</td>
-                <td>${item.minStockLevel}</td>
-                <td>${item.warehouse}</td>
-                <td><button onclick="editItem('${item.itemId}')">Edit</button></td>
-            `;
-            tbody.appendChild(row);
+            if (!item.hidden) { // Only display items that are not hidden
+                const row = document.createElement('tr');
+                row.dataset.item = JSON.stringify(item); // Store the full item data as JSON
+                row.innerHTML = `
+                    <td><input type="checkbox" name="selectItem" value="${item.itemId}"></td>
+                    <td>${item.itemId}</td>
+                    <td>${item.itemName}</td>
+                    <td>${item.stockLevel}</td>
+                    <td>${item.minStockLevel}</td>
+                    <td>${item.warehouse}</td>
+                    <td>
+                        <button class="slim-styled-button" onclick="editItem('${item.itemId}')">Edit</button>
+                        <button class="slim-styled-button" onclick="toggleHide('${item.itemId}')">Hide</button>
+                        <button class="slim-styled-button" onclick="viewItem('${item.itemId}')">View</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
         });
     } catch (error) {
         console.error('Error fetching inventory list:', error);
     }
 }
+
+// Function to view an item
+function viewItem(itemId) {
+    window.location.href = `portal_inventory_view.html?itemId=${itemId}`;
+}
+
+
+
+// Function to toggle the hidden status of an item
+async function toggleHide(itemId) {
+    try {
+        const response = await fetch('/api/inventory/toggle-hide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemId }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to toggle hide status: ${errorText}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        await fetchInventoryList(); // Refresh the inventory list after updating the hidden status
+    } catch (error) {
+        console.error('Error toggling hide status:', error);
+        alert(`Error toggling hide status: ${error.message}`);
+    }
+}
+
 
 // Function to edit an item
 async function editItem(itemId) {
@@ -261,7 +296,66 @@ async function deleteSelectedItems() {
         console.error('Error deleting items:', error);
     }
 }
+// Function to fetch and display hidden items
+async function fetchHiddenItems() {
+    try {
+        const response = await fetch('/api/inventory/hidden-items');
+        if (!response.ok) throw new Error('Failed to fetch hidden items.');
 
+        const items = await response.json();
+        const tbody = document.querySelector('#hiddenItemsTable tbody');
+        tbody.innerHTML = '';
+
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3">No hidden items found.</td></tr>';
+            return;
+        }
+
+        items.forEach((item) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.itemId}</td>
+                <td>${item.itemName}</td>
+                <td><button class="slim-styled-button" onclick="unhideItem('${item.itemId}')">Re-activate Item</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching hidden items:', error);
+    }
+}
+
+// Function to un-hide an item
+async function unhideItem(itemId) {
+    try {
+        const response = await fetch('/api/inventory/toggle-hide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemId }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to un-hide item: ${errorText}`);
+        }
+
+        alert('Item un-hidden successfully');
+        await fetchHiddenItems(); // Refresh the hidden items list
+        await fetchInventoryList(); // Refresh the inventory list
+    } catch (error) {
+        console.error('Error un-hiding item:', error);
+        alert(`Error un-hiding item: ${error.message}`);
+    }
+}
+
+// Call fetchHiddenItems when the page loads
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await fetchHiddenItems();
+    } catch (error) {
+        console.error('Error initializing hidden items:', error);
+    }
+});
 // CSV Upload Form Event Listener
 document.getElementById('uploadCsvForm').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -288,3 +382,4 @@ document.getElementById('uploadCsvForm').addEventListener('submit', async (event
         alert(`Error uploading CSV file: ${error.message}`);
     }
 });
+

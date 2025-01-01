@@ -1,101 +1,112 @@
 import Client from '../models/client_model.js';
-import { generateUniqueClientId } from '../middleware/unique_code_middleware.js';
 
+// Function to add a new client
 export const addClient = async (req, res) => {
     try {
-        const clientId = await generateUniqueClientId();
-        const newClient = new Client({ ...req.body, clientId });
+        const clientData = req.body;
+        const newClient = new Client(clientData);
         await newClient.save();
-        res.status(201).json({ message: 'Client added successfully', client: newClient });
+        res.status(201).json({ message: 'Client saved successfully!' });
     } catch (error) {
-        res.status(500).json({ error: `Failed to add client: ${error.message}` });
+        console.error('Error saving client:', error);
+        res.status(500).json({ error: 'Failed to save client' });
     }
 };
 
+// Function to get the list of clients
 export const getClients = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
-        const clients = await Client.find({ archived: false })
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
-        const totalClients = await Client.countDocuments({ archived: false });
-        res.status(200).json({
-            clients,
-            totalPages: Math.ceil(totalClients / limit),
-            currentPage: Number(page),
-        });
+        const clients = await Client.find();
+        res.status(200).json(clients);
     } catch (error) {
-        res.status(500).json({ error: `Failed to fetch clients: ${error.message}` });
+        console.error('Error fetching clients:', error);
+        res.status(500).json({ error: 'Failed to fetch clients' });
     }
 };
 
+// Function to update client details
 export const updateClient = async (req, res) => {
+    const { id } = req.params; // Use clientId instead of _id
     try {
-        const updatedClient = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedClient = await Client.findOneAndUpdate({ clientId: id }, req.body, { new: true });
         if (!updatedClient) {
-            return res.status(404).json({ error: 'Client not found' });
+            return res.status(404).json({ message: 'Client not found' });
         }
-        res.status(200).json({ message: 'Client updated successfully', client: updatedClient });
+        res.status(200).json(updatedClient);
     } catch (error) {
-        res.status(500).json({ error: `Failed to update client: ${error.message}` });
+        console.error('Error updating client:', error);
+        res.status(500).json({ error: 'Failed to update client' });
     }
 };
 
-export const archiveClients = async (req, res) => {
-    try {
-        const { clientIds } = req.body;
-        if (!clientIds || !clientIds.length) {
-            return res.status(400).json({ error: 'No client IDs provided' });
-        }
-        const result = await Client.updateMany({ _id: { $in: clientIds } }, { archived: true });
-        res.status(200).json({ message: `${result.nModified} clients archived successfully` });
-    } catch (error) {
-        res.status(500).json({ error: `Failed to archive clients: ${error.message}` });
-    }
-};
-
+// Function to delete clients
 export const deleteClients = async (req, res) => {
+    const { ids } = req.body;
     try {
-        const { clientIds } = req.body;
-        if (!clientIds || !clientIds.length) {
-            return res.status(400).json({ error: 'No client IDs provided' });
-        }
-        const result = await Client.deleteMany({ _id: { $in: clientIds } });
-        res.status(200).json({ message: `${result.deletedCount} clients deleted successfully` });
+        await Client.deleteMany({ clientId: { $in: ids } });
+        res.status(200).json({ message: 'Clients deleted successfully' });
     } catch (error) {
-        res.status(500).json({ error: `Failed to delete clients: ${error.message}` });
+        console.error('Error deleting clients:', error);
+        res.status(500).json({ error: 'Failed to delete clients' });
     }
 };
 
+// Function to toggle the hidden status of a client
+export const toggleHideClient = async (req, res) => {
+    const { clientId } = req.body;
+    try {
+        const client = await Client.findOne({ clientId });
+        if (!client) {
+            return res.status(404).json({ message: 'Client not found' });
+        }
+
+        client.accountStatus = client.accountStatus === 'hidden' ? 'active' : 'hidden';
+        await client.save();
+
+        res.status(200).json({ message: `Client ${client.accountStatus === 'hidden' ? 'hidden' : 'unhidden'} successfully` });
+    } catch (error) {
+        console.error('Error toggling hide status:', error);
+        res.status(500).json({ error: 'Failed to toggle hide status' });
+    }
+};
+
+// Function to get a client by clientId
+export const getClientById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const client = await Client.findOne({ clientId: id });
+        if (!client) {
+            return res.status(404).json({ message: 'Client not found' });
+        }
+        res.status(200).json(client);
+    } catch (error) {
+        console.error('Error fetching client:', error);
+        res.status(500).json({ error: 'Failed to fetch client' });
+    }
+};
+
+// Function to get the list of archived clients
 export const getArchivedClients = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
-        const clients = await Client.find({ archived: true })
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
-        const totalClients = await Client.countDocuments({ archived: true });
-        res.status(200).json({
-            clients,
-            totalPages: Math.ceil(totalClients / limit),
-            currentPage: Number(page),
-        });
+        const clients = await Client.find({ accountStatus: 'hidden' });
+        res.status(200).json(clients);
     } catch (error) {
-        res.status(500).json({ error: `Failed to fetch archived clients: ${error.message}` });
+        console.error('Error fetching archived clients:', error);
+        res.status(500).json({ error: 'Failed to fetch archived clients' });
     }
 };
 
+// Function to reinstate archived clients
 export const reinstateClient = async (req, res) => {
+    const { clientId } = req.body;
     try {
-        const { clientId } = req.body;
-        if (!clientId) {
-            return res.status(400).json({ error: 'No client ID provided' });
+        const client = await Client.findOneAndUpdate({ clientId }, { accountStatus: 'active' }, { new: true });
+        if (!client) {
+            return res.status(404).json({ message: 'Client not found' });
         }
-        const reinstatedClient = await Client.findByIdAndUpdate(clientId, { archived: false }, { new: true });
-        if (!reinstatedClient) {
-            return res.status(404).json({ error: 'Client not found' });
-        }
-        res.status(200).json({ message: 'Client reinstated successfully', client: reinstatedClient });
+        res.status(200).json({ message: 'Client reinstated successfully', client });
     } catch (error) {
-        res.status(500).json({ error: `Failed to reinstate client: ${error.message}` });
+        console.error('Error reinstating client:', error);
+        res.status(500).json({ error: 'Failed to reinstate client' });
     }
 };

@@ -1,3 +1,4 @@
+// inventory_model.js
 import mongoose from 'mongoose';
 
 const inventorySchema = new mongoose.Schema(
@@ -16,22 +17,21 @@ const inventorySchema = new mongoose.Schema(
         sellingPrice: {
             type: Number,
             default: function () {
-                const basePrice =
-                    this.costPrice + this.costPrice * (this.markupPercentage / 100);
+                const basePrice = this.costPrice + this.costPrice * (this.markupPercentage / 100);
                 return basePrice + basePrice * (this.gst / 100);
             },
         },
         supplier: { type: String, default: 'Default Supplier' },
         notes: { type: String, default: '' },
         authCode: { type: String, required: true, unique: true }, // Auth code for the item
+        hidden: { type: Boolean, default: false } // New field for hiding items
     },
     { timestamps: true }
 );
 
 // Middleware to recalculate selling price before save
 inventorySchema.pre('save', function (next) {
-    const basePrice =
-        this.costPrice + this.costPrice * (this.markupPercentage / 100);
+    const basePrice = this.costPrice + this.costPrice * (this.markupPercentage / 100);
     this.sellingPrice = basePrice + basePrice * (this.gst / 100);
     next();
 });

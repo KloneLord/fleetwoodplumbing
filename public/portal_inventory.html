@@ -189,7 +189,25 @@
                     <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
                     <button type="submit">Upload</button>
                 </form>
-                <a href="template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
+                <a href="/utils/import_template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
+
+                <h2>Hidden Items</h2>
+                <div id="hiddenItemsContainer" class="scrollable-container">
+                    <table id="hiddenItemsTable">
+                        <thead>
+                        <tr>
+                            <th style="width: 20%;">Item ID</th>
+                            <th style="width: 60%;">Description</th>
+                            <th style="width: 20%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="3">No hidden items found.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -243,38 +261,6 @@
         }
     }
 
-    // Function to fetch the inventory list
-    async function fetchInventoryList() {
-        try {
-            const response = await fetch('/api/inventory/list');
-            if (!response.ok) throw new Error('Failed to fetch inventory.');
-
-            const items = await response.json();
-            const tbody = document.querySelector('#inventoryTable tbody');
-            tbody.innerHTML = '';
-
-            if (items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">No items found.</td></tr>';
-                return;
-            }
-
-            items.forEach((item) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="checkbox" name="selectItem" value="${item.itemId}"></td>
-                    <td>${item.itemName}</td>
-                    <td>${item.itemId}</td>
-                    <td>${item.stockLevel}</td>
-                    <td>${item.minStockLevel}</td>
-                    <td>${item.warehouse}</td>
-                    <td><button onclick="editItem('${item.itemId}')">Edit</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-        } catch (error) {
-            console.error('Error fetching inventory list:', error);
-        }
-    }
 
     // Function to filter the inventory list
     async function filterInventoryList() {

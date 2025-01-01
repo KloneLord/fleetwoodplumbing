@@ -70,5 +70,34 @@ router.post('/edit', async (req, res) => {
     }
 });
 
+// New route to toggle the hidden status
+router.post('/toggle-hide', async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const item = await InventoryItem.findOne({ itemId });
+
+        if (!item) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        item.hidden = !item.hidden;
+        await item.save();
+
+        res.status(200).json({ message: 'Item hidden status updated', item });
+    } catch (error) {
+        console.error('Error toggling hidden status:', error.message);
+        res.status(500).json({ error: 'Failed to toggle hidden status' });
+    }
+});
+
+router.get('/hidden-items', async (req, res) => {
+    try {
+        const hiddenItems = await InventoryItem.find({ hidden: true });
+        res.status(200).json(hiddenItems);
+    } catch (error) {
+        console.error('Error fetching hidden items:', error.message);
+        res.status(500).json({ error: 'Failed to fetch hidden items' });
+    }
+});
 
 export default router;

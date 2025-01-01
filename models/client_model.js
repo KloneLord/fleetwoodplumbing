@@ -1,44 +1,29 @@
 import mongoose from 'mongoose';
 
 const clientSchema = new mongoose.Schema({
-    fullName: { type: String, required: true, trim: true },
-    primaryPhone: {
-        type: String,
-        required: true,
-        match: [/^\+?[0-9]{7,15}$/, 'Invalid phone number format'],
-    },
-    secondaryPhone: {
-        type: String,
-        match: [/^\+?[0-9]{7,15}$/, 'Invalid phone number format'],
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        match: [/.+@.+\..+/, 'Invalid email format'],
-    },
-    preferredContactMethod: {
-        type: String,
-        required: true,
-        enum: ['Phone', 'Email', 'SMS'],
-    },
-    resStreet: { type: String, required: true, trim: true },
-    resCity: { type: String, required: true, trim: true },
-    resState: { type: String, required: true, trim: true },
-    resZip: { type: String, required: true, trim: true },
-    resCountry: { type: String, required: true, trim: true },
-    postStreet: { type: String, required: true, trim: true },
-    postCity: { type: String, required: true, trim: true },
-    postState: { type: String, required: true, trim: true },
-    postZip: { type: String, required: true, trim: true },
-    postCountry: { type: String, required: true, trim: true },
-    archived: { type: Boolean, default: false },
     clientId: { type: String, required: true, unique: true },
-}, { timestamps: true });
-
-clientSchema.index({ email: 1 }, { unique: true });
-clientSchema.index({ clientId: 1 }, { unique: true });
+    fullName: { type: String, required: true },
+    username: { type: String },
+    password: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    streetAddress: { type: String },
+    city: { type: String },
+    state: { type: String },
+    postalCode: { type: String },
+    country: { type: String },
+    postalStreetAddress: { type: String },
+    postalCity: { type: String },
+    postalState: { type: String },
+    postalPostalCode: { type: String },
+    postalCountry: { type: String },
+    poBoxAddress: { type: String },
+    outstandingBalance: { type: Number, default: 0 },
+    transactionHistory: { type: String },
+    accountCreationDate: { type: Date, default: Date.now },
+    lastLoginDate: { type: Date },
+    accountStatus: { type: String, default: 'active' }
+});
 
 const Client = mongoose.model('Client', clientSchema);
 

@@ -3,52 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetwood Plumbing - Dashboard</title>
+    <title>Fleetwood Plumbing - Client Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
-    <script type="module" src="js/clients.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Initializing page...');
-            fetchClientList();
-        });
-
-        function showTab(tabId) {
-            // Find all tab contents and hide them
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.style.display = 'none'; // Hide all tabs
-                tab.classList.remove('active'); // Remove active class
-            });
-
-            // Show the selected tab content
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.style.display = 'block'; // Show the active tab
-                activeTab.classList.add('active'); // Add active class
-            }
-
-            // Reset styles for all tab buttons
-            const buttons = document.querySelectorAll('.tab-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('active'); // Remove active class from all buttons
-            });
-
-            // Highlight the active tab button
-            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active'); // Add active class to the current button
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Default to showing the first tab or a specific tab from the URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const tabId = urlParams.get('tab') || 'client_list_tab'; // Default tab
-            showTab(tabId);
-        });
-    </script>
+    <script defer src="js/clients.js"></script> <!-- Ensure the script is loaded after the DOM -->
 </head>
 <body>
 <header>
@@ -77,594 +36,289 @@
         <div class="inner-container">
             <!-- Tab Buttons -->
             <div class="tab-buttons">
-                <button data-tab="client_list_tab" onclick="showTab('client_list_tab')">Client List</button>
-                <button data-tab="add_client_tab" onclick="showTab('add_client_tab')">Add a Client</button>
-                <button data-tab="edit_client_tab" onclick="showTab('edit_client_tab')">Edit a Client</button>
-                <button data-tab="client_others_tab" onclick="showTab('client_others_tab')">Client Others</button>
+                <button data-tab="client_list_tab" class="active" onclick="showTab('client_list_tab')">Client List</button>
+                <button data-tab="add_client_tab" onclick="showTab('add_client_tab')">Add Client</button>
+                <button data-tab="edit_client_tab" onclick="showTab('edit_client_tab')">Edit</button>
+                <button data-tab="misc_tab" onclick="showTab('misc_tab')">Misc</button>
             </div>
 
             <!-- Client List Tab -->
-            <div id="client_list_tab" class="tab">
+            <div id="client_list_tab" class="tab active">
                 <h2>Client List</h2>
-                <input type="text" id="clientSearch" placeholder="Search clients..." oninput="filterClientList()"/>
-                <div class="inner-container" style="width:100%">
-                    <table id="clientsTable">
-                        <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Full Name</th>
-                            <th>Primary Phone</th>
-                            <th>Email Address</th>
-                            <th>Preferred Contact Method</th>
-                            <th>Residential Address</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Placeholder for dynamically added rows -->
-                        <tr>
-                            <td colspan="7">No clients found.</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="delete-button-container">
+                    <button id="deleteSelected" class="styled-button">Delete Selected</button>
                 </div>
-                <button id="archiveButton" type="button" onclick="archiveClients()">Archive Selected</button>
-                <button id="deleteButton" type="button" onclick="deleteClients()">Delete Selected</button>
+                <div>
+                    <input type="text" id="clientSearch" placeholder="Search clients..." oninput="filterClientList()" />
+                </div>
+                <table id="clientTable">
+                    <thead>
+                    <tr>
+                        <th style="width: 5%;"><input type="checkbox" id="selectAll" onclick="selectAllRows(this)" /></th>
+                        <th style="width: 15%;">Client ID</th>
+                        <th style="width: 25%;">Name</th>
+                        <th style="width: 20%;">Email</th>
+                        <th style="width: 20%;">Phone</th>
+                        <th style="width: 15%;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="6">No clients found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <script>
+                    function selectAllRows(selectAllCheckbox) {
+                        const checkboxes = document.querySelectorAll('input[name="selectClient"]');
+                        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+                    }
+                </script>
             </div>
 
             <!-- Add Client Tab -->
             <div id="add_client_tab" class="tab">
                 <h2>Add Client</h2>
-                <form id="clientDetailsForm">
-                    <!-- Personal Information -->
-                    <label for="fullName">Full Name:</label>
-                    <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
-
+                <form id="addClientForm">
                     <!-- Contact Information -->
-                    <label for="primaryPhone">Primary Phone Number:</label>
-                    <input type="tel" id="primaryPhone" name="primaryPhone" placeholder="Primary Phone Number" required>
-
-                    <label for="secondaryPhone">Secondary Phone Number:</label>
-                    <input type="tel" id="secondaryPhone" name="secondaryPhone" placeholder="Secondary Phone Number">
-
-                    <label for="email">Email Address:</label>
-                    <input type="email" id="email" name="email" placeholder="Email Address" required>
-
-                    <label for="preferredContactMethod">Preferred Contact Method:</label>
-                    <select id="preferredContactMethod" name="preferredContactMethod" required>
-                        <option value="Phone">Phone</option>
-                        <option value="Email">Email</option>
-                        <option value="SMS">SMS</option>
-                    </select>
-
-                    <!-- Residential Address -->
                     <fieldset>
-                        <legend>Residential Address</legend>
-                        <label for="resStreet">Street Address:</label>
-                        <input type="text" id="resStreet" name="resStreet" placeholder="Street Address" required>
+                        <legend>Contact Information</legend>
+                        <label for="addFullName">Full Name:</label>
+                        <input type="text" id="addFullName" name="fullName" placeholder="Full Name" required>
 
-                        <label for="resCity">City/Town:</label>
-                        <input type="text" id="resCity" name="resCity" placeholder="City/Town" required>
+                        <label for="addBusinessName">Business Name:</label>
+                        <input type="text" id="addBusinessName" name="businessName" placeholder="Business Name">
 
-                        <label for="resState">State/Province:</label>
-                        <input type="text" id="resState" name="resState" placeholder="State/Province" required>
+                        <label for="addUsername">Username:</label>
+                        <input type="text" id="addUsername" name="username" placeholder="Username">
 
-                        <label for="resZip">ZIP/Postal Code:</label>
-                        <input type="text" id="resZip" name="resZip" placeholder="ZIP/Postal Code" required>
+                        <label for="addPassword">Password:</label>
+                        <input type="password" id="addPassword" name="password" placeholder="Password">
 
-                        <label for="resCountry">Country:</label>
-                        <input type="text" id="resCountry" name="resCountry" placeholder="Country" required>
+                        <label for="addEmail">Email Address:</label>
+                        <input type="email" id="addEmail" name="email" placeholder="Email Address">
+
+                        <label for="addPhone">Phone Number:</label>
+                        <input type="tel" id="addPhone" name="phone" placeholder="Phone Number">
                     </fieldset>
 
-                    <!-- Postal Address -->
+                    <!-- Address Information -->
                     <fieldset>
-                        <legend>Postal Address</legend>
-                        <label for="postStreet">Street Address:</label>
-                        <input type="text" id="postStreet" name="postStreet" placeholder="Street Address" required>
+                        <legend>Address Information</legend>
+                        <label for="addStreetAddress">Street Address:</label>
+                        <input type="text" id="addStreetAddress" name="streetAddress" placeholder="Street Address">
 
-                        <label for="postCity">City/Town:</label>
-                        <input type="text" id="postCity" name="postCity" placeholder="City/Town" required>
+                        <label for="addCity">City:</label>
+                        <input type="text" id="addCity" name="city" placeholder="City">
 
-                        <label for="postState">State/Province:</label>
-                        <input type="text" id="postState" name="postState" placeholder="State/Province" required>
+                        <label for="addState">State/Province:</label>
+                        <input type="text" id="addState" name="state" placeholder="State/Province">
 
-                        <label for="postZip">ZIP/Postal Code:</label>
-                        <input type="text" id="postZip" name="postZip" placeholder="ZIP/Postal Code" required>
+                        <label for="addPostalCode">Postal Code:</label>
+                        <input type="text" id="addPostalCode" name="postalCode" placeholder="Postal Code">
 
-                        <label for="postCountry">Country:</label>
-                        <input type="text" id="postCountry" name="postCountry" placeholder="Country" required>
-                        <button type="button" onclick="copyAddressToPostal()">Copy Residential Address</button>
+                        <label for="addCountry">Country:</label>
+                        <input type="text" id="addCountry" name="country" placeholder="Country">
                     </fieldset>
 
-                    <!-- Additional Information -->
-                    <input type="hidden" id="archived" name="archived" value="false">
+                    <!-- Postal Address Information -->
+                    <fieldset>
+                        <button type="button" class="slim-styled-button" onclick="copyPhysicalToPostal()">Same as physical address</button>
+                        <br>
 
-                    <label for="clientId">Client ID:</label>
-                    <input type="text" id="clientId" name="clientId" placeholder="Client ID" required readonly>
+                        <legend>Postal Address Information</legend>
+                        <label for="addPostalStreetAddress">Street Address:</label>
+                        <input type="text" id="addPostalStreetAddress" name="postalStreetAddress" placeholder="Street Address">
 
-                    <!-- Submit Button -->
-                    <button type="submit">Save Client Details</button>
+                        <label for="addPostalCity">City:</label>
+                        <input type="text" id="addPostalCity" name="postalCity" placeholder="City">
+
+                        <label for="addPostalState">State/Province:</label>
+                        <input type="text" id="addPostalState" name="postalState" placeholder="State/Province">
+
+                        <label for="addPostalPostalCode">Postal Code:</label>
+                        <input type="text" id="addPostalPostalCode" name="postalPostalCode" placeholder="Postal Code">
+
+                        <label for="addPostalCountry">Country:</label>
+                        <input type="text" id="addPostalCountry" name="postalCountry" placeholder="Country">
+
+                        <label for="addPOBoxAddress">PO Box:</label>
+                        <input type="text" id="addPOBoxAddress" name="poBoxAddress" placeholder="PO Box Address">
+                    </fieldset>
+
+                    <!-- Financial Information -->
+                    <fieldset>
+                        <legend>Financial Information</legend>
+
+                        <label for="addOutstandingBalance">Outstanding Balance:</label>
+                        <input type="number" id="addOutstandingBalance" name="outstandingBalance" placeholder="Outstanding Balance" min="0" step="0.01">
+
+                        <label for="addTransactionHistory">Transaction History:</label>
+                        <input type="text" id="addTransactionHistory" name="transactionHistory" placeholder="Transaction History">
+                    </fieldset>
+
+                    <!-- Account Details -->
+                    <fieldset>
+                        <legend>Account Details</legend>
+                        <label for="addClientId">Client ID:</label>
+                        <input type="text" id="addClientId" name="clientId" placeholder="Client ID" readonly>
+
+                        <label for="addAccountCreationDate">Account Creation Date:</label>
+                        <input type="date" id="addAccountCreationDate" name="accountCreationDate" readonly>
+
+                        <label for="addLastLoginDate">Last Login Date:</label>
+                        <input type="date" id="addLastLoginDate" name="lastLoginDate" readonly>
+
+                        <label for="addAccountStatus">Account Status:</label>
+                        <select id="addAccountStatus" name="accountStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </fieldset>
+
+                    <button type="submit">Save Client</button>
                 </form>
             </div>
 
             <!-- Edit Client Tab -->
             <div id="edit_client_tab" class="tab">
                 <h2>Edit Client</h2>
-                <input type="text" id="editClientSearch" placeholder="Search clients..." oninput="filterEditClientList()" />
-
-                <div id="editClientList" style="overflow-y: auto; max-height: 300px; border: 1px solid #ccc; padding: 10px;">
-                    <!-- Dynamically populated client rows -->
-                </div>
-
-                <form id="edit_client_form">
-                    <h3>Edit Client Details</h3>
-                    <label for="editFullName">Full Name:</label>
-                    <input type="text" id="editFullName" name="fullName" required>
-
-                    <label for="editPrimaryPhone">Primary Phone Number:</label>
-                    <input type="tel" id="editPrimaryPhone" name="primaryPhone" required>
-
-                    <label for="editEmail">Email Address:</label>
-                    <input type="email" id="editEmail" name="email" required>
-
-                    <label for="editPreferredContactMethod">Preferred Contact Method:</label>
-                    <select id="editPreferredContactMethod" name="preferredContactMethod" required>
-                        <option value="Phone">Phone</option>
-                        <option value="Email">Email</option>
-                        <option value="SMS">SMS</option>
-                    </select>
-
+                <form id="editClientForm">
+                    <!-- Contact Information -->
                     <fieldset>
-                        <legend>Residential Address</legend>
-                        <label for="editResStreet">Street Address:</label>
-                        <input type="text" id="editResStreet" name="resStreet" required>
-                        <label for="editResCity">City/Town:</label>
-                        <input type="text" id="editResCity" name="resCity" required>
-                        <label for="editResState">State/Province:</label>
-                        <input type="text" id="editResState" name="resState" required>
-                        <label for="editResZip">ZIP/Postal Code:</label>
-                        <input type="text" id="editResZip" name="resZip" required>
-                        <label for="editResCountry">Country:</label>
-                        <input type="text" id="editResCountry" name="resCountry" required>
+                        <legend>Contact Information</legend>
+                        <label for="editFullName">Full Name:</label>
+                        <input type="text" id="editFullName" name="fullName" placeholder="Full Name" required>
+
+                        <label for="editBusinessName">Business Name:</label>
+                        <input type="text" id="editBusinessName" name="businessName" placeholder="Business Name">
+
+                        <label for="editUsername">Username:</label>
+                        <input type="text" id="editUsername" name="username" placeholder="Username">
+
+                        <label for="editPassword">Password:</label>
+                        <input type="password" id="editPassword" name="password" placeholder="Password">
+
+                        <label for="editEmail">Email Address:</label>
+                        <input type="email" id="editEmail" name="email" placeholder="Email Address">
+
+                        <label for="editPhone">Phone Number:</label>
+                        <input type="tel" id="editPhone" name="phone" placeholder="Phone Number">
                     </fieldset>
 
-                    <button type="submit">Save Changes</button>
+                    <!-- Address Information -->
+                    <fieldset>
+                        <legend>Address Information</legend>
+                        <label for="editStreetAddress">Street Address:</label>
+                        <input type="text" id="editStreetAddress" name="streetAddress" placeholder="Street Address">
+
+                        <label for="editCity">City:</label>
+                        <input type="text" id="editCity" name="city" placeholder="City">
+
+                        <label for="editState">State/Province:</label>
+                        <input type="text" id="editState" name="state" placeholder="State/Province">
+
+                        <label for="editPostalCode">Postal Code:</label>
+                        <input type="text" id="editPostalCode" name="postalCode" placeholder="Postal Code">
+
+                        <label for="editCountry">Country:</label>
+                        <input type="text" id="editCountry" name="country" placeholder="Country">
+                    </fieldset>
+
+                    <!-- Postal Address Information -->
+                    <fieldset>
+                        <button type="button" class="slim-styled-button" onclick="copyPhysicalToPostal()">Same as physical address</button>
+                        <br>
+                        <legend>Postal Address Information</legend>
+                        <label for="editPostalStreetAddress">Street Address:</label>
+                        <input type="text" id="editPostalStreetAddress" name="postalStreetAddress" placeholder="Street Address">
+
+                        <label for="editPostalCity">City:</label>
+                        <input type="text" id="editPostalCity" name="postalCity" placeholder="City">
+
+                        <label for="editPostalState">State/Province:</label>
+                        <input type="text" id="editPostalState" name="postalState" placeholder="State/Province">
+
+                        <label for="editPostalPostalCode">Postal Code:</label>
+                        <input type="text" id="editPostalPostalCode" name="postalPostalCode" placeholder="Postal Code">
+
+                        <label for="editPostalCountry">Country:</label>
+                        <input type="text" id="editPostalCountry" name="postalCountry" placeholder="Country">
+
+                        <label for="editPOBoxAddress">PO Box Address (optional):</label>
+                        <input type="text" id="editPOBoxAddress" name="poBoxAddress" placeholder="PO Box Address">
+                    </fieldset>
+
+                    <!-- Financial Information -->
+                    <fieldset>
+                        <legend>Financial Information</legend>
+                        <label for="editOutstandingBalance">Outstanding Balance:</label>
+                        <input type="number" id="editOutstandingBalance" name="outstandingBalance" placeholder="Outstanding Balance" min="0" step="0.01">
+
+                        <label for="editTransactionHistory">Transaction History:</label>
+                        <input type="text" id="editTransactionHistory" name="transactionHistory" placeholder="Transaction History">
+                    </fieldset>
+
+                    <!-- Account Details -->
+                    <fieldset>
+                        <legend>Account Details</legend>
+                        <label for="editClientId">Client ID:</label>
+                        <input type="text" id="editClientId" name="clientId" placeholder="Client ID" required>
+
+                        <label for="editAccountCreationDate">Account Creation Date:</label>
+                        <input type="date" id="editAccountCreationDate" name="accountCreationDate" readonly>
+
+                        <label for="editLastLoginDate">Last Login Date:</label>
+                        <input type="date" id="editLastLoginDate" name="lastLoginDate" readonly>
+
+                        <label for="editAccountStatus">Account Status:</label>
+                        <select id="editAccountStatus" name="accountStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </fieldset>
+
+                    <button type="submit">Update Client</button>
                 </form>
             </div>
 
-            <!-- Client Others Tab -->
-            <div id="client_others_tab" class="tab">
-                <h2>Clients other actions</h2>
-                <input type="text" id="archivedClientSearch" placeholder="Search clients..." oninput="filterArchivedClientList()" />
-                <table id="archivedClientsTable">
-                    <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Full Name</th>
-                        <th>Primary Phone</th>
-                        <th>Email Address</th>
-                        <th>Preferred Contact Method</th>
-                        <th>Residential Address</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- Placeholder for dynamically added rows -->
-                    <tr>
-                        <td colspan="7">No archived clients found.</td>
-                    </tr>
-                    </tbody>
-                </table>
+            <!-- Misc Tab -->
+            <div id="misc_tab" class="tab">
+                <h2>Miscellaneous</h2>
+
+                <h2>Upload CSV File</h2>
+                <form id="uploadCsvForm" enctype="multipart/form-data">
+                    <label for="csvFile">Upload CSV:</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
+                    <button type="submit">Upload</button>
+                </form>
+                <a href="/utils/client_template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
+
+                <h2>Hidden Clients</h2>
+                    <table id="hiddenClientTable">
+                        <thead>
+                        <tr>
+                            <th style="width: 15%;">Client ID</th>
+                            <th style="width: 25%;">Name</th>
+                            <th style="width: 20%;">Email</th>
+                            <th style="width: 20%;">Phone</th>
+                            <th style="width: 20%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="5">No hidden clients found.</td>
+                        </tr>
+                        </tbody>
+                    </table>
             </div>
         </div>
     </section>
 </main>
-<script>
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Fetch session information from the server
-        fetch('/api/auth/session')
-            .then(response => response.json())
-            .then(data => {
-                if (data.user) {
-                    document.getElementById('username').innerText = data.user.username;
-                    document.getElementById('role').innerText = data.user.role;
-                    document.getElementById('access').innerText = data.user.access;
-                } else {
-                    alert('You are not logged in. Redirecting to login page.');
-                    window.location.href = 'portal_registration.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching session information:', error);
-                alert('An error occurred. Please try again.');
-            });
-
-        // Fetch and display
-        fetchClientList();
-
-        // Add event listener for form submission
-        document.getElementById('clientDetailsForm').addEventListener('submit', saveClientDetails);
-        document.getElementById('edit_client_form').addEventListener('submit', updateClientDetails);
-    });
-
-    async function logOut() {
-        try {
-            const response = await fetch('/api/auth/logout', {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (!response.ok) throw new Error('Failed to log out');
-
-            alert('You have been logged out successfully!');
-            window.location.href = 'portal_login.html'; // Redirect to login page
-        } catch (error) {
-            console.error('Error during logout:', error.message);
-            alert('An error occurred while logging out. Please try again.');
-        }
-    }
-    async function fetchClientList() {
-        console.log('Fetching client list...');
-        try {
-            const response = await fetch('/api/clients/list');
-            if (!response.ok) {
-                throw new Error('Failed to fetch client list: ' + response.statusText);
-            }
-            const clients = await response.json();
-            console.log('Client list fetched successfully:', clients);
-            populateClientList(clients);
-        } catch (error) {
-            console.error('Error fetching client list:', error);
-        }
-    }
-
-    function populateClientList(clients) {
-        console.log('Populating client list...');
-        const tbody = document.querySelector('#clientsTable tbody');
-        tbody.innerHTML = '';
-        if (clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7">No clients found.</td></tr>';
-            return;
-        }
-        clients.forEach(client => {
-            console.log('Adding client to table:', client);
-            const row = document.createElement('tr');
-            row.innerHTML = `
-            <td><input type="checkbox" class="selectClient" data-id="${client._id}" /></td>
-            <td>${client.fullName}</td>
-            <td>${client.primaryPhone}</td>
-            <td>${client.email}</td>
-            <td>${client.preferredContactMethod}</td>
-            <td>${client.resStreet}, ${client.resCity}, ${client.resState}, ${client.resZip}, ${client.resCountry}</td>
-            <td>
-                <button onclick="viewClient('${client._id}')">View</button>
-            </td>
-        `;
-            tbody.appendChild(row);
-        });
-        console.log('Client list populated.');
-    }
-
-    async function saveClientDetails(clientDetails) {
-        console.log('Saving client details...', clientDetails);
-        try {
-            const response = await fetch('/api/clients/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(clientDetails),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to save client details: ' + response.statusText);
-            }
-            alert('Client details saved successfully!');
-            console.log('Client details saved successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error saving client details:', error);
-        }
-    }
-
-    async function updateClientDetails(clientId, clientDetails) {
-        console.log('Updating client details for ID:', clientId, clientDetails);
-        try {
-            const response = await fetch(`/api/clients/update/${clientId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(clientDetails),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update client details: ' + response.statusText);
-            }
-            alert('Client details updated successfully!');
-            console.log('Client details updated successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error updating client details:', error);
-        }
-    }
-
-    async function archiveClient(clientId) {
-        console.log('Archiving client with ID:', clientId);
-        try {
-            const response = await fetch('/api/clients/archive', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientIds: [clientId] }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to archive client: ' + response.statusText);
-            }
-            alert('Client archived successfully!');
-            console.log('Client archived successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error archiving client:', error);
-        }
-    }
-
-    async function deleteClient(clientId) {
-        console.log('Deleting client with ID:', clientId);
-        try {
-            const response = await fetch('/api/clients/delete', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientIds: [clientId] }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete client: ' + response.statusText);
-            }
-            alert('Client deleted successfully!');
-            console.log('Client deleted successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error deleting client:', error);
-        }
-    }
-
-    async function archiveClients() {
-        const selectedClientIds = Array.from(document.querySelectorAll('.selectClient:checked')).map(checkbox => checkbox.dataset.id);
-        console.log('Archiving selected clients with IDs:', selectedClientIds);
-        if (selectedClientIds.length === 0) {
-            alert('No clients selected for archiving.');
-            return;
-        }
-        try {
-            const response = await fetch('/api/clients/archive', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientIds: selectedClientIds }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to archive clients: ' + response.statusText);
-            }
-            alert('Clients archived successfully!');
-            console.log('Clients archived successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error archiving clients:', error);
-        }
-    }
-
-    async function deleteClients() {
-        const selectedClientIds = Array.from(document.querySelectorAll('.selectClient:checked')).map(checkbox => checkbox.dataset.id);
-        console.log('Deleting selected clients with IDs:', selectedClientIds);
-        if (selectedClientIds.length === 0) {
-            alert('No clients selected for deletion.');
-            return;
-        }
-        try {
-            const response = await fetch('/api/clients/delete', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientIds: selectedClientIds }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete clients: ' + response.statusText);
-            }
-            alert('Clients deleted successfully!');
-            console.log('Clients deleted successfully.');
-            await fetchClientList();
-        } catch (error) {
-            console.error('Error deleting clients:', error);
-        }
-    }
-
-    async function fetchArchivedClients() {
-        console.log('Fetching archived clients...');
-        try {
-            const response = await fetch('/api/clients/archived');
-            if (!response.ok) {
-                throw new Error('Failed to fetch archived clients: ' + response.statusText);
-            }
-            const clients = await response.json();
-            console.log('Archived clients fetched successfully:', clients);
-            populateArchivedClientList(clients);
-        } catch (error) {
-            console.error('Error fetching archived clients:', error);
-        }
-    }
-
-    function populateArchivedClientList(clients) {
-        console.log('Populating archived client list...');
-        const tbody = document.querySelector('#archivedClientsTable tbody');
-        tbody.innerHTML = '';
-        if (clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7">No archived clients found.</td></tr>';
-            return;
-        }
-        clients.forEach(client => {
-            console.log('Adding archived client to table:', client);
-            const row = document.createElement('tr');
-            row.innerHTML = `
-            <td><input type="checkbox" class="selectArchivedClient" data-id="${client._id}" /></td>
-            <td>${client.fullName}</td>
-            <td>${client.primaryPhone}</td>
-            <td>${client.email}</td>
-            <td>${client.preferredContactMethod}</td>
-            <td>${client.resStreet}, ${client.resCity}, ${client.resState}, ${client.resZip}, ${client.resCountry}</td>
-            <td>
-                <button onclick="reinstateClient('${client._id}')">Reinstate</button>
-            </td>
-        `;
-            tbody.appendChild(row);
-        });
-        console.log('Archived client list populated.');
-    }
-
-    async function reinstateClient(clientId) {
-        console.log('Reinstating client with ID:', clientId);
-        try {
-            const response = await fetch('/api/clients/reinstate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientId }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to reinstate client: ' + response.statusText);
-            }
-            alert('Client reinstated successfully!');
-            console.log('Client reinstated successfully.');
-            await fetchArchivedClients();
-        } catch (error) {
-            console.error('Error reinstating client:', error);
-        }
-    }
-
-    async function generateUniqueClientId() {
-        console.log('Generating unique client ID...');
-        try {
-            const response = await fetch('/api/clients/generate-id');
-            if (!response.ok) {
-                throw new Error('Failed to generate unique client ID: ' + response.statusText);
-            }
-            const { clientId } = await response.json();
-            console.log('Generated unique client ID:', clientId);
-            return clientId;
-        } catch (error) {
-            console.error('Error generating unique client ID:', error);
-        }
-    }
-
-    function viewClient(clientId) {
-        console.log('Viewing client with ID:', clientId);
-        alert(`Viewing client with ID: ${clientId}`);
-    }
-
-    function copyAddressToPostal() {
-        console.log('Copying residential address to postal address...');
-        document.getElementById('postStreet').value = document.getElementById('resStreet').value;
-        document.getElementById('postCity').value = document.getElementById('resCity').value;
-        document.getElementById('postState').value = document.getElementById('resState').value;
-        document.getElementById('postZip').value = document.getElementById('resZip').value;
-        document.getElementById('postCountry').value = document.getElementById('resCountry').value;
-        console.log('Residential address copied to postal address.');
-    }
-
-    function filterClientList(query) {
-        console.log('Filtering client list with query:', query);
-        const rows = document.querySelectorAll('#clientsTable tbody tr');
-        rows.forEach(row => {
-            const cells = Array.from(row.children).map(cell => cell.textContent.toLowerCase());
-            const matches = cells.some(cell => cell.includes(query));
-            row.style.display = matches ? '' : 'none';
-        });
-    }
-
-    function filterEditClientList(query) {
-        console.log('Filtering edit client list with query:', query);
-        const rows = document.querySelectorAll('#editClientList tr');
-        rows.forEach(row => {
-            const cells = Array.from(row.children).map(cell => cell.textContent.toLowerCase());
-            const matches = cells.some(cell => cell.includes(query));
-            row.style.display = matches ? '' : 'none';
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('Document loaded. Initializing...');
-        fetch('/api/auth/session')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Session information fetched:', data);
-                if (data.user) {
-                    document.getElementById('username').innerText = data.user.username;
-                    document.getElementById('role').innerText = data.user.role;
-                    document.getElementById('access').innerText = data.user.access;
-                    console.log('User logged in:', data.user);
-                } else {
-                    alert('You are not logged in. Redirecting to login page.');
-                    window.location.href = 'portal_registration.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching session information:', error);
-                alert('An error occurred. Please try again.');
-            });
-
-
-
-        document.getElementById('clientDetailsForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.log('Form submission detected. Preparing to save client details...');
-            const clientDetails = {
-                fullName: document.getElementById('fullName').value,
-                primaryPhone: document.getElementById('primaryPhone').value,
-                secondaryPhone: document.getElementById('secondaryPhone').value,
-                email: document.getElementById('email').value,
-                preferredContactMethod: document.getElementById('preferredContactMethod').value,
-                resStreet: document.getElementById('resStreet').value,
-                resCity: document.getElementById('resCity').value,
-                resState: document.getElementById('resState').value,
-                resZip: document.getElementById('resZip').value,
-                resCountry: document.getElementById('resCountry').value,
-                postStreet: document.getElementById('postStreet').value,
-                postCity: document.getElementById('postCity').value,
-                postState: document.getElementById('postState').value,
-                postZip: document.getElementById('postZip').value,
-                postCountry: document.getElementById('postCountry').value,
-                archived: false,
-                clientId: await generateUniqueClientId()
-            };
-            console.log('Client details prepared:', clientDetails);
-            await saveClientDetails(clientDetails);
-        });
-
-        document.getElementById('clientSearch').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            console.log('Client search input detected:', query);
-            filterClientList(query);
-        });
-
-        document.getElementById('editClientSearch').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            console.log('Edit client search input detected:', query);
-            filterEditClientList(query);
-        });
-
-        document.getElementById('archiveButton').addEventListener('click', async () => {
-            console.log('Archive button clicked.');
-            await archiveClients();
-        });
-
-        document.getElementById('deleteButton').addEventListener('click', async () => {
-            console.log('Delete button clicked.');
-            await deleteClients();
-        });
-
-        fetchArchivedClients()
-            .then(() => {
-                console.log('Archived client list has been fetched and populated.');
-            })
-            .catch(error => {
-                console.error('Error occurred while fetching archived clients:', error);
-            });
-    });
-
-</script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+    <p>Welcome, <span id="username"></span>!!! Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
 </footer>
 </body>
 </html>

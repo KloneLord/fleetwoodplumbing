@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Item Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/colors.css">
+  <script async src="js/view_item.js"></script>
+</head>
+<body>
+<header>
+  <div>
+    <nav>
+      <div class="menu-buttons">
+        <button class="styled-button" onclick="window.close()">Close</button>
+        <!-- Add other navigation buttons as needed -->
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="the-container" style="margin-left: 30px">
+    <div class="inner-container" style="margin-left: 30px">
+      <h2>Inventory Item Details</h2>
+      <div id="itemDetails" style="margin-left: 30px"></div>
+    </div>
+  </section>
+</main>
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+<script type="module">
+  document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemId = urlParams.get('itemId');
+
+    if (!itemId) {
+      document.getElementById('itemDetails').innerText = 'Item ID not provided.';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/inventory/item/${itemId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch item details.');
+      }
+
+      const item = await response.json();
+      displayItemDetails(item);
+    } catch (error) {
+      console.error('Error fetching item details:', error);
+      document.getElementById('itemDetails').innerText = 'Error fetching item details.';
+    }
+  });
+
+  function displayItemDetails(item) {
+    const detailsContainer = document.getElementById('itemDetails');
+    detailsContainer.innerHTML = `
+            <p><strong>Item ID:</strong> ${item.itemId}</p>
+            <p><strong>Item Name:</strong> ${item.itemName}</p>
+            <p><strong>Barcode:</strong> ${item.barcode}</p>
+            <p><strong>QR Code:</strong> ${item.qrCode}</p>
+            <p><strong>Category:</strong> ${item.category}</p>
+            <p><strong>Stock Level:</strong> ${item.stockLevel}</p>
+            <p><strong>Minimum Stock Level:</strong> ${item.minStockLevel}</p>
+            <p><strong>Warehouse Location:</strong> ${item.warehouse}</p>
+            <p><strong>Cost Price:</strong> $${item.costPrice.toFixed(2)}</p>
+            <p><strong>Markup Percentage:</strong> ${item.markupPercentage}%</p>
+            <p><strong>GST:</strong> ${item.gst}%</p>
+            <p><strong>Selling Price:</strong> $${item.sellingPrice.toFixed(2)}</p>
+        `;
+  }
+</script>
+</body>
+</html>

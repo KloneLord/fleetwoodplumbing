@@ -264,3 +264,26 @@ footer a:hover {
     text-align: right;
     margin-bottom: 10px;
 }
+/* Add this to your styles/layout.css */
+.scrollable-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.scrollable-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.scrollable-container th, .scrollable-container td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.scrollable-container th {
+    background-color: #f2f2f2;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/colors.css">
+  <script async src="js/view_client.js"></script>
+</head>
+<body>
+<header>
+  <div>
+    <nav>
+      <div class="menu-buttons">
+        <button class="styled-button" onclick="window.close()">Close</button>
+        <!-- Add other navigation buttons as needed -->
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="the-container" style="margin-left: 30px">
+    <div class="inner-container" style="margin-left: 30px">
+      <h2>Client Details</h2>
+      <div id="clientDetails" style="margin-left: 30px"></div>
+    </div>
+  </section>
+</main>
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+</footer>
+<script type="module">
+  document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('clientId');
+
+    if (!clientId) {
+      document.getElementById('clientDetails').innerText = 'Client ID not provided.';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/clients/client/${clientId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch client details.');
+      }
+
+      const client = await response.json();
+      displayClientDetails(client);
+    } catch (error) {
+      console.error('Error fetching client details:', error);
+      document.getElementById('clientDetails').innerText = 'Error fetching client details.';
+    }
+  });
+
+  function displayClientDetails(client) {
+    const detailsContainer = document.getElementById('clientDetails');
+    detailsContainer.innerHTML = `
+      <p><strong>Client ID:</strong> ${client.clientId || 'N/A'}</p>
+      <p><strong>Full Name:</strong> ${client.fullName || 'N/A'}</p>
+      <p><strong>Username:</strong> ${client.username || 'N/A'}</p>
+      <p><strong>Email:</strong> ${client.email || 'N/A'}</p>
+      <p><strong>Phone:</strong> ${client.phone || 'N/A'}</p>
+      <p><strong>Street Address:</strong> ${client.streetAddress || 'N/A'}</p>
+      <p><strong>City:</strong> ${client.city || 'N/A'}</p>
+      <p><strong>State:</strong> ${client.state || 'N/A'}</p>
+      <p><strong>Postal Code:</strong> ${client.postalCode || 'N/A'}</p>
+      <p><strong>Country:</strong> ${client.country || 'N/A'}</p>
+      <p><strong>Postal Street Address:</strong> ${client.postalStreetAddress || 'N/A'}</p>
+      <p><strong>Postal City:</strong> ${client.postalCity || 'N/A'}</p>
+      <p><strong>Postal State:</strong> ${client.postalState || 'N/A'}</p>
+      <p><strong>Postal Postal Code:</strong> ${client.postalPostalCode || 'N/A'}</p>
+      <p><strong>Postal Country:</strong> ${client.postalCountry || 'N/A'}</p>
+      <p><strong>PO Box Address:</strong> ${client.poBoxAddress || 'N/A'}</p>
+      <p><strong>Outstanding Balance:</strong> $${(client.outstandingBalance !== null && client.outstandingBalance !== undefined) ? client.outstandingBalance.toFixed(2) : '0.00'}</p>
+      <p><strong>Transaction History:</strong> ${client.transactionHistory || 'None'}</p>
+      <p><strong>Account Creation Date:</strong> ${client.accountCreationDate ? new Date(client.accountCreationDate).toLocaleDateString() : 'N/A'}</p>
+      <p><strong>Last Login Date:</strong> ${client.lastLoginDate ? new Date(client.lastLoginDate).toLocaleDateString() : 'N/A'}</p>
+      <p><strong>Account Status:</strong> ${client.accountStatus || 'N/A'}</p>
+    `;
+  }
+</script>
+</body>
+</html>
