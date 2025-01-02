@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/colors.css">
-  <script async src="js/view_client.js"></script>
 </head>
 <body>
 <header>
@@ -26,6 +25,8 @@
     <div class="inner-container" style="margin-left: 30px">
       <h2>Client Details</h2>
       <div id="clientDetails" style="margin-left: 30px"></div>
+      <h2>Project Sites</h2>
+      <div id="projectSites" style="margin-left: 30px"></div>
     </div>
   </section>
 </main>
@@ -43,16 +44,25 @@
     }
 
     try {
-      const response = await fetch(`/api/clients/client/${clientId}`);
-      if (!response.ok) {
+      const clientResponse = await fetch(`/api/clients/client/${clientId}`);
+      if (!clientResponse.ok) {
         throw new Error('Failed to fetch client details.');
       }
 
-      const client = await response.json();
+      const client = await clientResponse.json();
       displayClientDetails(client);
+
+      const projectSitesResponse = await fetch(`/api/project_sites/${clientId}`);
+      if (!projectSitesResponse.ok) {
+        throw new Error('Failed to fetch project sites.');
+      }
+
+      const projectSites = await projectSitesResponse.json();
+      displayProjectSites(projectSites);
     } catch (error) {
-      console.error('Error fetching client details:', error);
+      console.error('Error fetching details:', error);
       document.getElementById('clientDetails').innerText = 'Error fetching client details.';
+      document.getElementById('projectSites').innerText = 'Error fetching project sites.';
     }
   });
 
@@ -80,6 +90,41 @@
       <p><strong>Account Creation Date:</strong> ${client.accountCreationDate ? new Date(client.accountCreationDate).toLocaleDateString() : 'N/A'}</p>
       <p><strong>Last Login Date:</strong> ${client.lastLoginDate ? new Date(client.lastLoginDate).toLocaleDateString() : 'N/A'}</p>
       <p><strong>Account Status:</strong> ${client.accountStatus || 'N/A'}</p>
+    `;
+  }
+
+  function displayProjectSites(projectSites) {
+    const sitesContainer = document.getElementById('projectSites');
+    if (projectSites.length === 0) {
+      sitesContainer.innerHTML = '<p>No project sites found for this client.</p>';
+      return;
+    }
+
+    sitesContainer.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Project Site Title</th>
+            <th>Street Address</th>
+            <th>City/Town</th>
+            <th>Postcode</th>
+            <th>State</th>
+            <th>Country</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${projectSites.map(site => `
+            <tr>
+              <td>${site.project_site_address_name}</td>
+              <td>${site.project_site_street}</td>
+              <td>${site.project_site_city}</td>
+              <td>${site.project_site_postcode}</td>
+              <td>${site.project_site_state}</td>
+              <td>${site.project_site_country}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     `;
   }
 </script>

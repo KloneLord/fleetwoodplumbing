@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetwood Plumbing - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/colors.css">
+
+  <script>
+    function showTab(tabId) {
+      // Find all tab contents and hide them
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.style.display = 'none'; // Hide all tabs
+        tab.classList.remove('active'); // Remove active class
+      });
+
+      // Show the selected tab content
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.style.display = 'block'; // Show the active tab
+        activeTab.classList.add('active'); // Add active class
+      }
+
+      // Reset styles for all tab buttons
+      const buttons = document.querySelectorAll('.tab-buttons button');
+      buttons.forEach(button => {
+        button.classList.remove('active'); // Remove active class from all buttons
+      });
+
+      // Highlight the active tab button
+      const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeButton) {
+        activeButton.classList.add('active'); // Add active class to the current button
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default to showing the first tab or a specific tab from the URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabId = urlParams.get('tab') || 'project_tab'; // Default tab
+      showTab(tabId);
+    });
+  </script>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+    <nav>
+      <div class="menu-buttons">
+        <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+        <button onclick="window.location.href='portal_clients.html'">Clients</button>
+        <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+        <button onclick="window.location.href='portal_projects.html'">Projects</button>
+        <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+        <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+        <button onclick="window.location.href='portal_orders.html'">Orders</button>
+        <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+        <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+        <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+        <button onclick="window.location.href='portal_settings.html'">Settings</button>
+        <button onclick="logOut()">Log Out</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="the-container">
+    <div class="inner-container">
+      <!-- Tab Buttons -->
+      <div class="tab-buttons">
+        <button data-tab="project_tab" class="active" onclick="showTab('project_tab')">Project</button>
+        <button data-tab="tasks_tab" onclick="showTab('tasks_tab')">Tasks</button>
+        <button data-tab="materials_tab" onclick="showTab('materials_tab')">Materials</button>
+        <button data-tab="time_log_tab" onclick="showTab('time_log_tab')">Time Log</button>
+        <button data-tab="plant_equipment_tab" onclick="showTab('plant_equipment_tab')">Plant Equipment</button>
+        <button data-tab="plans_tab" onclick="showTab('plans_tab')">Plans</button>
+        <button data-tab="safety_tab" onclick="showTab('safety_tab')">Safety</button>
+        <button data-tab="schedule_tab" onclick="showTab('schedule_tab')">Schedule</button>
+        <button data-tab="invoices_tab" onclick="showTab('invoices_tab')">Invoices</button>
+        <button data-tab="misc_tab" onclick="showTab('misc_tab')">Misc</button>
+      </div>
+
+      <!-- Tab Content -->
+      <div id="project_tab" class="tab active">
+        <h2>Project</h2>
+        <form id="project_form">
+          <label for="project_input">Input:</label>
+          <input type="text" id="project_input" name="project_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="tasks_tab" class="tab">
+        <h2>Tasks</h2>
+        <form id="tasks_form">
+          <label for="tasks_input">Input:</label>
+          <input type="text" id="tasks_input" name="tasks_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="materials_tab" class="tab">
+        <h2>Materials</h2>
+        <form id="materials_form">
+          <label for="materials_input">Input:</label>
+          <input type="text" id="materials_input" name="materials_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="time_log_tab" class="tab">
+        <h2>Time Log</h2>
+        <form id="time_log_form">
+          <label for="time_log_input">Input:</label>
+          <input type="text" id="time_log_input" name="time_log_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="plant_equipment_tab" class="tab">
+        <h2>Plant Equipment</h2>
+        <form id="plant_equipment_form">
+          <label for="plant_equipment_input">Input:</label>
+          <input type="text" id="plant_equipment_input" name="plant_equipment_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="plans_tab" class="tab">
+        <h2>Plans</h2>
+        <form id="plans_form">
+          <label for="plans_input">Input:</label>
+          <input type="text" id="plans_input" name="plans_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="safety_tab" class="tab">
+        <h2>Safety</h2>
+        <form id="safety_form">
+          <label for="safety_input">Input:</label>
+          <input type="text" id="safety_input" name="safety_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="schedule_tab" class="tab">
+        <h2>Schedule</h2>
+        <form id="schedule_form">
+          <label for="schedule_input">Input:</label>
+          <input type="text" id="schedule_input" name="schedule_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="invoices_tab" class="tab">
+        <h2>Invoices</h2>
+        <form id="invoices_form">
+          <label for="invoices_input">Input:</label>
+          <input type="text" id="invoices_input" name="invoices_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      <div id="misc_tab" class="tab">
+        <h2>Misc</h2>
+        <form id="misc_form">
+          <label for="misc_input">Input:</label>
+          <input type="text" id="misc_input" name="misc_input" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Fetch session information from the server
+    fetch('/api/auth/session')
+            .then(response => response.json())
+            .then(data => {
+              if (data.user) {
+                document.getElementById('username').innerText = data.user.username;
+                document.getElementById('role').innerText = data.user.role;
+                document.getElementById('access').innerText = data.user.access;
+              } else {
+                alert('You are not logged in. Redirecting to login page.');
+                window.location.href = 'portal_login.html';
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching session information:', error);
+              alert('An error occurred. Please try again.');
+            });
+  });
+
+  async function logOut() {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) throw new Error('Failed to log out');
+
+      alert('You have been logged out successfully!');
+      window.location.href = 'portal_login.html'; // Redirect to login page
+    } catch (error) {
+      console.error('Error during logout:', error.message);
+      alert('An error occurred while logging out. Please try again.');
+    }
+  }
+</script>
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+  <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
+</footer>
+</body>
+</html>

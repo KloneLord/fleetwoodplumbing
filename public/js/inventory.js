@@ -187,10 +187,13 @@ async function fetchInventoryList() {
 
 // Function to view an item
 function viewItem(itemId) {
-    window.location.href = `portal_inventory_view.html?itemId=${itemId}`;
+    const width = Math.round(window.innerWidth * 0.9);
+    const height = Math.round(window.innerHeight * 0.9);
+    const left = Math.round((window.innerWidth - width) / 2);
+    const top = Math.round((window.innerHeight - height) / 2);
+    const params = `width=${width},height=${height},left=${left},top=${top},status=no,scrollbars=yes,resizable=yes`;
+    window.open(`portal_inventory_view.html?itemId=${itemId}`, '_blank', params);
 }
-
-
 
 // Function to toggle the hidden status of an item
 async function toggleHide(itemId) {
@@ -214,7 +217,6 @@ async function toggleHide(itemId) {
         alert(`Error toggling hide status: ${error.message}`);
     }
 }
-
 
 // Function to edit an item
 async function editItem(itemId) {
@@ -254,16 +256,16 @@ async function editItem(itemId) {
     }
 }
 
-
-
-// Function to filter the inventory list
+// Function to filter the inventory list by item ID and description
 function filterInventoryList() {
     const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
     const rows = document.querySelectorAll('#inventoryTable tbody tr');
 
     rows.forEach(row => {
-        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(searchValue)) {
+        const itemId = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const itemName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+
+        if (itemId.includes(searchValue) || itemName.includes(searchValue)) {
             row.style.display = '';
         } else {
             row.style.display = 'none';
@@ -280,7 +282,16 @@ function selectAllRows(checkbox) {
 // Function to delete selected items
 async function deleteSelectedItems() {
     const selectedIds = Array.from(document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]:checked'))
-        .map(cb => cb.closest('tr').querySelector('td:nth-child(3)').textContent);
+        .map(cb => cb.value);
+
+    if (selectedIds.length === 0) {
+        alert('No items selected.');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to delete the selected items?')) {
+        return;
+    }
 
     try {
         const response = await fetch('/api/inventory/delete', {
@@ -296,6 +307,36 @@ async function deleteSelectedItems() {
         console.error('Error deleting items:', error);
     }
 }
+
+// Function to hide selected items
+async function hideSelectedItems() {
+    const selectedIds = Array.from(document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+
+    if (selectedIds.length === 0) {
+        alert('No items selected.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/inventory/toggle-hide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemIds: selectedIds })
+        });
+
+        if (!response.ok) throw new Error('Failed to hide items');
+
+        await fetchInventoryList();
+    } catch (error) {
+        console.error('Error hiding items:', error);
+    }
+}
+
+// Attach event listeners to delete and hide buttons
+document.getElementById('deleteSelected').addEventListener('click', deleteSelectedItems);
+document.getElementById('hideSelected').addEventListener('click', hideSelectedItems);
+
 // Function to fetch and display hidden items
 async function fetchHiddenItems() {
     try {
@@ -356,6 +397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error initializing hidden items:', error);
     }
 });
+
 // CSV Upload Form Event Listener
 document.getElementById('uploadCsvForm').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -382,4 +424,3 @@ document.getElementById('uploadCsvForm').addEventListener('submit', async (event
         alert(`Error uploading CSV file: ${error.message}`);
     }
 });
-

@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import {
     addClient,
     getClients,
@@ -7,10 +8,14 @@ import {
     getClientById,
     deleteClients,
     getArchivedClients,
-    reinstateClient
+    reinstateClient,
+    uploadCsv
 } from '../controllers/client_controller.js';
 
 const router = express.Router();
+
+// Set up multer for file uploads
+const upload = multer({ dest: 'uploads/' });
 
 // Route to add a new client
 router.post('/add', addClient);
@@ -35,5 +40,8 @@ router.get('/archived', getArchivedClients);
 
 // Route to reinstate an archived client
 router.post('/reinstate', reinstateClient);
+
+// Route to upload a CSV file
+router.post('/upload-csv', upload.single('csvFile'), uploadCsv);
 
 export default router;

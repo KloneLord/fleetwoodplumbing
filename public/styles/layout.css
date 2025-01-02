@@ -286,4 +286,68 @@ footer a:hover {
 
 .scrollable-container th {
     background-color: #f2f2f2;
+}/* Style for table headers */
+#projectSitesTable th,
+#project_list_tab th,
+#archivedProjectsTable th,
+#inventoryTable thead th,
+#clientTable thead th,
+#hiddenClientTable thead th,
+#hiddenItemsTable thead th {
+    background-color: #2196F3; /* Blue background for the header */
+    color: white; /* White text color for better contrast */
+    padding: 10px; /* Add some padding for better spacing */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Optional: Add a border to the header cells */
+}
+
+/* Ensure columns are spread out evenly */
+#project_list_tab,
+#archivedProjectsTable,
+#inventoryTable,
+#clientTable,
+#hiddenClientTable,
+#hiddenItemsTable,
+#projectSitesTable{
+    width: 100%; /* Ensure the table spans the full width */
+    table-layout: fixed; /* Ensure columns are evenly distributed */
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+}
+
+/* Style for table cells */
+#projectSitesTable th,
+#project_list_tab th,
+#archivedProjectsTable th,
+#inventoryTable th,
+#inventoryTable td,
+#clientTable th,
+#clientTable td,
+#hiddenClientTable th,
+#hiddenClientTable td,
+#hiddenItemsTable th,
+#hiddenItemsTable td {
+    padding: 8px; /* Padding for table cells */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Border for the bottom of the cells */
+}
+
+/* Alternate row background colors */
+#projectSitesTable tbody tr:nth-child(odd),
+#project_list_tab tbody tr:nth-child(odd),
+#archivedProjectsTable tbody tr:nth-child(odd),
+#inventoryTable tbody tr:nth-child(odd),
+#clientTable tbody tr:nth-child(odd),
+#hiddenClientTable tbody tr:nth-child(odd),
+#hiddenItemsTable tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+#projectSitesTable tbody tr:nth-child(even),
+#project_list_tab tbody tr:nth-child(even),
+#archivedProjectsTable tbody tr:nth-child(even),
+#inventoryTable tbody tr:nth-child(even),
+#clientTable tbody tr:nth-child(even),
+#hiddenClientTable tbody tr:nth-child(even),
+#hiddenItemsTable tbody tr:nth-child(even) {
+    background-color: #e6f7ff; /* Light blue background for even rows */
 }
