@@ -1,32 +1,4 @@
 import Client from '../models/client_model.js';
-import fs from 'fs';
-import csv from 'csv-parser';
-
-
-// Existing functions...
-
-// Function to handle CSV upload
-export const uploadCsv = async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    const clients = [];
-    fs.createReadStream(req.file.path)
-        .pipe(csv())
-        .on('data', (row) => {
-            clients.push(row);
-        })
-        .on('end', async () => {
-            try {
-                await Client.insertMany(clients);
-                res.status(200).json({ message: 'CSV file uploaded and clients added successfully' });
-            } catch (error) {
-                console.error('Error processing CSV file:', error);
-                res.status(500).json({ error: 'Failed to process CSV file' });
-            }
-        });
-};
 
 // Function to add a new client
 export const addClient = async (req, res) => {

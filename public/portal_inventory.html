@@ -47,7 +47,8 @@
                 <h2>Inventory List</h2>
                 <div class="delete-button-container">
                     <button id="deleteSelected" class="styled-button">Delete Selected</button>
-                    <button id="hideSelected" class="styled-button" onclick="hideSelectedClients()">Hide Selected</button>
+                </div>
+                <div>
                     <input type="text" id="inventorySearch" placeholder="Search inventory..." oninput="filterInventoryList()" />
                 </div>
                 <table id="inventoryTable">
@@ -126,7 +127,7 @@
                         <input type="number" id="addSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
                     </fieldset>
 
-                    <button type="submit" class="styled-button">Save Item</button>
+                    <button type="submit">Save Item</button>
                 </form>
             </div>
 
@@ -174,7 +175,7 @@
                         <input type="number" id="editSellingPrice" name="sellingPrice" placeholder="Selling Price" step="0.10" min="0" readonly>
                     </fieldset>
 
-                    <button class="styled-button" type="submit">Update Item</button>
+                    <button type="submit">Update Item</button>
                 </form>
             </div>
 
@@ -186,7 +187,7 @@
                 <form id="uploadCsvForm" enctype="multipart/form-data">
                     <label for="csvFile">Upload CSV:</label>
                     <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
-                    <button class="styled-button" type="submit">Upload</button>
+                    <button type="submit">Upload</button>
                 </form>
                 <a href="/utils/import_template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
 

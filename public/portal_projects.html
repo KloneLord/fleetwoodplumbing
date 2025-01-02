@@ -7,7 +7,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
-    <script src="js/projects.js" defer></script>
+
+    <script>
+        function showTab(tabId) {
+            // Find all tab contents and hide them
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.style.display = 'none'; // Hide all tabs
+                tab.classList.remove('active'); // Remove active class
+            });
+
+            // Show the selected tab content
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.style.display = 'block'; // Show the active tab
+                activeTab.classList.add('active'); // Add active class
+            }
+
+            // Reset styles for all tab buttons
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('active'); // Remove active class from all buttons
+            });
+
+            // Highlight the active tab button
+            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active'); // Add active class to the current button
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Default to showing the first tab or a specific tab from the URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabId = urlParams.get('tab') || 'temp_1_tab'; // Default tab
+            showTab(tabId);
+        });
+    </script>
 </head>
 <body>
 <header>
@@ -25,6 +61,7 @@
                 <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
                 <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
                 <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="window.location.href='portal_settings.html'">Settings</button>
                 <button onclick="logOut()">Log Out</button>
             </div>
         </nav>
@@ -36,145 +73,89 @@
         <div class="inner-container">
             <!-- Tab Buttons -->
             <div class="tab-buttons">
-                <button data-tab="project_list_tab" class="active" onclick="showTab('project_list_tab')">Project List</button>
-                <button data-tab="add_project_tab" onclick="showTab('add_project_tab')">Add Project</button>
-                <button data-tab="edit_project_tab" onclick="showTab('edit_project_tab')">Edit Project</button>
-                <button data-tab="misc_project_tab" onclick="showTab('misc_project_tab')">Misc Project</button>
+                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Template 1</button>
+                <button data-tab="temp_2_tab" onclick="showTab('temp_2_tab')">Template 2</button>
+                <button data-tab="temp_3_tab" onclick="showTab('temp_3_tab')">Template 3</button>
+                <button data-tab="temp_4_tab" onclick="showTab('temp_4_tab')">Template 4</button>
             </div>
 
             <!-- Tab Content -->
-            <div id="project_list_tab" class="tab active">
-                <h2>Project List</h2>
-                <div class="delete-button-container">
-                    <button id="deleteSelected">Delete Selected</button>
-                    <button id="archiveSelected" onclick="archiveSelectedProjects()">Archive Selected</button>
-                    <input type="text" id="projectSearch" placeholder="Search projects..." oninput="filterProjectList()" />
-                </div>
-                <table id="projectTable">
-                    <thead>
-                    <tr>
-                        <th style="width: 5%;"><input type="checkbox" id="selectAll" onclick="selectAllRows(this)" /></th>
-                        <th style="width: 25%;">Project Title</th>
-                        <th style="width: 25%;">Customer</th>
-                        <th style="width: 35%;">Address</th>
-                        <th style="width: 10%;">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="5">No projects found.</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="add_project_tab" class="tab">
-                <h2>Add Project</h2>
-                <form id="add_project_form">
-                    <div>
-                        <label for="project_title">Project Title:</label>
-                        <input type="text" id="project_title" name="project_title" required>
-                    </div>
-                    <div>
-                        <label for="clientsDropdown">Client:</label>
-                        <select id="clientsDropdown" name="clients" required>
-                            <!-- Options will be populated dynamically from the customer list -->
-                        </select>
-                        <button type="button" onclick="window.location.href='portal_clients.html'">Add Client</button>
-                    </div>
-                    <div>
-                        <label for="street">Street:</label>
-                        <input type="text" id="street" name="street" required>
-                    </div>
-                    <div>
-                        <label for="city">City/Town:</label>
-                        <input type="text" id="city" name="city" required>
-                    </div>
-                    <div>
-                        <label for="postcode">Postcode:</label>
-                        <input type="text" id="postcode" name="postcode" required>
-                    </div>
-                    <div>
-                        <label for="state">State:</label>
-                        <input type="text" id="state" name="state" required>
-                    </div>
-                    <div>
-                        <label for="country">Country:</label>
-                        <input type="text" id="country" name="country" required>
-                    </div>
-                    <div>
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description" rows="4" required></textarea>
-                    </div>
-                    <button class="styled-button" type="submit">Submit</button>
-                </form>
-            </div>
-
-            <div id="edit_project_tab" class="tab">
-                <h2>Edit Project</h2>
-                <form id="edit_project_form">
-                    <div>
-                        <label for="edit_project_title">Project Title:</label>
-                        <input type="text" id="edit_project_title" name="edit_project_title" required>
-                    </div>
-                    <div>
-                        <label for="edit_clientsDropdown">Client:</label>
-                        <select id="edit_clientsDropdown" name="edit_clients" required>
-                            <!-- Options will be populated dynamically from the customer list -->
-                        </select>
-                        <button type="button" onclick="window.location.href='portal_clients.html'">Add Client</button>
-                    </div>
-                    <div>
-                        <label for="edit_street">Street:</label>
-                        <input type="text" id="edit_street" name="edit_street" required>
-                    </div>
-                    <div>
-                        <label for="edit_city">City/Town:</label>
-                        <input type="text" id="edit_city" name="edit_city" required>
-                    </div>
-                    <div>
-                        <label for="edit_postcode">Postcode:</label>
-                        <input type="text" id="edit_postcode" name="edit_postcode" required>
-                    </div>
-                    <div>
-                        <label for="edit_state">State:</label>
-                        <input type="text" id="edit_state" name="edit_state" required>
-                    </div>
-                    <div>
-                        <label for="edit_country">Country:</label>
-                        <input type="text" id="edit_country" name="edit_country" required>
-                    </div>
-                    <div>
-                        <label for="edit_description">Description:</label>
-                        <textarea id="edit_description" name="edit_description" rows="4" required></textarea>
-                    </div>
+            <div id="temp_1_tab" class="tab active">
+                <h2>Template 1</h2>
+                <form id="temp_1_form">
+                    <label for="temp_1_input">Input:</label>
+                    <input type="text" id="temp_1_input" name="temp_1_input" required>
                     <button type="submit">Submit</button>
                 </form>
             </div>
 
-            <div id="misc_project_tab" class="tab">
-                <h2>Misc Projects</h2>
-                <div id="archivedProjectsContainer" class="scrollable-container">
-                    <table id="archivedProjectsTable">
-                        <thead>
-                        <tr>
-                            <th style="width: 25%;">Project Title</th>
-                            <th style="width: 25%;">Customer</th>
-                            <th style="width: 35%;">Address</th>
-                            <th style="width: 15%;">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="4">No archived projects found.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div id="temp_2_tab" class="tab">
+                <h2>Template 2</h2>
+                <form id="temp_2_form">
+                    <label for="temp_2_input">Input:</label>
+                    <input type="text" id="temp_2_input" name="temp_2_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div id="temp_3_tab" class="tab">
+                <h2>Template 3</h2>
+                <form id="temp_3_form">
+                    <label for="temp_3_input">Input:</label>
+                    <input type="text" id="temp_3_input" name="temp_3_input" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div id="temp_4_tab" class="tab">
+                <h2>Template 4</h2>
+                <form id="temp_4_form">
+                    <label for="temp_4_input">Input:</label>
+                    <input type="text" id="temp_4_input" name="temp_4_input" required>
+                    <button type="submit">Submit</button>
+                </form>
             </div>
         </div>
     </section>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch session information from the server
+        fetch('/api/auth/session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user) {
+                    document.getElementById('username').innerText = data.user.username;
+                    document.getElementById('role').innerText = data.user.role;
+                    document.getElementById('access').innerText = data.user.access;
+                } else {
+                    alert('You are not logged in. Redirecting to login page.');
+                    window.location.href = 'portal_login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching session information:', error);
+                alert('An error occurred. Please try again.');
+            });
+    });
+
+    async function logOut() {
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Failed to log out');
+
+            alert('You have been logged out successfully!');
+            window.location.href = 'portal_login.html'; // Redirect to login page
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+            alert('An error occurred while logging out. Please try again.');
+        }
+    }
+</script>
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
     <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>

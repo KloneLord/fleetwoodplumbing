@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import connectDB from './config/db_config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import multer from 'multer';
 import sessionMiddleware from './middleware/session_middleware.js';
 import businessRoutes from './routes/business.js';
 import adminRoutes from './routes/admin.js';
@@ -11,8 +10,6 @@ import authRoutes from './routes/auth.js';
 import clientRoutes from './routes/client_routes.js';
 import inventoryRoutes from './routes/inventory_routes.js';
 import authCodeRoutes from './routes/authCodeRoutes.js';
-import projectSiteRoutes from './routes/projectSiteRoutes.js';
-
 
 // Other imports and middleware setup
 
@@ -38,9 +35,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Set up multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
 // Use session middleware
 app.use(sessionMiddleware);
 
@@ -51,19 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/auth-code', authCodeRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/inventory', inventoryRoutes);
-app.use('/api/project_sites', projectSiteRoutes);
 
-// Route to handle CSV uploads
-app.post('/api/clients/upload-csv', upload.single('csvFile'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    // Process the CSV file
-    // Add your CSV processing logic here
-
-    res.status(200).json({ message: 'CSV file uploaded successfully' });
-});
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

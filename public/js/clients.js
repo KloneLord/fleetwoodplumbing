@@ -1,4 +1,5 @@
 // Function to show the selected tab
+// Function to show the selected tab
 function showTab(tabId) {
     // Hide all tabs and remove 'active' class
     const tabs = document.querySelectorAll('.tab');
@@ -30,105 +31,7 @@ function showTab(tabId) {
     if (tabId === 'misc_tab') {
         fetchHiddenClients();
     }
-    if (tabId === 'project_sites_tab') {
-        sitesPopulateClientDropdowns();
-    }
     // Add other tab-specific script refreshes as needed
-}
-
-// Function to fetch and display project sites
-async function loadProjectSites(clientId) {
-    try {
-        const response = await fetch(`/api/project_sites/${clientId}`);
-        if (!response.ok) throw new Error('Failed to fetch project sites.');
-
-        const projectSites = await response.json();
-        const projectSitesTableBody = document.getElementById('projectSitesTable').querySelector('tbody');
-        projectSitesTableBody.innerHTML = ''; // Clear existing rows
-
-        projectSites.forEach(site => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${site.project_site_address_name}</td>
-                <td>${site.project_site_street}</td>
-                <td>${site.project_site_city}</td>
-                <td>${site.project_site_postcode}</td>
-                <td>${site.project_site_state}</td>
-                <td>${site.project_site_country}</td>
-                <td><button onclick="deleteProjectSite('${site._id}')">Delete</button></td>
-            `;
-            projectSitesTableBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error fetching project sites:', error);
-    }
-}
-
-// Function to delete a project site
-window.deleteProjectSite = async function (projectId) {
-    if (confirm('Are you sure you want to delete this project site?')) {
-        try {
-            const response = await fetch(`/api/project_sites/${projectId}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                alert('Project site deleted successfully!');
-                const clientDropdown = document.getElementById('clientDropdown');
-                loadProjectSites(clientDropdown.value); // Refresh the table
-            } else {
-                alert('Failed to delete project site.');
-            }
-        } catch (error) {
-            console.error('Error deleting project site:', error);
-            alert('An error occurred while deleting the project site.');
-        }
-    }
-};
-
-// Function to fetch and return the names and IDs of active clients
-async function sitesFetchClientNames() {
-    try {
-        const response = await fetch('/api/clients/list');
-        if (!response.ok) throw new Error('Failed to fetch clients.');
-
-        const clients = await response.json();
-        const activeClients = clients
-            .filter(client => client.accountStatus === 'active')
-            .map(client => ({ clientId: client.clientId, fullName: client.fullName }));
-
-        console.log('Active Clients:', activeClients);
-        return activeClients;
-    } catch (error) {
-        console.error('Error fetching client names:', error);
-        return [];
-    }
-}
-
-// Function to populate the client dropdown
-async function sitesPopulateClientDropdowns() {
-    const activeClients = await sitesFetchClientNames();
-    const clientDropdown = document.getElementById('clientDropdown');
-
-    clientDropdown.innerHTML = ''; // Clear any existing options
-    activeClients.forEach(client => {
-        const option = document.createElement('option');
-        option.value = client.clientId; // Set the value of the option to clientId
-        option.textContent = client.fullName; // Display the fullName
-        clientDropdown.appendChild(option);
-    });
-
-    // Automatically load project sites for the first client in the dropdown
-    if (activeClients.length > 0) {
-        clientDropdown.value = activeClients[0].clientId;
-        loadProjectSites(activeClients[0].clientId);
-    }
-}
-
-// Initialize Forms
-async function initializeForms() {
-    document.getElementById('addClientId').value = await generateAuthCode();
-    await fetchClientList();
 }
 
 // Function to generate an auth code
@@ -149,6 +52,15 @@ async function generateAuthCode(requestSource = 'client') {
         throw error;
     }
 }
+
+// Initialize Forms
+async function initializeForms() {
+    document.getElementById('addClientId').value = await generateAuthCode();
+    await fetchClientList();
+}
+
+// Event listener for DOMContentLoaded
+document.addEventListener('DOMContentLoaded', initializeForms);
 
 // Add Client Form Submission
 document.getElementById('addClientForm').addEventListener('submit', async (e) => {
@@ -182,7 +94,6 @@ document.getElementById('addClientForm').addEventListener('submit', async (e) =>
     }
 });
 
-// Edit Client Form Submission
 document.getElementById('editClientForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -214,97 +125,6 @@ document.getElementById('editClientForm').addEventListener('submit', async (e) =
         alert(`Error updating client: ${error.message}`);
     }
 });
-
-// Function to delete selected clients
-async function deleteSelectedClients() {
-    const selectedIds = Array.from(document.querySelectorAll('#clientTable tbody input[type="checkbox"]:checked'))
-        .map(cb => cb.value);
-
-    if (selectedIds.length === 0) {
-        alert('No clients selected.');
-        return;
-    }
-
-    if (!confirm('Are you sure you want to delete the selected clients?')) {
-        return;
-    }
-
-    try {
-        const response = await fetch('/api/clients/delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ids: selectedIds })
-        });
-
-        if (!response.ok) throw new Error('Failed to delete clients');
-
-        await fetchClientList();
-    } catch (error) {
-        console.error('Error deleting clients:', error);
-    }
-}
-
-// Function to hide selected clients
-async function hideSelectedClients() {
-    const selectedIds = Array.from(document.querySelectorAll('#clientTable tbody input[name="selectClient"]:checked'))
-        .map(cb => cb.value);
-
-    if (selectedIds.length === 0) {
-        alert('No clients selected.');
-        return;
-    }
-
-    console.log('Selected IDs to hide:', selectedIds); // Debugging statement
-
-    try {
-        const response = await fetch('/api/clients/toggle-hide', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ids: selectedIds })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to hide clients: ${errorText}`);
-        }
-
-        alert('Selected clients have been hidden.');
-        await fetchClientList(); // Refresh the client list
-    } catch (error) {
-        console.error('Error hiding clients:', error);
-    }
-}
-
-// Attach event listeners to delete and hide buttons
-document.getElementById('deleteSelected').addEventListener('click', deleteSelectedClients);
-document.getElementById('hideSelected').addEventListener('click', hideSelectedClients);
-
-// Function to select all rows
-function selectAllRows(checkbox) {
-    const checkboxes = document.querySelectorAll('#clientTable tbody input[type="checkbox"]');
-    checkboxes.forEach(cb => cb.checked = checkbox.checked);
-}
-
-// Function to filter the client list by ID, name, email, and phone
-function filterClientList() {
-    const searchValue = document.getElementById('clientSearch').value.toLowerCase();
-    const rows = document.querySelectorAll('#clientTable tbody tr');
-
-    rows.forEach(row => {
-        const clientId = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        const clientName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-        const clientEmail = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-        const clientPhone = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
-
-        if (clientId.includes(searchValue) || clientName.includes(searchValue) || clientEmail.includes(searchValue) || clientPhone.includes(searchValue)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-// Function to fetch and display the client list
 async function fetchClientList() {
     try {
         const response = await fetch('/api/clients/list');
@@ -342,40 +162,56 @@ async function fetchClientList() {
     }
 }
 
-// Function to fetch hidden clients
-async function fetchHiddenClients() {
-    try {
-        const response = await fetch('/api/clients/archived');
-        if (!response.ok) throw new Error('Failed to fetch hidden clients.');
 
-        const clients = await response.json();
-        const tbody = document.querySelector('#hiddenClientTable tbody');
-        tbody.innerHTML = '';
+// Initialize form and fetch clients when the DOM is loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchClientList();
+});
 
-        if (clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">No hidden clients found.</td></tr>';
-            return;
+
+
+// Function to filter the client list
+function filterClientList() {
+    const searchValue = document.getElementById('clientSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('#clientTable tbody tr');
+
+    rows.forEach(row => {
+        const clientName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        if (clientName.includes(searchValue)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
         }
+    });
+}
 
-        clients.forEach((client) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="width: 15%;">${client.clientId}</td>
-                <td style="width: 25%;">${client.fullName}</td>
-                <td style="width: 20%;">${client.email}</td>
-                <td style="width: 20%;">${client.phone}</td>
-                <td style="width: 20%;">
-                    <button class="slim-styled-button" onclick="toggleHide('${client.clientId}')">Unhide</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+// Function to select all rows
+function selectAllRows(checkbox) {
+    const checkboxes = document.querySelectorAll('#clientTable tbody input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+}
+
+// Function to delete selected clients
+async function deleteSelectedClients() {
+    const selectedIds = Array.from(document.querySelectorAll('#clientTable tbody input[type="checkbox"]:checked'))
+        .map(cb => cb.closest('tr').querySelector('td:nth-child(2)').textContent);
+
+    try {
+        const response = await fetch('/api/clients/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds })
         });
+
+        if (!response.ok) throw new Error('Failed to delete clients');
+
+        await fetchClientList();
     } catch (error) {
-        console.error('Error fetching hidden clients:', error);
+        console.error('Error deleting clients:', error);
     }
 }
 
-// Function to edit client details
+
 async function editClient(clientId) {
     showTab('edit_client_tab'); // Switch to the edit tab
 
@@ -419,7 +255,6 @@ async function editClient(clientId) {
     }
 }
 
-// Function to toggle client hide status
 async function toggleHide(clientId) {
     try {
         const response = await fetch('/api/clients/toggle-hide', {
@@ -428,6 +263,7 @@ async function toggleHide(clientId) {
             body: JSON.stringify({ clientId }),
 
         });
+        fetchHiddenClients();
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`Failed to toggle hide status: ${errorText}`);
@@ -436,14 +272,12 @@ async function toggleHide(clientId) {
         const result = await response.json();
         alert(result.message);
         await fetchClientList(); // Refresh the client list after updating the hidden status
-        await fetchHiddenClients();
     } catch (error) {
         console.error('Error toggling hide status:', error);
         alert(`Error toggling hide status: ${error.message}`);
     }
 }
 
-// Function to view client details
 function viewClient(clientId) {
     const width = Math.round(window.innerWidth * 0.9);
     const height = Math.round(window.innerHeight * 0.9);
@@ -453,41 +287,67 @@ function viewClient(clientId) {
     window.open(`portal_client_view.html?clientId=${clientId}`, '_blank', params);
 }
 
-// Function to copy physical address to postal address
-// Function to copy physical address to postal address
-function copyPhysicalToPostal() {
-    // Get values from the physical address fields
-    const streetAddress = document.getElementById('editStreetAddress').value;
-    const city = document.getElementById('editCity').value;
-    const state = document.getElementById('editState').value;
-    const postalCode = document.getElementById('editPostalCode').value;
-    const country = document.getElementById('editCountry').value;
 
-    // Set values to the postal address fields
-    document.getElementById('editPostalStreetAddress').value = streetAddress;
-    document.getElementById('editPostalCity').value = city;
-    document.getElementById('editPostalState').value = state;
-    document.getElementById('editPostalPostalCode').value = postalCode;
-    document.getElementById('editPostalCountry').value = country;
+// Function to fetch and display hidden clients
+async function fetchHiddenClients() {
+    try {
+        const response = await fetch('/api/clients/archived');
+        if (!response.ok) throw new Error('Failed to fetch hidden clients.');
+
+        const clients = await response.json();
+        const tbody = document.querySelector('#hiddenClientTable tbody');
+        tbody.innerHTML = '';
+
+        if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No hidden clients found.</td></tr>';
+            return;
+        }
+
+        clients.forEach((client) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="width: 15%;">${client.clientId}</td>
+                <td style="width: 25%;">${client.fullName}</td>
+                <td style="width: 20%;">${client.email}</td>
+                <td style="width: 20%;">${client.phone}</td>
+                <td style="width: 20%;">
+                    <button class="slim-styled-button" onclick="toggleHide('${client.clientId}')">Unhide</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching hidden clients:', error);
+    }
 }
 
-// Event listener for DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Ensure the button exists before adding the event listener
-    const copyButton = document.getElementById('copy-address-button');
-    if (copyButton) {
-        copyButton.addEventListener('click', copyPhysicalToPostal);
+// Call fetchHiddenClients when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', fetchHiddenClients);
+
+// Function to un-hide a client
+async function unhideClient(clientId) {
+    try {
+        const response = await fetch('/api/clients/toggle-hide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clientId }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to un-hide client: ${errorText}`);
+        }
+
+        alert('Client un-hidden successfully');
+        await fetchHiddenClients(); // Refresh the hidden clients list
+        await fetchClientList(); // Refresh the client list
+    } catch (error) {
+        console.error('Error un-hiding client:', error);
+        alert(`Error un-hiding client: ${error.message}`);
     }
-});
+}
 
-// Event listener for DOMContentLoaded
-document.addEventListener('DOMContentLoaded', async () => {
-    await initializeForms(); // Initialize forms and fetch clients
-    document.getElementById('copy-address-button').addEventListener('click', copyPhysicalToPostal);
-    await fetchHiddenClients();
-});
-
-// Event listener for CSV upload form submission
+// CSV Upload Form Event Listener
 document.getElementById('uploadCsvForm').addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData();
@@ -544,10 +404,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('access').innerText = sessionData.user.access;
         } else {
             alert('You are not logged in. Redirecting to login page.');
-            window.location.href = 'portal_login.html';
+            window.location.href = 'portal_registration.html';
         }
     } catch (error) {
         console.error('Error fetching session information:', error);
         alert('An error occurred. Please try again.');
     }
+});
+
+function copyPhysicalToPostal() {
+    const streetAddress = document.getElementById('editStreetAddress').value;
+    const city = document.getElementById('editCity').value;
+    const state = document.getElementById('editState').value;
+    const postalCode = document.getElementById('editPostalCode').value;
+    const country = document.getElementById('editCountry').value;
+
+    document.getElementById('editPostalStreetAddress').value = streetAddress;
+    document.getElementById('editPostalCity').value = city;
+    document.getElementById('editPostalState').value = state;
+    document.getElementById('editPostalPostalCode').value = postalCode;
+    document.getElementById('editPostalCountry').value = country;
+}
+
+// Ensure this function is called when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('copy-address-button').addEventListener('click', copyPhysicalToPostal);
 });

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
     <script defer src="js/clients.js"></script> <!-- Ensure the script is loaded after the DOM -->
-    <script defer src="js/projectSites.js"></script> <!-- Ensure the script is loaded after the DOM -->
 </head>
 <body>
 <header>
@@ -41,18 +40,17 @@
                 <button data-tab="add_client_tab" onclick="showTab('add_client_tab')">Add Client</button>
                 <button data-tab="edit_client_tab" onclick="showTab('edit_client_tab')">Edit</button>
                 <button data-tab="misc_tab" onclick="showTab('misc_tab')">Misc</button>
-                <button data-tab="project_sites_tab" onclick="showTab('project_sites_tab')">Project Sites</button>
             </div>
 
             <!-- Client List Tab -->
             <div id="client_list_tab" class="tab active">
                 <h2>Client List</h2>
                 <div class="delete-button-container">
-                    <button class="styled-button" id="deleteSelected">Delete Selected</button>
-                    <button class="styled-button" id="hideSelected" onclick="hideSelectedClients()">Hide Selected</button>
-                    <input type="text" id="clientSearch" onkeyup="filterClientList()" placeholder="Search clients...">
+                    <button id="deleteSelected" class="styled-button">Delete Selected</button>
                 </div>
-
+                <div>
+                    <input type="text" id="clientSearch" placeholder="Search clients..." oninput="filterClientList()" />
+                </div>
                 <table id="clientTable">
                     <thead>
                     <tr>
@@ -126,7 +124,7 @@
 
                     <!-- Postal Address Information -->
                     <fieldset>
-                        <button type="button" id="copy-address-button" class="slim-styled-button" onclick="copyPhysicalToPostal()">Same as physical address</button>
+                        <button type="button" class="slim-styled-button" onclick="copyPhysicalToPostal()">Same as physical address</button>
                         <br>
 
                         <legend>Postal Address Information</legend>
@@ -179,7 +177,7 @@
                         </select>
                     </fieldset>
 
-                    <button class="styled-button" type="submit">Save Client</button>
+                    <button type="submit">Save Client</button>
                 </form>
             </div>
 
@@ -281,7 +279,7 @@
                         </select>
                     </fieldset>
 
-                    <button class="styled-button" type="submit">Update Client</button>
+                    <button type="submit">Update Client</button>
                 </form>
             </div>
 
@@ -293,91 +291,28 @@
                 <form id="uploadCsvForm" enctype="multipart/form-data">
                     <label for="csvFile">Upload CSV:</label>
                     <input type="file" id="csvFile" name="csvFile" accept=".csv" required />
-                    <button class="styled-button" type="submit">Upload</button>
+                    <button type="submit">Upload</button>
                 </form>
                 <a href="/utils/client_template.csv" download>Download CSV Template</a> <!-- Link to the CSV template -->
 
                 <h2>Hidden Clients</h2>
-                <br>
-                <table id="hiddenClientTable">
-                    <thead>
-                    <tr>
-                        <th style="width: 15%;">Client ID</th>
-                        <th style="width: 25%;">Name</th>
-                        <th style="width: 20%;">Email</th>
-                        <th style="width: 20%;">Phone</th>
-                        <th style="width: 20%;">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="5">No hidden clients found.</td>
-                    </tr>
-                    </tbody>
-                </table>
+                    <table id="hiddenClientTable">
+                        <thead>
+                        <tr>
+                            <th style="width: 15%;">Client ID</th>
+                            <th style="width: 25%;">Name</th>
+                            <th style="width: 20%;">Email</th>
+                            <th style="width: 20%;">Phone</th>
+                            <th style="width: 20%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="5">No hidden clients found.</td>
+                        </tr>
+                        </tbody>
+                    </table>
             </div>
-
-            <!-- Project Sites Tab -->
-            <div id="project_sites_tab" class="tab">
-                <h2>Project Sites</h2>
-
-                <div>
-                    <label for="clientDropdown">Client:</label>
-                    <select id="clientDropdown" onchange="loadProjectSites(this.value)">
-                        <!-- Options will be populated dynamically from the client list -->
-                    </select>
-                    <button class="styled-button" type="button" onclick="window.location.href='portal_clients.html'">Add Client</button>
-                </div>
-                <br>
-                <table id="projectSitesTable">
-                    <thead>
-                    <tr>
-                        <th style="width: 15%;">Project Site Title</th>
-                        <th style="width: 20%;">Street Address</th>
-                        <th style="width: 15%;">City/Town</th>
-                        <th style="width: 10%;">Postcode</th>
-                        <th style="width: 15%;">State</th>
-                        <th style="width: 15%;">Country</th>
-                        <th style="width: 10%;">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- Project sites will be populated dynamically -->
-                    </tbody>
-                </table>
-
-                <h2>Add Project Site</h2>
-                <form id="addProjectSiteForm">
-                    <div>
-                        <label for="projectSiteTitle">Project Site Title:</label>
-                        <input type="text" id="projectSiteTitle" name="projectSiteTitle" required>
-                    </div>
-                    <div>
-                        <label for="streetAddress">Street Address:</label>
-                        <input type="text" id="streetAddress" name="streetAddress" required>
-                    </div>
-                    <div>
-                        <label for="city">City/Town:</label>
-                        <input type="text" id="city" name="city" required>
-                    </div>
-                    <div>
-                        <label for="postcode">Postcode:</label>
-                        <input type="text" id="postcode" name="postcode" required>
-                    </div>
-                    <div>
-                        <label for="state">State:</label>
-                        <input type="text" id="state" name="state" value="Victoria" required>
-                    </div>
-                    <div>
-                        <label for="country">Country:</label>
-                        <input type="text" id="country" name="country" value="Australia" required>
-                    </div>
-                    <input type="hidden" id="clientId" name="clientId">
-                    <input type="hidden" id="fullName" name="fullName">
-                    <button class="styled-button" type="submit">Save Project Site</button>
-                </form>
-            </div>
-        </div>
         </div>
     </section>
 </main>
