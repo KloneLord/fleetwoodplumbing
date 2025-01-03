@@ -1,20 +1,21 @@
-// routes/projectSiteRoutes.js
 import express from 'express';
-import {
-    getAllProjectSites,
-    getProjectSitesByClientId,
-    createProjectSite,
-    deleteProjectSite,
-    updateProjectSite
-} from '../controllers/projectSiteController.js';
+import { createProjectSite, getProjectSiteDetails, deleteProjectSite, getProjectSitesByClientId, getProjectSiteDetailsById } from '../controllers/projectSiteController.js';
 
 const router = express.Router();
 
-// Define routes
-router.get('/', getAllProjectSites); // Get all project sites
-router.get('/:clientId', getProjectSitesByClientId); // Get project sites by client ID
-router.post('/', createProjectSite); // Create a new project site
-router.delete('/:id', deleteProjectSite); // Delete a project site by ID
-router.put('/:id', updateProjectSite); // Update a project site by ID
+// Create a new project site
+router.post('/', createProjectSite);
+
+// Get project site details by site ID
+router.get('/:id', getProjectSiteDetails);
+
+// Delete a project site
+router.delete('/:id', deleteProjectSite);
+
+// Fetch all project sites for a given client ID
+router.get('/client/:clientId', getProjectSitesByClientId);
+
+// Fetch details of a specific project site by site ID
+router.get('/details/:siteId', getProjectSiteDetailsById);
 
 export default router;

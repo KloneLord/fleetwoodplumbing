@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import clientRoutes from './routes/client_routes.js';
 import inventoryRoutes from './routes/inventory_routes.js';
 import authCodeRoutes from './routes/authCodeRoutes.js';
+import projectSiteRoutes from './routes/projectSiteRoutes.js';
 
 // Other imports and middleware setup
 
@@ -45,7 +46,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/auth-code', authCodeRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/inventory', inventoryRoutes);
-
+app.use('/api/project_sites', projectSiteRoutes);
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

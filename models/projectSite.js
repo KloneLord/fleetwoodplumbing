@@ -1,19 +1,43 @@
-// models/ProjectSite.js
 import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
+const ProjectSiteSchema = new mongoose.Schema({
+    clientId: {
+        type: String,
+        required: true
+    },
+    siteName: {
+        type: String,
+        required: true
+    },
+    streetAddress: {
+        type: String,
+        required: true
+    },
+    cityTown: {
+        type: String,
+        required: true
+    },
+    postcode: {
+        type: String,
+        required: true
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
+});
 
-// Define the schema for ProjectSite
-const projectSiteSchema = new Schema({
-    project_site_address_name: { type: String, required: true },
-    project_site_street: { type: String, required: true },
-    project_site_city: { type: String, required: true },
-    project_site_postcode: { type: String, required: true },
-    project_site_state: { type: String, required: true },
-    project_site_country: { type: String, required: true },
-    clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true }
-}, { timestamps: true });
-
-// Export the ProjectSite model
-const ProjectSite = mongoose.model('ProjectSite', projectSiteSchema);
+const ProjectSite = mongoose.model('ProjectSite', ProjectSiteSchema);
 export default ProjectSite;

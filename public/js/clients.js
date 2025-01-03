@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('access').innerText = sessionData.user.access;
         } else {
             alert('You are not logged in. Redirecting to login page.');
-            window.location.href = 'portal_registration.html';
+            window.location.href = 'portal_login.html';
         }
     } catch (error) {
         console.error('Error fetching session information:', error);
@@ -412,21 +412,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-function copyPhysicalToPostal() {
-    const streetAddress = document.getElementById('editStreetAddress').value;
-    const city = document.getElementById('editCity').value;
-    const state = document.getElementById('editState').value;
-    const postalCode = document.getElementById('editPostalCode').value;
-    const country = document.getElementById('editCountry').value;
 
-    document.getElementById('editPostalStreetAddress').value = streetAddress;
-    document.getElementById('editPostalCity').value = city;
-    document.getElementById('editPostalState').value = state;
-    document.getElementById('editPostalPostalCode').value = postalCode;
-    document.getElementById('editPostalCountry').value = country;
-}
-
-// Ensure this function is called when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('copy-address-button').addEventListener('click', copyPhysicalToPostal);
-});

@@ -92,6 +92,8 @@ form input:focus {
 form button {
     background: #2196F3; /* Bright blue */
     color: white; /* White text */
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 form button:hover {
@@ -117,10 +119,11 @@ footer a:hover {
     color: #FFFFFF; /* White text */
     border: none; /* Remove default border */
     border-radius: 8px; /* Rounded corners */
-    padding: 12px 24px; /* Padding for size */
+    padding: 8px 14px; /* Padding for size */
     font-size: 14px; /* Font size */
     font-weight: bold; /* Make the text bold */
-
+    margin-top: 20px;
+    margin-bottom: 20px;
     letter-spacing: 1px; /* Add some spacing between letters */
     cursor: pointer; /* Change cursor to pointer on hover */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
@@ -144,6 +147,8 @@ footer a:hover {
     color: #FFFFFF; /* White text */
     border: none; /* Remove default border */
     border-radius: 4px; /* Slightly rounded corners */
+    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 2px 8px; /* Slimmer padding for a smaller size */
     font-size: 12px; /* Smaller font size */
     font-weight: 500; /* Medium weight for a cleaner look */
@@ -164,4 +169,67 @@ footer a:hover {
     background-color: #1565C0; /* Even darker blue for active state */
     box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Minimal shadow on click */
     transform: translateY(1px); /* Subtle press down effect */
+}
+/* Dropdown Container */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Button */
+.styled-dropdown {
+    background-color: #FFFFFF; /* White background */
+    color: #000000; /* Black text */
+    border: 1px solid #cccccc; /* Subtle gray border */
+    border-radius: 6px; /* Rounded corners */
+    padding: 4px 12px; /* Padding for size */
+    font-size: 14px; /* Font size */
+    font-weight: 500; /* Medium weight */
+    cursor: pointer; /* Pointer on hover */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+.styled-dropdown:hover {
+    background-color: #f9f9f9; /* Light gray hover background */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.styled-dropdown:active {
+    background-color: #f1f1f1; /* Even lighter gray for active state */
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow on click */
+    transform: translateY(1px); /* Subtle press down effect */
+}
+
+/* Dropdown Content */
+.styled-dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #FFFFFF; /* White background */
+    min-width: 160px; /* Minimum width */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 6px; /* Rounded corners */
+    z-index: 1; /* Layer above other content */
+    overflow: hidden; /* Prevent overflow */
+    border: 1px solid #cccccc; /* Subtle border */
+}
+
+/* Dropdown Content Links */
+.styled-dropdown-content a {
+    color: #000000; /* Black text */
+    padding: 8px 12px; /* Padding for size */
+    text-decoration: none; /* Remove underline */
+    display: block; /* Block level for clickable area */
+    transition: background-color 0.2s ease; /* Smooth hover effect */
+}
+
+.styled-dropdown-content a:hover {
+    background-color: #f1f1f1; /* Light gray hover background */
+    color: #000000; /* Ensure text remains black */
+}
+
+/* Show Dropdown on Hover */
+.dropdown-container:hover .dropdown-content {
+    display: block; /* Show content on hover */
 }

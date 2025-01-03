@@ -23,6 +23,20 @@ function showTab(tabId) {
     }
 }
 
+// Function to filter the inventory list
+async function filterInventoryList() {
+    const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
+    const rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+    rows.forEach(row => {
+        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        if (itemName.includes(searchValue)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
 // Function to generate an auth code
 async function generateAuthCode(requestSource = 'inventory') {
     try {
@@ -255,22 +269,6 @@ async function editItem(itemId) {
 }
 
 
-
-// Function to filter the inventory list
-function filterInventoryList() {
-    const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
-    const rows = document.querySelectorAll('#inventoryTable tbody tr');
-
-    rows.forEach(row => {
-        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(searchValue)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
 // Function to select all rows
 function selectAllRows(checkbox) {
     const checkboxes = document.querySelectorAll('#inventoryTable tbody input[type="checkbox"]');
@@ -291,7 +289,7 @@ async function deleteSelectedItems() {
 
         if (!response.ok) throw new Error('Failed to delete items');
 
-        await fetchInventoryList();
+        fetchInventoryList();
     } catch (error) {
         console.error('Error deleting items:', error);
     }
@@ -340,8 +338,8 @@ async function unhideItem(itemId) {
         }
 
         alert('Item un-hidden successfully');
-        await fetchHiddenItems(); // Refresh the hidden items list
-        await fetchInventoryList(); // Refresh the inventory list
+        fetchHiddenItems(); // Refresh the hidden items list
+        fetchInventoryList(); // Refresh the inventory list
     } catch (error) {
         console.error('Error un-hiding item:', error);
         alert(`Error un-hiding item: ${error.message}`);
@@ -351,7 +349,7 @@ async function unhideItem(itemId) {
 // Call fetchHiddenItems when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await fetchHiddenItems();
+        fetchHiddenItems();
     } catch (error) {
         console.error('Error initializing hidden items:', error);
     }

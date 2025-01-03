@@ -262,20 +262,7 @@
     }
 
 
-    // Function to filter the inventory list
-    async function filterInventoryList() {
-        const searchValue = document.getElementById('inventorySearch').value.toLowerCase();
-        const rows = document.querySelectorAll('#inventoryTable tbody tr');
 
-        rows.forEach(row => {
-            const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            if (itemName.includes(searchValue)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
 
     // Function to select all rows
     function selectAllRows(checkbox) {
@@ -437,7 +424,7 @@
                 document.getElementById('access').innerText = sessionData.user.access;
             } else {
                 alert('You are not logged in. Redirecting to login page.');
-                window.location.href = 'portal_registration.html';
+                window.location.href = 'portal_login.html';
             }
         } catch (error) {
             console.error('Error fetching session information:', error);

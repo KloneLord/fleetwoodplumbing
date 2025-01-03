@@ -149,10 +149,12 @@ form input {
 
 form button {
     border: none;
-    padding: 0.75rem;
+    padding: 0.5rem;
     border-radius: 5px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    min-width: 14%;
+    max-height: 28px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -214,51 +216,7 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
-/* Add this to your styles/layout.css or styles/colors.css file */
-/* Style for the table header */
-#inventoryTable thead {
-    background-color: dodgerblue; /* Blue background for the header */
-    width: 100%; /* Ensure the header spans the full width */
-}
 
-#inventoryTable th {
-    color: white; /* White text color for better contrast */
-    padding: 10px; /* Add some padding for better spacing */
-    text-align: left; /* Align text to the left */
-    border: 1px solid #ddd; /* Optional: Add a border to the header cells */
-}
-
-/* Ensure columns are spread out evenly */
-#inventoryTable {
-    width: 100%; /* Ensure the table spans the full width */
-    table-layout: fixed; /* Ensure columns are evenly distributed */
-}
-
-#inventoryTable th,
-#inventoryTable td {
-    width: auto; /* Let the table automatically adjust the column widths */
-}
-#inventoryTable th, #inventoryTable td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-#inventoryTable th {
-    background-color: #2196F3;
-}
-
-#inventoryTable {
-    width: 100%;
-    border-collapse: collapse;
-}
-/* Alternating row colors */
-#inventoryTable tbody tr:nth-child(odd) {
-    background-color: #ffffff; /* White background for odd rows */
-}
-#inventoryTable tbody tr:nth-child(even) {
-    background-color: #e6f7ff; /* Light blue background for even rows */
-}
 /* Move delete button to the top */
 .delete-button-container {
     text-align: right;
@@ -286,4 +244,109 @@ footer a:hover {
 
 .scrollable-container th {
     background-color: #f2f2f2;
+}
+
+/* Style for the table headers */
+#inventoryTable thead,
+#hiddenItemsTable thead,
+#hiddenClientTable thead,
+#clientTable thead,
+#projectsTable thead,
+#hiddenProjectsTable thead {
+    background-color: dodgerblue; /* Blue background for the header */
+    width: 100%; /* Ensure the header spans the full width */
+}
+
+#inventoryTable th,
+#hiddenItemsTable th,
+#hiddenClientTable th,
+#clientTable th,
+#projectsTable th,
+#hiddenProjectsTable th {
+    color: white; /* White text color for better contrast */
+    padding: 10px; /* Add some padding for better spacing */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Optional: Add a border to the header cells */
+}
+
+/* Ensure columns are spread out evenly */
+#inventoryTable,
+#hiddenItemsTable,
+#hiddenClientTable,
+#clientTable,
+#projectsTable,
+#hiddenProjectsTable {
+    width: 100%; /* Ensure the table spans the full width */
+    table-layout: fixed; /* Ensure columns are evenly distributed */
+}
+
+#inventoryTable th,
+#inventoryTable td,
+#hiddenItemsTable th,
+#hiddenItemsTable td,
+#hiddenClientTable th,
+#hiddenClientTable td,
+#clientTable th,
+#clientTable td,
+#projectsTable th,
+#projectsTable td,
+#hiddenProjectsTable th,
+#hiddenProjectsTable td {
+    width: auto; /* Let the table automatically adjust the column widths */
+}
+
+/* Specific styles for inventoryTable */
+#inventoryTable th,
+#inventoryTable td,
+#hiddenItemsTable th,
+#hiddenItemsTable td,
+#hiddenClientTable th,
+#hiddenClientTable td,
+#clientTable th,
+#clientTable td,
+#projectsTable th,
+#projectsTable td,
+#hiddenProjectsTable th,
+#hiddenProjectsTable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#inventoryTable th,
+#hiddenItemsTable th,
+#hiddenClientTable th,
+#clientTable th,
+#projectsTable th,
+#hiddenProjectsTable th {
+    background-color: #2196F3;
+}
+
+#inventoryTable,
+#hiddenItemsTable,
+#hiddenClientTable,
+#clientTable,
+#projectsTable,
+#hiddenProjectsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Alternating row colors */
+#inventoryTable tbody tr:nth-child(odd),
+#hiddenItemsTable tbody tr:nth-child(odd),
+#hiddenClientTable tbody tr:nth-child(odd),
+#clientTable tbody tr:nth-child(odd),
+#projectsTable tbody tr:nth-child(odd),
+#hiddenProjectsTable tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+#inventoryTable tbody tr:nth-child(even),
+#hiddenItemsTable tbody tr:nth-child(even),
+#hiddenClientTable tbody tr:nth-child(even),
+#clientTable tbody tr:nth-child(even),
+#projectsTable tbody tr:nth-child(even),
+#hiddenProjectsTable tbody tr:nth-child(even) {
+    background-color: #e6f7ff; /* Light blue background for even rows */
 }
