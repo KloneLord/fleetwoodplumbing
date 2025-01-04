@@ -1,41 +1,34 @@
 import mongoose from 'mongoose';
 
-const ProjectSiteSchema = new mongoose.Schema({
-    siteId: {
+const ProjectSchema = new mongoose.Schema({
+    projectID: {
         type: String,
         required: true,
         unique: true
     },
-    clientID: {
+    title: {
         type: String,
         required: true
     },
-    clientName: {
+    customer: {
         type: String,
         required: true
     },
-    siteName: {
+    clientId: {
         type: String,
         required: true
     },
-    streetAddress: {
+    projectSite: {
         type: String,
         required: true
     },
-    cityTown: {
+    description: {
         type: String,
         required: true
     },
-    postcode: {
+    status: {
         type: String,
-        required: true
-    },
-    state: {
-        type: String,
-        required: true
-    },
-    country: {
-        type: String,
+        enum: ['Lodged', 'Scheduled', 'In Progress', 'Works Complete', 'Invoiced', 'Paid', 'Complete'],
         required: true
     },
     createdAt: {
@@ -48,5 +41,5 @@ const ProjectSiteSchema = new mongoose.Schema({
     }
 });
 
-const ProjectSite = mongoose.model('ProjectSite', ProjectSiteSchema);
-export default ProjectSite;
+const Project = mongoose.model('Project', ProjectSchema);
+export default Project;

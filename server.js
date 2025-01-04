@@ -11,7 +11,7 @@ import clientRoutes from './routes/client_routes.js';
 import inventoryRoutes from './routes/inventory_routes.js';
 import authCodeRoutes from './routes/authCodeRoutes.js';
 import projectSiteRoutes from './routes/projectSiteRoutes.js';
-
+import projectRoutes from './routes/projectRoutes.js';
 // Other imports and middleware setup
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
 
 // Routes
+app.use('/api', projectRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);

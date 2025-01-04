@@ -64,6 +64,7 @@
                 <button onclick="archiveSelectedProjects()">Archive Selected</button>
             </div>
 
+
             <div id="add_project_tab" class="tab">
                 <h2>Add a Project</h2>
                 <form id="addProjectForm">
@@ -100,6 +101,8 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <input type="hidden" id="selectedSiteId" name="selectedSiteId">
 
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" required></textarea>
@@ -155,6 +158,8 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <input type="hidden" id="editSelectedSiteId" name="selectedSiteId">
 
                     <label for="editDescription">Description:</label>
                     <textarea id="editDescription" name="description" required></textarea>

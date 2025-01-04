@@ -1,17 +1,41 @@
 import ProjectSite from '../models/ProjectSite.js';
+import SiteId from '../models/SiteId.js';
+
+// Function to generate a unique siteId
+export const generateSiteId = async (req, res) => {
+    try {
+        let unique = false;
+        let siteId;
+
+        while (!unique) {
+            siteId = Math.random().toString(36).substr(2, 16);
+            const existingId = await SiteId.findOne({ siteId });
+
+            if (!existingId) {
+                unique = true;
+                const newSiteId = new SiteId({ siteId });
+                await newSiteId.save();
+            }
+        }
+
+        res.status(201).json({ siteId });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Create a new project site
 export const createProjectSite = async (req, res) => {
-    const { fullName, clientID, siteName, streetAddress, cityTown, postcode, state, country } = req.body;
+    const { siteId, clientID, clientName, siteName, streetAddress, cityTown, postcode, state, country } = req.body;
 
-    // Validate the required fields
-    if (!fullName || !clientID || !siteName || !streetAddress || !cityTown || !postcode || !state || !country) {
+    if (!siteId || !clientID || !clientName || !siteName || !streetAddress || !cityTown || !postcode || !state || !country) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
     const projectSite = new ProjectSite({
-        fullName,
+        siteId,
         clientID,
+        clientName,
         siteName,
         streetAddress,
         cityTown,
@@ -58,10 +82,9 @@ export const deleteProjectSite = async (req, res) => {
 // Fetch all project sites for a given client ID
 export const getProjectSitesByClientId = async (req, res) => {
     try {
-        const projectSites = await ProjectSite.find({ clientId: req.params.clientId });
+        const projectSites = await ProjectSite.find({ clientID: req.params.clientId });
         res.json(projectSites);
     } catch (error) {
-        console.error('Error fetching project sites:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -75,7 +98,6 @@ export const getProjectSiteDetailsById = async (req, res) => {
         }
         res.json(siteDetails);
     } catch (error) {
-        console.error('Error fetching project site details:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
