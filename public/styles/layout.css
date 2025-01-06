@@ -246,13 +246,86 @@ footer a:hover {
     background-color: #f2f2f2;
 }
 
+#projectTable {
+    width: 100%;
+    table-layout: fixed; /* Ensures consistent column sizes */
+}
+
+#projectTable th, #projectTable td {
+    white-space: nowrap; /* Prevent text from wrapping to a new line */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Show ellipsis for overflowing content */
+    max-width: 150px; /* Adjust as necessary for your design */
+}
+
+#projectTable th {
+    text-align: left; /* Align header text to the left for readability */
+    white-space: nowrap; /* Prevent header text from wrapping */
+}
+
+#description {
+    width: 100%; /* Set the width to 100% of its container */
+    height: 250px; /* Set a specific height */
+    padding: 10px; /* Add padding inside the textarea */
+    font-size: 16px; /* Increase the font size */
+    border: 1px solid #ddd; /* Add a border */
+    border-radius: 4px; /* Add rounded corners */
+    resize: vertical; /* Allow vertical resizing only */
+}
+
+.styled-container {
+    display: flex;
+    justify-content: space-between; /* Distribute space between items */
+    align-items: center; /* Align items vertically in the center */
+    width: 100%; /* Full width of the container */
+    margin-bottom: 20px; /* Add some space below the container */
+}
+
+.styled-container .styled-input,
+.styled-container .styled-button {
+    width: 25%; /* Each item takes up 25% of the container's width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.project-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.project-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.project-detail-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.project-detail-value {
+    color: #666;
+}
+
+
 /* Style for the table headers */
 #inventoryTable thead,
 #hiddenItemsTable thead,
 #hiddenClientTable thead,
 #clientTable thead,
 #projectsTable thead,
-#hiddenProjectsTable thead {
+#hiddenProjectsTable thead,
+#projectSitesTable thead,
+#projectTable thead,
+#tasksTable thead,
+#materialsTable thead,
+#plantEquipmentTable thead,
+#timeLogTable thead,
+#invoicesTable thead {
     background-color: dodgerblue; /* Blue background for the header */
     width: 100%; /* Ensure the header spans the full width */
 }
@@ -262,7 +335,14 @@ footer a:hover {
 #hiddenClientTable th,
 #clientTable th,
 #projectsTable th,
-#hiddenProjectsTable th {
+#hiddenProjectsTable th,
+#projectSitesTable th,
+#projectTable th,
+#tasksTable th,
+#materialsTable th,
+#plantEquipmentTable th,
+#timeLogTable th,
+#invoicesTable th {
     color: white; /* White text color for better contrast */
     padding: 10px; /* Add some padding for better spacing */
     text-align: left; /* Align text to the left */
@@ -275,7 +355,14 @@ footer a:hover {
 #hiddenClientTable,
 #clientTable,
 #projectsTable,
-#hiddenProjectsTable {
+#hiddenProjectsTable,
+#projectSitesTable,
+#projectTable,
+#tasksTable,
+#materialsTable,
+#plantEquipmentTable,
+#timeLogTable,
+#invoicesTable {
     width: 100%; /* Ensure the table spans the full width */
     table-layout: fixed; /* Ensure columns are evenly distributed */
 }
@@ -291,11 +378,25 @@ footer a:hover {
 #projectsTable th,
 #projectsTable td,
 #hiddenProjectsTable th,
-#hiddenProjectsTable td {
+#hiddenProjectsTable td,
+#projectSitesTable th,
+#projectSitesTable td,
+#projectTable th,
+#projectTable td,
+#tasksTable th,
+#tasksTable td,
+#materialsTable th,
+#materialsTable td,
+#plantEquipmentTable th,
+#plantEquipmentTable td,
+#timeLogTable th,
+#timeLogTable td,
+#invoicesTable th,
+#invoicesTable td {
     width: auto; /* Let the table automatically adjust the column widths */
 }
 
-/* Specific styles for inventoryTable */
+/* Specific styles for tables */
 #inventoryTable th,
 #inventoryTable td,
 #hiddenItemsTable th,
@@ -307,7 +408,21 @@ footer a:hover {
 #projectsTable th,
 #projectsTable td,
 #hiddenProjectsTable th,
-#hiddenProjectsTable td {
+#hiddenProjectsTable td,
+#projectSitesTable th,
+#projectSitesTable td,
+#projectTable th,
+#projectTable td,
+#tasksTable th,
+#tasksTable td,
+#materialsTable th,
+#materialsTable td,
+#plantEquipmentTable th,
+#plantEquipmentTable td,
+#timeLogTable th,
+#timeLogTable td,
+#invoicesTable th,
+#invoicesTable td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -318,7 +433,14 @@ footer a:hover {
 #hiddenClientTable th,
 #clientTable th,
 #projectsTable th,
-#hiddenProjectsTable th {
+#hiddenProjectsTable th,
+#projectSitesTable th,
+#projectTable th,
+#tasksTable th,
+#materialsTable th,
+#plantEquipmentTable th,
+#timeLogTable th,
+#invoicesTable th {
     background-color: #2196F3;
 }
 
@@ -327,7 +449,14 @@ footer a:hover {
 #hiddenClientTable,
 #clientTable,
 #projectsTable,
-#hiddenProjectsTable {
+#hiddenProjectsTable,
+#projectSitesTable,
+#projectTable,
+#tasksTable,
+#materialsTable,
+#plantEquipmentTable,
+#timeLogTable,
+#invoicesTable {
     width: 100%;
     border-collapse: collapse;
 }
@@ -338,7 +467,14 @@ footer a:hover {
 #hiddenClientTable tbody tr:nth-child(odd),
 #clientTable tbody tr:nth-child(odd),
 #projectsTable tbody tr:nth-child(odd),
-#hiddenProjectsTable tbody tr:nth-child(odd) {
+#hiddenProjectsTable tbody tr:nth-child(odd),
+#projectSitesTable tbody tr:nth-child(odd),
+#projectTable tbody tr:nth-child(odd),
+#tasksTable tbody tr:nth-child(odd),
+#materialsTable tbody tr:nth-child(odd),
+#plantEquipmentTable tbody tr:nth-child(odd),
+#timeLogTable tbody tr:nth-child(odd),
+#invoicesTable tbody tr:nth-child(odd) {
     background-color: #ffffff; /* White background for odd rows */
 }
 
@@ -347,6 +483,13 @@ footer a:hover {
 #hiddenClientTable tbody tr:nth-child(even),
 #clientTable tbody tr:nth-child(even),
 #projectsTable tbody tr:nth-child(even),
-#hiddenProjectsTable tbody tr:nth-child(even) {
+#hiddenProjectsTable tbody tr:nth-child(even),
+#projectSitesTable tbody tr:nth-child(even),
+#projectTable tbody tr:nth-child(even),
+#tasksTable tbody tr:nth-child(even),
+#materialsTable tbody tr:nth-child(even),
+#plantEquipmentTable tbody tr:nth-child(even),
+#timeLogTable tbody tr:nth-child(even),
+#invoicesTable tbody tr:nth-child(even) {
     background-color: #e6f7ff; /* Light blue background for even rows */
 }

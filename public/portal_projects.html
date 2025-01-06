@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
+    <script type="module" src="js/projects.js"></script>
+
 </head>
 <body>
 <header>
@@ -45,25 +47,29 @@
             <!-- Tab Content -->
             <div id="project_list_tab" class="tab active">
                 <h2>Project List</h2>
-                <input type="text" id="projectSearch" placeholder="Search Projects">
+                <div class="styled-container">
+                    <input class="styled-input" type="text" id="projectSearch" placeholder="Search Projects" oninput="filterProjectList()">
+                    <button class="styled-button" onclick="deleteSelectedProjects()">Delete Selected</button>
+                    <button class="styled-button" onclick="archiveSelectedProjects()">Archive Selected</button>
+                </div>
                 <table id="projectTable">
                     <thead>
                     <tr>
-                        <th><input type="checkbox" onclick="selectAllRows(this)"></th>
-                        <th>Project Title</th>
-                        <th>Customer</th>
-                        <th>Address</th>
-                        <th>Actions</th>
+                        <th style="width: 5%"><input type="checkbox" onclick="selectAllRows(this)"></th>
+                        <th style="width: 5%">ID</th>
+                        <th style="width: 20%">Project Title</th>
+                        <th style="width: 15%">Customer</th>
+                        <th style="width: 20%">Site Name</th>
+                        <th style="width: 20%">Status</th>
+                        <th style="width: 15%">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- Project rows will be populated by JavaScript -->
                     </tbody>
                 </table>
-                <button onclick="deleteSelectedProjects()">Delete Selected</button>
-                <button onclick="archiveSelectedProjects()">Archive Selected</button>
-            </div>
 
+            </div>
 
             <div id="add_project_tab" class="tab">
                 <h2>Add a Project</h2>
@@ -74,7 +80,7 @@
                     <label for="projectID">Project ID:</label>
                     <input type="text" id="projectID" name="projectID" readonly>
 
-                    <label for="clientsDropdown">Customer:</label>
+                    <label for="clientsDropdown">Client:</label>
                     <select id="clientsDropdown" name="clientsDropdown" required>
                         <option value="">Pick one</option>
                     </select>
@@ -82,8 +88,16 @@
                     <label for="clientId">Client ID:</label>
                     <input type="text" id="clientId" name="clientId" readonly>
 
+                    <label for="siteDropdown">Project Site:</label>
+                    <select id="siteDropdown" name="siteDropdown" required>
+                        <option value="">Pick one</option>
+                    </select>
+
+                    <label for="siteId">Project Site ID:</label>
+                    <input type="text" id="siteId" name="siteId" readonly>
+
                     <div id="projectSitesTableContainer">
-                        <h3>Project Sites</h3>
+                        <h3>Project Site</h3>
                         <table id="projectSitesTable">
                             <thead>
                             <tr>
@@ -93,7 +107,6 @@
                                 <th>Postcode</th>
                                 <th>State</th>
                                 <th>Country</th>
-                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody id="projectSitesTableBody">
@@ -101,8 +114,6 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <input type="hidden" id="selectedSiteId" name="selectedSiteId">
 
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" required></textarea>
@@ -117,6 +128,9 @@
                         <option value="Paid">Paid</option>
                         <option value="Complete">Complete</option>
                     </select>
+
+                    <!-- Message container for displaying errors or success notifications -->
+                    <div id="formMessage" style="margin-top: 10px;"></div>
 
                     <button type="submit">Save Project</button>
                 </form>
@@ -186,8 +200,15 @@
         </div>
     </section>
 </main>
+<script>
+    function getSelectedProjects() {
+        const selected = [];
+        const checkboxes = document.querySelectorAll('#projectTable tbody input[type="checkbox"]:checked');
+        checkboxes.forEach(cb => selected.push(cb.value));
+        return selected;
+    }
+</script>
 
-<script type="module" src="js/projects.js"></script>
 
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>

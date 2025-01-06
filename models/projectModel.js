@@ -22,13 +22,18 @@ const ProjectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    projectSiteId: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required: true
     },
     status: {
         type: String,
-        enum: ['Lodged', 'Scheduled', 'In Progress', 'Works Complete', 'Invoiced', 'Paid', 'Complete'],
+        enum: ['Lodged', 'Scheduled', 'In Progress', 'Works Complete', 'Invoiced', 'Paid', 'Complete', 'Archived', 'Active'],
+        default: 'Active',
         required: true
     },
     createdAt: {

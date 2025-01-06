@@ -7,43 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/colors.css">
-
-  <script>
-    function showTab(tabId) {
-      // Find all tab contents and hide them
-      const tabs = document.querySelectorAll('.tab');
-      tabs.forEach(tab => {
-        tab.style.display = 'none'; // Hide all tabs
-        tab.classList.remove('active'); // Remove active class
-      });
-
-      // Show the selected tab content
-      const activeTab = document.getElementById(tabId);
-      if (activeTab) {
-        activeTab.style.display = 'block'; // Show the active tab
-        activeTab.classList.add('active'); // Add active class
-      }
-
-      // Reset styles for all tab buttons
-      const buttons = document.querySelectorAll('.tab-buttons button');
-      buttons.forEach(button => {
-        button.classList.remove('active'); // Remove active class from all buttons
-      });
-
-      // Highlight the active tab button
-      const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-      if (activeButton) {
-        activeButton.classList.add('active'); // Add active class to the current button
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Default to showing the first tab or a specific tab from the URL parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const tabId = urlParams.get('tab') || 'project_tab'; // Default tab
-      showTab(tabId);
-    });
-  </script>
+  <script src="js/project_card.js" defer></script>
 </head>
 <body>
 <header>
@@ -88,98 +52,178 @@
       <!-- Tab Content -->
       <div id="project_tab" class="tab active">
         <h2>Project</h2>
-        <form id="project_form">
-          <label for="project_input">Input:</label>
-          <input type="text" id="project_input" name="project_input" required>
-          <button type="submit">Submit</button>
-        </form>
+        <div id="project_tab_content" class="project-details">
+          <!-- Project details will be dynamically inserted here -->
+        </div>
       </div>
 
+      <!-- Tasks Tab -->
       <div id="tasks_tab" class="tab">
         <h2>Tasks</h2>
+        <table id="tasksTable">
+          <thead>
+          <tr>
+            <th>Task</th>
+            <th>Details</th>
+            <th>Assigned</th>
+            <th>Hours</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody id="tasks_table_body">
+          <!-- Task rows will be dynamically inserted here -->
+          </tbody>
+        </table>
         <form id="tasks_form">
-          <label for="tasks_input">Input:</label>
-          <input type="text" id="tasks_input" name="tasks_input" required>
-          <button type="submit">Submit</button>
+          <label for="task_input">Task:</label>
+          <input type="text" id="task_input" name="task_input" required>
+          <label for="details_input">Details:</label>
+          <input type="text" id="details_input" name="details_input" required>
+          <label for="assigned_input">Assigned:</label>
+          <input type="text" id="assigned_input" name="assigned_input" required>
+          <label for="hours_input">Hours:</label>
+          <input type="number" id="hours_input" name="hours_input" required>
+          <label for="status_input">Status:</label>
+          <input type="text" id="status_input" name="status_input" required>
+          <button type="submit">Add Task</button>
         </form>
       </div>
 
+      <!-- Materials Tab -->
       <div id="materials_tab" class="tab">
         <h2>Materials</h2>
+        <table id="materialsTable">
+          <thead>
+          <tr>
+            <th>ItemId</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Employee</th>
+            <th>Time</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody id="materials_table_body">
+          <!-- Material rows will be dynamically inserted here -->
+          </tbody>
+        </table>
         <form id="materials_form">
-          <label for="materials_input">Input:</label>
-          <input type="text" id="materials_input" name="materials_input" required>
-          <button type="submit">Submit</button>
+          <label for="itemid_input">ItemId:</label>
+          <input type="text" id="itemid_input" name="itemid_input" required>
+          <label for="description_input">Description:</label>
+          <input type="text" id="description_input" name="description_input" required>
+          <label for="quantity_input">Quantity:</label>
+          <input type="number" id="quantity_input" name="quantity_input" required>
+          <label for="employee_input">Employee:</label>
+          <input type="text" id="employee_input" name="employee_input" required>
+          <label for="time_input">Time:</label>
+          <input type="time" id="time_input" name="time_input" required>
+          <label for="date_input">Date:</label>
+          <input type="date" id="date_input" name="date_input" required>
+          <button type="submit">Add Material</button>
         </form>
       </div>
 
-      <div id="time_log_tab" class="tab">
-        <h2>Time Log</h2>
-        <form id="time_log_form">
-          <label for="time_log_input">Input:</label>
-          <input type="text" id="time_log_input" name="time_log_input" required>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-
+      <!-- Plant Equipment Tab -->
       <div id="plant_equipment_tab" class="tab">
         <h2>Plant Equipment</h2>
+        <table id="plantEquipmentTable">
+          <thead>
+          <tr>
+            <th>Plant Equipment</th>
+            <th>Hours</th>
+            <th>Employee</th>
+            <th>Checked in</th>
+            <th>Checked out</th>
+          </tr>
+          </thead>
+          <tbody id="plant_equipment_table_body">
+          <!-- Plant equipment rows will be dynamically inserted here -->
+          </tbody>
+        </table>
         <form id="plant_equipment_form">
-          <label for="plant_equipment_input">Input:</label>
+          <label for="plant_equipment_input">Plant Equipment:</label>
           <input type="text" id="plant_equipment_input" name="plant_equipment_input" required>
-          <button type="submit">Submit</button>
+          <label for="hours_input">Hours:</label>
+          <input type="number" id="hours_input" name="hours_input" required>
+          <label for="employee_input">Employee:</label>
+          <input type="text" id="employee_input" name="employee_input" required>
+          <label for="checked_in_input">Checked in:</label>
+          <input type="datetime-local" id="checked_in_input" name="checked_in_input" required>
+          <label for="checked_out_input">Checked out:</label>
+          <input type="datetime-local" id="checked_out_input" name="checked_out_input" required>
+          <button type="submit">Add Plant Equipment</button>
         </form>
       </div>
 
-      <div id="plans_tab" class="tab">
-        <h2>Plans</h2>
-        <form id="plans_form">
-          <label for="plans_input">Input:</label>
-          <input type="text" id="plans_input" name="plans_input" required>
-          <button type="submit">Submit</button>
+      <!-- Time Log Tab -->
+      <div id="time_log_tab" class="tab">
+        <h2>Time Log</h2>
+        <table id="timeLogTable">
+          <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Check in</th>
+            <th>Check out</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody id="time_log_table_body">
+          <!-- Time log rows will be dynamically inserted here -->
+          </tbody>
+        </table>
+        <form id="time_log_form">
+          <label for="employee_input">Employee:</label>
+          <input type="text" id="employee_input" name="employee_input" required>
+          <label for="check_in_input">Check in:</label>
+          <input type="datetime-local" id="check_in_input" name="check_in_input" required>
+          <label for="check_out_input">Check out:</label>
+          <input type="datetime-local" id="check_out_input" name="check_out_input" required>
+          <label for="date_input">Date:</label>
+          <input type="date" id="date_input" name="date_input" required>
+          <button type="submit">Add Time Log</button>
         </form>
       </div>
 
-      <div id="safety_tab" class="tab">
-        <h2>Safety</h2>
-        <form id="safety_form">
-          <label for="safety_input">Input:</label>
-          <input type="text" id="safety_input" name="safety_input" required>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-
-      <div id="schedule_tab" class="tab">
-        <h2>Schedule</h2>
-        <form id="schedule_form">
-          <label for="schedule_input">Input:</label>
-          <input type="text" id="schedule_input" name="schedule_input" required>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-
+      <!-- Invoices Tab -->
       <div id="invoices_tab" class="tab">
         <h2>Invoices</h2>
+        <table id="invoicesTable">
+          <thead>
+          <tr>
+            <th>Invoice Number</th>
+            <th>Total Amount</th>
+            <th>Sent</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody id="invoices_table_body">
+          <!-- Invoice rows will be dynamically inserted here -->
+          </tbody>
+        </table>
         <form id="invoices_form">
-          <label for="invoices_input">Input:</label>
-          <input type="text" id="invoices_input" name="invoices_input" required>
-          <button type="submit">Submit</button>
+          <label for="invoice_number_input">Invoice Number:</label>
+          <input type="text" id="invoice_number_input" name="invoice_number_input" required>
+          <label for="total_amount_input">Total Amount:</label>
+          <input type="number" id="total_amount_input" name="total_amount_input" required>
+          <label for="sent_input">Sent:</label>
+          <input type="date" id="sent_input" name="sent_input" required>
+          <label for="status_input">Status:</label>
+          <input type="text" id="status_input" name="status_input" required>
+          <button type="submit">Add Invoice</button>
         </form>
       </div>
 
+      <!-- Misc Tab -->
       <div id="misc_tab" class="tab">
         <h2>Misc</h2>
-        <form id="misc_form">
-          <label for="misc_input">Input:</label>
-          <input type="text" id="misc_input" name="misc_input" required>
-          <button type="submit">Submit</button>
-        </form>
+        <!-- Content for Misc tab -->
       </div>
     </div>
   </section>
 </main>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     // Fetch session information from the server
     fetch('/api/auth/session')
             .then(response => response.json())

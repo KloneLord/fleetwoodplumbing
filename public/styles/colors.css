@@ -233,3 +233,27 @@ footer a:hover {
 .dropdown-container:hover .dropdown-content {
     display: block; /* Show content on hover */
 }
+.styled-input {
+    background-color: #2196F3; /* Main background color */
+    color: #FFFFFF; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 14px; /* Padding for size */
+    font-size: 14px; /* Font size */
+    font-weight: bold; /* Make the text bold */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 1px; /* Add some spacing between letters */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    width: calc(100% - 36px); /* Adjust width to fit container and padding */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Optional: Add hover and focus effects to match the button */
+.styled-input:hover,
+.styled-input:focus {
+    background-color: #1976D2; /* Darker background on hover */
+    outline: none; /* Remove default outline */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3); /* Slightly larger shadow on hover */
+}
