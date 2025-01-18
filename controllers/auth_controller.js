@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/user.js';
-import AuthCode from '../models/auth_code.js';
+import User_model from '../models/user_model.js';
+import AuthCode from '../models/auth_code_model.js';
 
 // Login User
 export const loginUser = async (req, res) => {
@@ -14,7 +14,7 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ error: 'Username and password are required' });
         }
 
-        const user = await User.findOne({ username });
+        const user = await User_model.findOne({ username });
         if (!user) {
             console.log('loginUser: User not found for username:', username);
             return res.status(400).json({ error: 'Invalid username or password' });
@@ -38,6 +38,7 @@ export const loginUser = async (req, res) => {
             username: user.username,
             role: user.role,
             access: user.access, // Include the access level
+            auth_code: user.authCode, // Include the access level
         };
 
 
@@ -74,7 +75,7 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ error: 'Invalid authentication code' });
         }
 
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User_model.findOne({ username });
         if (existingUser) {
             console.log('registerUser: Duplicate username:', username);
             return res.status(400).json({ error: 'Username already exists' });
@@ -91,7 +92,7 @@ export const registerUser = async (req, res) => {
             userAccess = 'client';
         }
 
-        const newUser = new User({
+        const newUser = new User_model({
             username,
             email: req.body.email || 'not_provided@example.com',
             password: hashedPassword,

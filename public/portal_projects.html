@@ -60,15 +60,14 @@
                         <th style="width: 20%">Project Title</th>
                         <th style="width: 15%">Customer</th>
                         <th style="width: 20%">Site Name</th>
-                        <th style="width: 20%">Status</th>
-                        <th style="width: 15%">Actions</th>
+                        <th style="width: 15%">Status</th>
+                        <th style="width: 20%">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- Project rows will be populated by JavaScript -->
                     </tbody>
                 </table>
-
             </div>
 
             <div id="add_project_tab" class="tab">
@@ -207,8 +206,25 @@
         checkboxes.forEach(cb => selected.push(cb.value));
         return selected;
     }
-</script>
 
+    // Function to log out
+    async function logOut() {
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Failed to log out');
+
+            alert('You have been logged out successfully!');
+            window.location.href = 'portal_login.html';
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+            alert('An error occurred while logging out. Please try again.');
+        }
+    }
+</script>
 
 <footer>
     <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>

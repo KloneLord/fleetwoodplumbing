@@ -1,6 +1,6 @@
 import InventoryItem from '../models/inventory_model.js';
-import AuthCode from '../models/auth_code.js';
-import { generateAuthCode } from '../routes/auth_code.js';
+import AuthCode from '../models/auth_code_model.js';
+import { generateAuthCode } from '../routes/auth_code_routes.js';
 import csvParser from 'csv-parser';
 import fs from 'fs';
 

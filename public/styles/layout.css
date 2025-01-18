@@ -159,6 +159,17 @@ form button {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* New styles for checkbox alignment */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+form input[type="checkbox"] {
+    width: auto; /* Override the width for checkboxes */
+}
+
 form input:focus,
 form select:focus,
 form button:focus {
@@ -249,6 +260,7 @@ footer a:hover {
 #projectTable {
     width: 100%;
     table-layout: fixed; /* Ensures consistent column sizes */
+
 }
 
 #projectTable th, #projectTable td {
@@ -256,6 +268,7 @@ footer a:hover {
     overflow: hidden; /* Hide overflowing content */
     text-overflow: ellipsis; /* Show ellipsis for overflowing content */
     max-width: 150px; /* Adjust as necessary for your design */
+    max-height: 25px;
 }
 
 #projectTable th {
@@ -312,6 +325,7 @@ footer a:hover {
 }
 
 
+
 /* Style for the table headers */
 #inventoryTable thead,
 #hiddenItemsTable thead,
@@ -325,7 +339,10 @@ footer a:hover {
 #materialsTable thead,
 #plantEquipmentTable thead,
 #timeLogTable thead,
-#invoicesTable thead {
+#invoicesTable thead,
+#new_users_table thead,
+#employee_table thead,
+#rego_certs_table thead {
     background-color: dodgerblue; /* Blue background for the header */
     width: 100%; /* Ensure the header spans the full width */
 }
@@ -342,7 +359,10 @@ footer a:hover {
 #materialsTable th,
 #plantEquipmentTable th,
 #timeLogTable th,
-#invoicesTable th {
+#invoicesTable th,
+#new_users_table th,
+#employee_table th,
+#rego_certs_table th {
     color: white; /* White text color for better contrast */
     padding: 10px; /* Add some padding for better spacing */
     text-align: left; /* Align text to the left */
@@ -362,9 +382,11 @@ footer a:hover {
 #materialsTable,
 #plantEquipmentTable,
 #timeLogTable,
-#invoicesTable {
+#invoicesTable,
+#new_users_table,
+#employee_table,
+#rego_certs_table {
     width: 100%; /* Ensure the table spans the full width */
-    table-layout: fixed; /* Ensure columns are evenly distributed */
 }
 
 #inventoryTable th,
@@ -392,8 +414,16 @@ footer a:hover {
 #timeLogTable th,
 #timeLogTable td,
 #invoicesTable th,
-#invoicesTable td {
+#invoicesTable td,
+#new_users_table th,
+#new_users_table td,
+#employee_table th,
+#employee_table td,
+#rego_certs_table th,
+#rego_certs_table td {
     width: auto; /* Let the table automatically adjust the column widths */
+    white-space: normal; /* Allow text to wrap */
+    overflow: visible; /* Ensure text is not cut off */
 }
 
 /* Specific styles for tables */
@@ -422,7 +452,13 @@ footer a:hover {
 #timeLogTable th,
 #timeLogTable td,
 #invoicesTable th,
-#invoicesTable td {
+#invoicesTable td,
+#new_users_table th,
+#new_users_table td,
+#employee_table th,
+#employee_table td,
+#rego_certs_table th,
+#rego_certs_table td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -440,7 +476,10 @@ footer a:hover {
 #materialsTable th,
 #plantEquipmentTable th,
 #timeLogTable th,
-#invoicesTable th {
+#invoicesTable th,
+#new_users_table th,
+#employee_table th,
+#rego_certs_table th {
     background-color: #2196F3;
 }
 
@@ -456,7 +495,10 @@ footer a:hover {
 #materialsTable,
 #plantEquipmentTable,
 #timeLogTable,
-#invoicesTable {
+#invoicesTable,
+#new_users_table,
+#employee_table,
+#rego_certs_table {
     width: 100%;
     border-collapse: collapse;
 }
@@ -474,7 +516,10 @@ footer a:hover {
 #materialsTable tbody tr:nth-child(odd),
 #plantEquipmentTable tbody tr:nth-child(odd),
 #timeLogTable tbody tr:nth-child(odd),
-#invoicesTable tbody tr:nth-child(odd) {
+#invoicesTable tbody tr:nth-child(odd),
+#new_users_table tbody tr:nth-child(odd),
+#employee_table tbody tr:nth-child(odd),
+#rego_certs_table tbody tr:nth-child(odd) {
     background-color: #ffffff; /* White background for odd rows */
 }
 
@@ -490,6 +535,9 @@ footer a:hover {
 #materialsTable tbody tr:nth-child(even),
 #plantEquipmentTable tbody tr:nth-child(even),
 #timeLogTable tbody tr:nth-child(even),
-#invoicesTable tbody tr:nth-child(even) {
+#invoicesTable tbody tr:nth-child(even),
+#new_users_table tbody tr:nth-child(even),
+#employee_table tbody tr:nth-child(even),
+#rego_certs_table tbody tr:nth-child(even) {
     background-color: #e6f7ff; /* Light blue background for even rows */
 }

@@ -1,5 +1,4 @@
 // Function to show the selected tab
-// Function to show the selected tab
 function showTab(tabId) {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
@@ -24,14 +23,10 @@ function showTab(tabId) {
     }
 }
 
-
 async function initializeForms() {
     await fetchProjectList();
     await populateClientDropdowns();
 }
-
-// Event listener for DOM content loaded
-
 
 // Function to generate an auth code
 async function generateAuthCode(requestSource = 'project') {
@@ -52,12 +47,10 @@ async function generateAuthCode(requestSource = 'project') {
     }
 }
 
-
 // Event listener for DOM content loaded to fill the projectID
 document.addEventListener('DOMContentLoaded', async () => {
     await fillProjectID();
 });
-
 
 // Function to populate project site table based on client ID in the clientId input text box
 async function populateProjectSiteTable(clientId) {
@@ -117,7 +110,6 @@ function selectProjectSite(selectedSiteId) {
     });
 }
 
-
 // Function to fetch session information
 async function fetchSession() {
     try {
@@ -155,6 +147,7 @@ async function logOut() {
         alert('An error occurred while logging out. Please try again.');
     }
 }
+
 // Function to fetch and display the project list
 async function fetchProjectList() {
     try {
@@ -180,11 +173,10 @@ async function fetchProjectList() {
                 <td style="width: 20%;">${project.title}</td>
                 <td style="width: 15%;">${project.customer}</td>
                 <td style="width: 20%;">${project.projectSite}</td>
-                <td style="width: 20%;">${project.status}</td>
-                <td style="width: 15%;">
+                <td style="width: 15%;">${project.status}</td>
+                <td style="width: 20%;">
                     <a href="portal_projects_card.html?projectID=${project.projectID}" class="slim-styled-button">View</a>
-                    <button class="slim-styled-button" onclick="archiveProject('${project.projectID}')">Archive</button>
-                    <button class="slim-styled-button" onclick="deleteProject('${project.projectID}')">Delete</button>
+                    <button class="slim-styled-button" onclick="editProject('${project.projectID}')">Edit</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -193,7 +185,106 @@ async function fetchProjectList() {
         console.error('Error fetching project list:', error);
     }
 }
+const project = 10000;
+async function editProject(project) {
+    console.log(`Editing project with ID: ${projectID}`);
+    // Show the edit project tab
+    showTab('edit_project_tab');
+    console.log('Switched to edit project tab');
 
+    try {
+        // Fetch project details from the database
+        const response = await fetch(`/api/projects/${projectID}`);
+        if (!response.ok) throw new Error('Failed to fetch project details.');
+
+        const project = await response.json();
+        console.log('Fetched project details:', project);
+
+        // Populate the edit project form with project details
+        document.getElementById('editProjectID').value = project.projectID;
+        document.getElementById('editProjectTitle').value = project.title;
+        document.getElementById('editClientId').value = project.clientId;
+        document.getElementById('editDescription').value = project.description;
+        document.getElementById('editStatus').value = project.status;
+
+        // Populate clients dropdown and select the current client
+        const clientsDropdown = document.getElementById('edit_clientsDropdown');
+        clientsDropdown.innerHTML = '<option value="">Pick one</option>';
+        const activeClients = await fetchClientNames();
+        activeClients.forEach(client => {
+            const option = document.createElement('option');
+            option.value = client.clientId;
+            option.textContent = client.fullName;
+            if (client.clientId === project.clientId) {
+                option.selected = true;
+            }
+            clientsDropdown.appendChild(option);
+        });
+        console.log('Populated clients dropdown');
+
+        // Populate project sites table
+        await populateProjectSiteTable(project.clientId);
+        console.log('Populated project sites table');
+
+        // Select the current project site
+        document.getElementById('editSelectedSiteId').value = project.projectSiteId;
+        const rows = document.querySelectorAll('#editProjectSitesTableBody tr');
+        rows.forEach(row => {
+            const button = row.querySelector('.select-button');
+            if (button.getAttribute('data-id') === project.projectSiteId) {
+                row.style.opacity = '1';
+                button.classList.add('selected');
+            } else {
+                row.style.opacity = '0.5';
+                button.classList.remove('selected');
+            }
+        });
+        console.log('Selected current project site');
+    } catch (error) {
+        console.error('Error fetching project details:', error);
+    }
+}
+
+async function handleEditProjectFormSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    console.log('Edit project form submitted');
+
+    // Gather form data
+    const formData = new FormData(event.target);
+    const selectedSiteId = document.getElementById('editSelectedSiteId').value;
+    if (!selectedSiteId) {
+        alert('Please select a project site before submitting.');
+        return;
+    }
+
+    const projectID = formData.get('projectID');
+    const project = {
+        title: formData.get('title'),
+        customer: formData.get('clientsDropdown'),
+        clientId: formData.get('clientId'),
+        projectSite: selectedSiteId, // Get selected project site ID
+        description: formData.get('description'),
+        status: formData.get('status')
+    };
+    console.log('Project data to update:', project);
+
+    try {
+        // Send the data to the backend API
+        const response = await fetch(`/api/projects/${projectID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(project)
+        });
+
+        if (!response.ok) throw new Error('Failed to update project.');
+
+        console.log('Project updated successfully');
+        await fetchProjectList(); // Refresh the project list
+        showTab('project_list_tab'); // Switch back to the project list tab
+    } catch (error) {
+        console.error('Error updating project:', error);
+    }
+}
 
 // Function to filter the project list based on the search input
 function filterProjectList() {
@@ -220,8 +311,6 @@ function selectAllRows(checkbox) {
     checkboxes.forEach(cb => cb.checked = checkbox.checked);
 }
 
-
-
 // Function to delete selected projects
 async function deleteSelectedProjects() {
     const selected = getSelectedProjects();
@@ -232,6 +321,8 @@ async function deleteSelectedProjects() {
     // Add your delete logic here with selected IDs
     console.log('Deleting projects:', selected);
 }
+
+// Function to archive selected projects
 async function archiveSelectedProjects() {
     const selected = getSelectedProjects();
     if (selected.length === 0) {
@@ -314,6 +405,23 @@ async function fetchArchivedProjects() {
         console.error('Error fetching archived projects:', error);
     }
 }
+
+// Function to reinstate archived projects
+async function reinstateArchivedProject(projectID) {
+    try {
+        const response = await fetch(`/api/projects/reinstate/${projectID}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) throw new Error('Failed to reinstate project');
+
+        await fetchArchivedProjects();
+    } catch (error) {
+        console.error('Error reinstating project:', error);
+    }
+}
+
 // Function to handle form submission for adding a new project
 async function handleAddProjectFormSubmit(event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -368,88 +476,6 @@ async function handleAddProjectFormSubmit(event) {
         formMessage.innerHTML = '<p style="color: red;">Error saving project. Please try again.</p>';
     }
 }
-// Function to handle form submission for editing a project
-async function handleEditProjectFormSubmit(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    // Gather form data
-    const formData = new FormData(event.target);
-    const selectedSiteId = document.getElementById('editSelectedSiteId').value;
-    if (!selectedSiteId) {
-        alert('Please select a project site before submitting.');
-        return;
-    }
-
-    const projectID = formData.get('projectID');
-    const project = {
-        title: formData.get('title'),
-        customer: formData.get('clientsDropdown'),
-        clientId: formData.get('clientId'),
-        projectSite: selectedSiteId, // Get selected project site ID
-        description: formData.get('description'),
-        status: formData.get('status')
-    };
-
-    try {
-        // Send the data to the backend API
-        const response = await fetch(`/api/projects/${projectID}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(project)
-        });
-
-        if (!response.ok) throw new Error('Failed to update project.');
-
-        await fetchProjectList(); // Refresh the project list
-    } catch (error) {
-        console.error('Error updating project:', error);
-    }
-}
-
-
-// Function to reinstate archived projects
-async function reinstateArchivedProject(projectID) {
-    try {
-        const response = await fetch(`/api/projects/reinstate/${projectID}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!response.ok) throw new Error('Failed to reinstate project');
-
-        await fetchArchivedProjects();
-    } catch (error) {
-        console.error('Error reinstating project:', error);
-    }
-}
-
-
-// Event listener for DOM content loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    await fetchSession();
-    await initializeForms();
-
-    // Default to showing the first tab or a specific tab from the URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const tabId = urlParams.get('tab') || 'project_list_tab'; // Default tab
-    showTab(tabId);
-
-    document.getElementById('projectSearch').addEventListener('input', filterProjectList);
-    document.getElementById('logOutButton').addEventListener('click', logOut);
-
-    // Add event listeners for tab buttons
-    document.querySelectorAll('.tab-buttons button').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const tabId = event.target.getAttribute('data-tab');
-            showTab(tabId);
-        });
-    });
-
-    document.getElementById('addProjectForm').addEventListener('submit', handleAddProjectFormSubmit);
-
-    // Add event listener for edit project form submission
-    document.getElementById('editProjectForm').addEventListener('submit', handleEditProjectFormSubmit);
-});
 
 // Function to fetch and return the names and IDs of active clients
 async function fetchClientNames() {
@@ -469,7 +495,6 @@ async function fetchClientNames() {
         return [];
     }
 }
-
 // Function to fetch and return the names and IDs of project sites filtered by clientId
 async function fetchProjectSites(clientId) {
     try {

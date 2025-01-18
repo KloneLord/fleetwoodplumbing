@@ -1,0 +1,262 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    width: 70%; /* Takes 70% of the screen width */
+    margin: 0 auto; /* Centers the container */
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #E25822;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #E25822;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    background: #f9f9f9;
+    padding: 2rem;
+    border-bottom: 2px solid #ddd;
+}
+
+.hero h1 {
+    color: #E25822;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.hero .slim-button {
+    background-color: #FF7F50;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.hero .slim-button:hover {
+    background-color: #E25822;
+}
+
+/* Services Section */
+.services {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem 0;
+    background: #f9f9f9;
+}
+
+.service {
+    text-align: center;
+    max-width: 300px;
+}
+
+.service img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.service h3 {
+    color: #E25822;
+    margin-bottom: 0.5rem;
+}
+
+.service p {
+    color: #555;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #E25822;
+    color: white;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Contact Page Specific */
+.contact-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem 0;
+}
+
+.contact-info {
+    max-width: 400px;
+    color: #555;
+}
+
+.contact-info h2 {
+    color: #E25822;
+    margin-bottom: 1rem;
+}
+
+.contact-info p, .contact-info a {
+    margin: 0.5rem 0;
+}
+
+/* Store Page */
+.store-container {
+    display: flex;
+    margin: 2rem 0;
+}
+
+.sidebar {
+    flex: 1;
+    padding: 1rem;
+    background: #f4f4f4;
+    border-radius: 5px;
+    margin-right: 2rem;
+}
+
+.sidebar h3 {
+    color: #E25822;
+    margin-bottom: 1rem;
+}
+
+.sidebar .category {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .category li a {
+    text-decoration: none;
+    color: #555;
+    display: block;
+    margin: 0.5rem 0;
+}
+
+.sidebar .category li a:hover {
+    color: #E25822;
+}
+
+.product-grid {
+    flex: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.product-card {
+    text-align: center;
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.product-card h3 {
+    color: #E25822;
+    margin-bottom: 0.5rem;
+}
+
+.product-card p {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.product-card button {
+    background-color: #FF7F50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-card button:hover {
+    background-color: #E25822;
+}
+main {
+    margin: 0 auto;
+    width: 80%;
+}
+
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.service {
+    text-align: center;
+    flex: 1 1 calc(33.333% - 2rem); /* Adjusts each service block to fit neatly */
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.service img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}

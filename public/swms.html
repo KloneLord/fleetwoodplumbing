@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWMS - Excavation and Trenching</title>
+  <link rel="stylesheet" href="./styles/swms.css">
+  <style>
+    .hint-box {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      position: relative;
+    }
+    .hint-box:hover::after {
+      content: attr(data-hint);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      padding: 5px;
+      border-radius: 3px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+<div class="swms-container">
+  <h1>Safe Work Method Statement (SWMS)</h1>
+  <h2>Activity: Excavation and Trenching</h2>
+
+  <form id="swmsForm">
+    <!-- Company and Document Info -->
+    <section class="section">
+      <h3>Document Details</h3>
+      <label>Company Name:</label>
+      <input type="text" name="company_name" placeholder="Enter your company name" required>
+      <div class="hint-box" data-hint="Fleetwood Plumbing Pty Ltd" onclick="fillInput(this)">Hint?</div>
+      <label>SWMS Number:</label>
+      <input type="text" name="swms_number" readonly>
+      <div class="hint-box" data-hint="EXC-001" onclick="fillInput(this)">Hint?</div>
+      <label>Date:</label>
+      <input type="date" name="date" required>
+      <div class="hint-box" data-hint="2025-01-07" onclick="fillInput(this)">Hint?</div>
+      <label>Review Date:</label>
+      <input type="date" name="review_date" required>
+      <div class="hint-box" data-hint="2026-01-07" onclick="fillInput(this)">Hint?</div>
+      <label>Prepared By:</label>
+      <input type="text" name="prepared_by" placeholder="Enter name" required>
+      <div class="hint-box" data-hint="John Doe" onclick="fillInput(this)">Hint?</div>
+      <label>Approved By:</label>
+      <input type="text" name="approved_by" placeholder="Enter name" required>
+      <div class="hint-box" data-hint="Jane Smith" onclick="fillInput(this)">Hint?</div>
+    </section>
+
+    <section class="section">
+      <h3>PPE Requirements</h3>
+      <ul id="ppe-list">
+      </ul>
+      <textarea id="ppe-textbox" class="large-textbox" readonly></textarea>
+    </section>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const ppeItems = document.querySelectorAll('.ppe-item');
+        const textbox = document.getElementById('ppe-textbox');
+        let currentIndex = 0;
+
+        ppeItems[currentIndex].classList.remove('hidden');
+
+        ppeItems.forEach((item, index) => {
+          item.addEventListener('click', () => {
+            textbox.value += item.textContent + '\n';
+            item.classList.add('hidden');
+
+            currentIndex++;
+            if (currentIndex < ppeItems.length) {
+              ppeItems[currentIndex].classList.remove('hidden');
+            }
+          });
+        });
+      });
+    </script>
+
+    <!-- Legislation -->
+    <section class="section">
+      <h3>Legislation, Codes, and Standards</h3>
+      <ul>
+        <li>Work Health and Safety Act 2011 (or relevant local act)</li>
+        <li>Work Health and Safety Regulation 2011 (or relevant local regulation)</li>
+        <li>Code of Practice: Excavation Work</li>
+        <li>AS/NZS 4744.1: Safe Earth Moving Practices</li>
+      </ul>
+    </section>
+
+    <!-- Risk Assessment -->
+    <section class="section">
+      <h3>Risk Assessment</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Hazard</th>
+          <th>Risk</th>
+          <th>Control Measures</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Contact with underground services</td>
+          <td>Electric shock, explosion, or service damage</td>
+          <td>- Obtain DBYD report.<br>- Locate and mark all services before excavation.</td>
+        </tr>
+        <tr>
+          <td>Trench collapse</td>
+          <td>Burial, injury, or death</td>
+          <td>- Use trench shields/shoring.<br>- Never enter unshored trenches deeper than 1.5m.<br>- Monitor ground conditions.</td>
+        </tr>
+        <tr>
+          <td>Falling into the trench</td>
+          <td>Injury</td>
+          <td>- Install barricades and signage.<br>- Use ladders for safe access.</td>
+        </tr>
+        <!-- Add more rows as necessary -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Work Steps -->
+    <section class="section">
+      <h3>Work Steps</h3>
+      <textarea name="work_steps" placeholder="Describe work steps..." required></textarea>
+      <div class="hint-box" data-hint="1. Planning and Preparation: Conduct pre-start meeting, obtain DBYD, inspect site hazards.\n2. Site Setup: Install barricades, signage, inspect equipment, ensure PPE compliance.\n3. Excavation Work: Monitor ground conditions, use trench shields/shoring, maintain safe distances." onclick="fillInput(this)">Hint?</div>
+    </section>
+
+    <!-- Emergency Procedures -->
+    <section class="section">
+      <h3>Emergency Procedures</h3>
+      <textarea name="emergency_procedures" placeholder="Describe emergency procedures..." required></textarea>
+      <div class="hint-box" data-hint="In case of trench collapse: Evacuate the area immediately, contact emergency services (000 in Australia).\nFirst Aid: Administer first aid and ensure a first aid kit is accessible on-site." onclick="fillInput(this)">Hint?</div>
+    </section>
+
+    <!-- Digital Signatures -->
+    <section class="section">
+      <h3>Sign-Off Sheet</h3>
+      <div id="signatures">
+        <div class="signature-group">
+          <label>Name:</label>
+          <input type="text" name="employee_name[]" placeholder="Enter name" required>
+          <div class="hint-box" data-hint="Employee Name" onclick="fillInput(this)">Hint?</div>
+          <label>Role:</label>
+          <input type="text" name="employee_role[]" placeholder="Enter role" required>
+          <div class="hint-box" data-hint="Employee Role" onclick="fillInput(this)">Hint?</div>
+          <label>Signature:</label>
+          <input type="text" name="employee_signature[]" placeholder="Sign here" required>
+          <div class="hint-box" data-hint="Employee Signature" onclick="fillInput(this)">Hint?</div>
+          <label>Date:</label>
+          <input type="date" name="employee_date[]" required>
+          <div class="hint-box" data-hint="2025-01-07" onclick="fillInput(this)">Hint?</div>
+        </div>
+      </div>
+      <button type="button" id="addSignature">Add Another Signature</button>
+    </section>
+
+    <!-- Acknowledgment -->
+    <section class="section">
+      <h3>Acknowledgment</h3>
+      <textarea name="acknowledgment" placeholder="Acknowledgment text..." readonly>
+I acknowledge that I have read and understood the Safe Work Method Statement for excavation and trenching and agree to comply with the controls listed.
+                </textarea>
+      <label>Supervisor Name:</label>
+      <input type="text" name="supervisor_name" placeholder="Enter name" required>
+      <div class="hint-box" data-hint="Supervisor Name" onclick="fillInput(this)">Hint?</div>
+      <label>Supervisor Signature:</label>
+      <input type="text" name="supervisor_signature" placeholder="Sign here" required>
+      <div class="hint-box" data-hint="Supervisor Signature" onclick="fillInput(this)">Hint?</div>
+      <label>Date:</label>
+      <input type="date" name="supervisor_date" required>
+      <div class="hint-box" data-hint="2025-01-07" onclick="fillInput(this)">Hint?</div>
+    </section>
+
+    <!-- Submit and Email -->
+    <div class="buttons">
+      <button type="submit" id="saveSwms">Save to Database</button>
+      <button type="button" id="emailSwms">Email to Client</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.hint-box').forEach(hintBox => {
+      hintBox.addEventListener('click', () => {
+        const input = hintBox.previousElementSibling;
+        input.value = hintBox.getAttribute('data-hint');
+      });
+    });
+
+    document.getElementById('addSignature').addEventListener('click', () => {
+      const signatureGroup = document.querySelector('.signature-group').cloneNode(true);
+      signatureGroup.querySelectorAll('input').forEach(input => input.value = '');
+      document.getElementById('signatures').appendChild(signatureGroup);
+    });
+  });
+
+  function fillInput(hintBox) {
+    const input = hintBox.previousElementSibling;
+    input.value = hintBox.getAttribute('data-hint');
+  }
+</script>
+</body>
+</html>

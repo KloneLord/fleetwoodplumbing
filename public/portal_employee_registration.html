@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+    <style>
+        /* Center the heading and give it a blue background */
+        .centered-heading {
+            text-align: center;
+            background-color: dodgerblue; /* Blue background for the header */
+            color: white;
+            padding: 10px;
+        }
+        /* CSS to ensure table columns have the specified widths and text does not overflow */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 20%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 30%;
+            word-break: break-all; /* Ensure long URLs break within the cell */
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 30%;
+            word-break: break-all; /* Ensure long URLs break within the cell */
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 20%;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function addCertModal() {
+            document.getElementById('certificationModal').style.display = 'block';
+        }
+
+        function closeCertModal() {
+            document.getElementById('certificationModal').style.display = 'none';
+        }
+
+        const plumbingTickets = [
+            "Plumbing License", "Gas Fitter License", "Backflow Prevention Certificate",
+            "Thermostatic Mixing Valve (TMV) Certification", "Drainage Certificate",
+            "Solar Hot Water Installation Certification", "Pipe Welding Certification",
+            "Water Efficiency Labelling and Standards (WELS) Training", "Hydronic Heating Certification",
+            "Stormwater Management Certification", "Fire Protection Systems Certification"
+        ];
+
+        const constructionTickets = [
+            "White Card (Construction Induction Card)", "Confined Spaces Entry Permit",
+            "Working at Heights Certification", "Asbestos Awareness Training", "First Aid Certification",
+            "Manual Handling Certificate", "Fire Safety Awareness", "Traffic Management Ticket",
+            "Electrical Spotter’s Ticket", "Environmental Awareness Training"
+        ];
+
+        const transportTickets = [
+            "Heavy Vehicle License", "Forklift License", "Excavator Ticket", "Scaffolding Ticket",
+            "Crane License", "Elevated Work Platform (EWP) Ticket", "Bobcat/Skid Steer Ticket",
+            "Dogging Ticket (for slinging and load directing)", "Rigging Ticket"
+        ];
+
+        const additionalPermits = [
+            "Water Authority Permits", "Environmental Compliance Certification", "Building Approvals"
+        ];
+
+        function populateCertificationsDropdown(selectElement) {
+            const categories = {
+                "Plumbing-Specific Tickets": plumbingTickets,
+                "General Construction Site Tickets": constructionTickets,
+                "Transport and Equipment-Related Tickets": transportTickets,
+                "Additional Permits": additionalPermits
+            };
+
+            for (const [category, tickets] of Object.entries(categories)) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category;
+                tickets.forEach(ticket => {
+                    const option = document.createElement('option');
+                    option.value = ticket;
+                    option.textContent = ticket;
+                    optgroup.appendChild(option);
+                });
+                selectElement.appendChild(optgroup);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+            if (userId) {
+                try {
+                    const response = await fetch(`/api/employees/${userId}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const user = await response.json();
+                    document.getElementById('first_name').value = user.first_name;
+                    document.getElementById('last_name').value = user.last_name;
+                    document.getElementById('email').value = user.email;
+                    document.getElementById('username').value = user.username;
+                    document.getElementById('phone').value = user.phone;
+                    document.getElementById('rate_cost').value = user.rate_cost;
+                    document.getElementById('rate_charge').value = user.rate_charge;
+                    document.getElementById('employment').value = user.employment;
+                    document.getElementById('job_title').value = user.job_title;
+                    document.getElementById('role').value = user.role;
+                    document.getElementById('access').value = user.access;
+                    document.getElementById('profile_picture_url').value = user.profile_picture_url;
+                    document.getElementById('tfn').value = user.tfn;
+                    document.getElementById('claim_tax').checked = user.claim_tax;
+                    document.getElementById('notes').value = user.notes;
+
+                    // Load existing certifications into the table
+                    if (user.certifications && user.certifications.length > 0) {
+                        user.certifications.forEach(certification => addCertificationToTable(certification));
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            }
+
+            // Populate the dropdown for the new certification form
+            populateCertificationsDropdown(document.getElementById('certification_title'));
+        });
+
+        async function registerEmployee(event) {
+            event.preventDefault();
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+
+            const formData = new FormData();
+            formData.append('first_name', document.getElementById('first_name').value);
+            formData.append('last_name', document.getElementById('last_name').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('username', document.getElementById('username').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('rate_cost', document.getElementById('rate_cost').value);
+            formData.append('rate_charge', document.getElementById('rate_charge').value);
+            formData.append('employment', document.getElementById('employment').value);
+            formData.append('job_title', document.getElementById('job_title').value);
+            formData.append('role', document.getElementById('role').value);
+            formData.append('access', document.getElementById('access').value);
+            formData.append('profile_picture_url', document.getElementById('profile_picture_url').value);
+            formData.append('tfn', document.getElementById('tfn').value);
+            formData.append('claim_tax', document.getElementById('claim_tax').checked);
+            formData.append('notes', document.getElementById('notes').value);
+
+            try {
+                const response = await fetch(`/api/employees/${userId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Employee registration updated successfully.');
+                    window.location.href = 'portal_settings.html#employee_portal'; // Redirect to portal_settings.html
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error updating employee:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        async function addCertification(event) {
+            event.preventDefault();
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('certification_title').value);
+            formData.append('front', document.getElementById('certification_front').files[0]);
+            formData.append('back', document.getElementById('certification_back').files[0] || '');
+
+            try {
+                const response = await fetch(`/api/employees/${userId}/certifications`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Certification added successfully.');
+                    addCertificationToTable(result.certification);
+                    closeCertModal(); // Close the modal after successful submission
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error adding certification:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        function addCertificationToTable(certification) {
+            const certificationList = document.getElementById('certification-list');
+            const row = document.createElement('tr');
+            row.className = 'certification-entry';
+
+            // Convert file paths to URLs (adjust the base URL as needed)
+            const frontUrl = certification.front.replace(/\\/g, '/');
+            const backUrl = certification.back.replace(/\\/g, '/');
+
+            row.innerHTML = `
+                <td>${certification.title}</td>
+                <td><a href="${frontUrl}" target="_blank">Front Photo</a></td>
+                <td><a href="${backUrl}" target="_blank">Back Photo</a></td>
+                <td><button type="button" onclick="removeCertification('${certification._id}', this)">Delete</button></td>
+            `;
+            certificationList.appendChild(row);
+        }
+
+        async function removeCertification(certificationId, button) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+
+            try {
+                const response = await fetch(`/api/employees/${userId}/certifications/${certificationId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    const row = button.closest('tr');
+                    row.remove();
+                    alert('Certification deleted successfully.');
+                } else {
+                    const result = await response.json();
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error deleting certification:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</head>
+<body>
+<main>
+    <section class="the-container">
+        <div class="inner-container">
+            <h2 class="centered-heading">Employee Registration</h2>
+            <form id="employee_registration_form" onsubmit="registerEmployee(event)">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" required>
+
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required readonly>
+
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone">
+
+                <h3>Certifications</h3>
+                <table id="rego_certs_table">
+                    <thead>
+                    <tr>
+                        <th style="max-width: 20%;">Certification</th>
+                        <th style="max-width: 30%;">Front</th>
+                        <th style="max-width: 30%;">Back</th>
+                        <th style="max-width: 20%;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="certification-list"></tbody>
+                </table>
+                <button class="styled-button" type="button" style="max-width: 250px" onclick="addCertModal()">Add a New Certification</button>
+
+                <label for="rate_cost">Rate Cost:</label>
+                <input type="number" id="rate_cost" name="rate_cost" step="0.01">
+
+                <label for="rate_charge">Rate Charge:</label>
+                <input type="number" id="rate_charge" name="rate_charge" step="0.01">
+
+                <label for="employment">Employment:</label>
+                <select id="employment" name="employment">
+                    <option value="School Based">School Based</option>
+                    <option value="Apprentice">Apprentice</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Part Time">Part Time</option>
+                    <option value="Full Time">Full Time</option>
+                    <option value="Salary">Salary</option>
+                </select>
+
+                <label for="job_title">Job Title:</label>
+                <select id="job_title" name="job_title">
+                    <option value="Worker">Worker</option>
+                    <option value="Team Leader">Team Leader</option>
+                    <option value="Site Manager">Site Manager</option>
+                    <option value="Business Manager">Business Manager</option>
+                    <option value="Office">Office</option>
+                    <option value="Top Dog">Top Dog</option>
+                </select>
+
+                <label for="role">Role:</label>
+                <select id="role" name="role">
+                    <option value="Worker">Worker</option>
+                    <option value="Office">Team Leader</option>
+                    <option value="Admin">Admin</option>
+                </select>
+
+                <label for="access">Access:</label>
+                <select id="access" name="access">
+                    <option value="Basic">Basic</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Office">Office</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Super Admin">Super Admin</option>
+                    <option value="Banned">Banned</option>
+                    <option value="Locked">Locked</option>
+                </select>
+
+                <label for="profile_picture_url">Profile Picture URL:</label>
+                <input type="text" id="profile_picture_url" name="profile_picture_url">
+
+                <label for="tfn">TFN:</label>
+                <input type="text" id="tfn" name="tfn">
+
+                <div class="form-group inline">
+                    <label for="claim_tax">Claim Tax:</label>
+                    <input type="checkbox" id="claim_tax" name="claim_tax">
+                </div>
+
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" style="min-height: 200px"></textarea>
+
+                <button class="styled-button" type="submit">Update Registration</button>
+            </form>
+
+            <!-- Modal for adding new certification -->
+            <div id="certificationModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeCertModal()">&times;</span>
+                    <h3>Add New Certification</h3>
+                    <form id="certification_form" onsubmit="addCertification(event)">
+                        <label for="certification_title">Certification Title:</label>
+                        <select id="certification_title" name="certification_title" required>
+                            <!-- Options will be populated here -->
+                        </select>
+
+                        <label for="certification_front">Front Image:</label>
+                        <input type="file" id="certification_front" name="certification_front" accept="image/*" required>
+
+                        <label for="certification_back">Back Image:</label>
+                        <input type="file" id="certification_back" name="certification_back" accept="image/*">
+
+                        <button class="styled-button" type="submit">Add Certification</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

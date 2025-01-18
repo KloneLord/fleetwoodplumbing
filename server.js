@@ -4,15 +4,23 @@ import connectDB from './config/db_config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import sessionMiddleware from './middleware/session_middleware.js';
-import businessRoutes from './routes/business.js';
-import adminRoutes from './routes/admin.js';
-import authRoutes from './routes/auth.js';
+import businessRoutes from './routes/business_routes.js';
+import adminRoutes from './routes/admin_routes.js';
+import authRoutes from './routes/auth_routes.js';
 import clientRoutes from './routes/client_routes.js';
 import inventoryRoutes from './routes/inventory_routes.js';
-import authCodeRoutes from './routes/authCodeRoutes.js';
-import projectSiteRoutes from './routes/projectSiteRoutes.js';
-import projectRoutes from './routes/projectRoutes.js';
-// Other imports and middleware setup
+import authCodeRoutes from './routes/auth_code_routes.js';
+import projectSiteRoutes from './routes/project_site_routes.js';
+import projectRoutes from './routes/project_routes.js';
+import taskRoutes from './routes/task_routes.js';
+import materialRoutes from './routes/materials_routes.js';
+import plantEquipmentRoutes from './routes/plant_equipment_routes.js';
+import timeLogRoutes from './routes/time_log_routes.js';
+import planRoutes from './routes/plan_routes.js';
+import invoiceRoutes from './routes/invoice_routes.js';
+import employeeRegisterRoutes from './routes/employee_register_routes.js';
+import projectTasksRoutes from './routes/project_tasks_routes.js'; // Adjust the path as necessary
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +56,17 @@ app.use('/api/auth-code', authCodeRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/project_sites', projectSiteRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/materials', materialRoutes);
+app.use('/api/plantEquipment', plantEquipmentRoutes);
+app.use('/api/timeLog', timeLogRoutes);
+app.use('/api/plans', planRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/employees', employeeRegisterRoutes);
+// server.js or app.js
+app.use(projectTasksRoutes);
+
+
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());
@@ -55,6 +74,21 @@ app.get('/favicon.ico', (req, res) => res.status(204).end());
 // Example route to check API status
 app.get('/', (req, res) => {
     res.send('Fleetwood Plumbing API is running...');
+});
+
+// Example API to fetch session data
+app.get('/api/fetch-session', async (req, res) => {
+    try {
+        const sessionResponse = await fetch('http://localhost:5000/api/auth/session');
+        if (!sessionResponse.ok) {
+            throw new Error(`HTTP error! status: ${sessionResponse.status}`);
+        }
+        const sessionData = await sessionResponse.json();
+        res.status(200).json(sessionData);
+    } catch (error) {
+        console.error('Error fetching session data:', error.message);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Catch-all for unhandled routes (404 errors)

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetwood Plumbing - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/colors.css">
+  <style>
+    /* Normal input styles */
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    /* Disabled input styles */
+    input:disabled {
+      background-color: transparent;
+      border: none;
+      color: #333;
+      font-size: 16px;
+      padding: 0;
+      margin-bottom: 10px;
+      cursor: default;
+      appearance: none;
+    }
+
+    /* Example of additional theming */
+    input.themed {
+      font-family: 'Roboto', sans-serif;
+      color: #2c3e50; /* Dark theme text color */
+    }
+
+    /* Optional: Add some style to the form when inputs are disabled */
+    form.disabled input {
+      background-color: transparent;
+      border: none;
+      color: #333;
+      font-size: 16px;
+      padding: 0;
+      margin-bottom: 10px;
+      cursor: default;
+      appearance: none;
+    }
+
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetch session data
+        const sessionResponse = await fetch('/api/auth/session');
+        if (!sessionResponse.ok) {
+          throw new Error(`HTTP error! status: ${sessionResponse.status}`);
+        }
+        const sessionData = await sessionResponse.json();
+
+        // Handle session data
+        if (sessionData.user) {
+          // Update page content with user data
+          document.getElementById('usernameFoot').innerText = sessionData.user.username;
+          document.getElementById('role').innerText = sessionData.user.role;
+          document.getElementById('access').innerText = sessionData.user.access;
+
+          // Store authCode in the global variable
+          authCode = sessionData.user.auth_code; // Accessing auth_code correctly
+          console.log(sessionData);
+          console.log(`Here is the authCode: ${authCode}`);
+        } else {
+          // Redirect if not logged in
+          alert('You are not logged in. Redirecting to login page.');
+          window.location.href = 'portal_login.html';
+        }
+
+        // Load business details
+        await loadBusinessDetails();
+      } catch (error) {
+        console.error('Error fetching session information:', error);
+        alert('An error occurred. Please try again.');
+      }
+    });
+
+    function showTab(tabId) {
+      // Find all tab contents and hide them
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.style.display = 'none'; // Hide all tabs
+        tab.classList.remove('active'); // Remove active class
+      });
+
+      // Show the selected tab content
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.style.display = 'block'; // Show the active tab
+        activeTab.classList.add('active'); // Add active class
+      }
+
+      // Reset styles for all tab buttons
+      const buttons = document.querySelectorAll('.tab-buttons button');
+      buttons.forEach(button => {
+        button.classList.remove('active'); // Remove active class from all buttons
+      });
+
+      // Highlight the active tab button
+      const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeButton) {
+        activeButton.classList.add('active'); // Add active class to the current button
+      }
+
+      // Check if the Employee Portal tab is clicked
+      if (tabId === 'employee_portal_tab') {
+        const authCodeInput = document.getElementById('auth_codeFormInput');
+        if (authCodeInput) {
+          authCodeInput.value = authCode; // Set authCode to the input field
+        } else {
+          console.error('Auth Code input field not found');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetch session data
+        const sessionResponse = await fetch('/api/auth/session');
+        if (!sessionResponse.ok) {
+          throw new Error(`HTTP error! status: ${sessionResponse.status}`);
+        }
+        const sessionData = await sessionResponse.json();
+
+        // Handle session data
+        if (sessionData.user) {
+          // Update page content with user data
+          document.getElementById('usernameFoot').innerText = sessionData.user.username;
+          document.getElementById('role').innerText = sessionData.user.role;
+          document.getElementById('access').innerText = sessionData.user.access;
+
+          // Store authCode in the global variable
+          authCode = sessionData.user.auth_code; // Accessing auth_code correctly
+          console.log(sessionData);
+          console.log(`Here is the authCode: ${authCode}`);
+        } else {
+          // Redirect if not logged in
+          alert('You are not logged in. Redirecting to login page.');
+          window.location.href = 'portal_login.html';
+        }
+
+        // Load business details
+        await loadBusinessDetails();
+      } catch (error) {
+        console.error('Error fetching session information:', error);
+        alert('An error occurred. Please try again.');
+      }
+    });
+
+    async function loadBusinessDetails() {
+      try {
+        const response = await fetch('/api/business/details');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const business = await response.json();
+
+        if (business) {
+          document.getElementById('company_name').value = business.name;
+          document.getElementById('company_abn').value = business.abn;
+          document.getElementById('company_email').value = business.email;
+          document.getElementById('company_phone').value = business.phone;
+          document.getElementById('company_street').value = business.street;
+          document.getElementById('company_city').value = business.city;
+          document.getElementById('company_state').value = business.state;
+          document.getElementById('company_postalCode').value = business.postalCode;
+          document.getElementById('company_country').value = business.country;
+
+          // Lock inputs and show the Unlock button
+          lockForm(true);
+          document.getElementById('unlock_button').style.display = 'inline-block';
+        } else {
+          // No business entry found, unlock inputs and show the Save button
+          unlockForm();
+          document.getElementById('save_button').style.display = 'inline-block';
+        }
+      } catch (error) {
+        console.error('Error loading business details:', error);
+        alert('An error occurred while loading business details. Please try again.');
+      }
+    }
+
+
+
+    function toggleButtons(saveVisible, updateVisible, lockVisible, unlockVisible) {
+      document.getElementById('save_button').style.display = saveVisible ? 'inline-block' : 'none';
+      document.getElementById('update_button').style.display = updateVisible ? 'inline-block' : 'none';
+      document.getElementById('lock_button').style.display = lockVisible ? 'inline-block' : 'none';
+      document.getElementById('unlock_button').style.display = unlockVisible ? 'inline-block' : 'none';
+    }
+
+    async function saveBusinessDetails(event) {
+      event.preventDefault();
+      const businessDetails = {
+        name: document.getElementById('company_name').value,
+        abn: document.getElementById('company_abn').value,
+        email: document.getElementById('company_email').value,
+        phone: document.getElementById('company_phone').value,
+        street: document.getElementById('company_street').value,
+        city: document.getElementById('company_city').value,
+        state: document.getElementById('company_state').value,
+        postalCode: document.getElementById('company_postalCode').value,
+        country: document.getElementById('company_country').value,
+        authCode: authCode
+      };
+
+      try {
+        const response = await fetch('/api/business/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(businessDetails)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        alert('Business details saved successfully.');
+        lockForm(true);
+        toggleButtons(false, false, false, true);
+      } catch (error) {
+        console.error('Error saving business details:', error);
+        alert('An error occurred while saving business details. Please try again.');
+      }
+    }
+
+    async function updateBusinessDetails(event) {
+      event.preventDefault();
+      const businessDetails = {
+        name: document.getElementById('company_name').value,
+        abn: document.getElementById('company_abn').value,
+        email: document.getElementById('company_email').value,
+        phone: document.getElementById('company_phone').value,
+        street: document.getElementById('company_street').value,
+        city: document.getElementById('company_city').value,
+        state: document.getElementById('company_state').value,
+        postalCode: document.getElementById('company_postalCode').value,
+        country: document.getElementById('company_country').value,
+        authCode: authCode
+      };
+
+      try {
+        const response = await fetch('/api/business/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(businessDetails)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        alert('Business details updated successfully.');
+        lockForm(true);
+        toggleButtons(false, false, false, true);
+      } catch (error) {
+        console.error('Error updating business details:', error);
+        alert('An error occurred while updating business details. Please try again.');
+      }
+    }
+
+    function lockForm(lock) {
+      const form = document.getElementById('company_form');
+      const formElements = form.querySelectorAll('input');
+      formElements.forEach(element => {
+        element.disabled = lock;
+      });
+      if (lock) {
+        form.classList.add('disabled');
+      } else {
+        form.classList.remove('disabled');
+      }
+    }
+
+    function unlockForm() {
+      lockForm(false);
+      toggleButtons(false, true, true, false);
+    }
+
+    function lockFormHandler() {
+      lockForm(true);
+      toggleButtons(false, false, false, true);
+    }
+
+  </script>
+
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+    <nav>
+      <div class="menu-buttons">
+        <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+        <button onclick="window.location.href='portal_clients.html'">Clients</button>
+        <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+        <button onclick="window.location.href='portal_projects.html'">Projects</button>
+        <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+        <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+        <button onclick="window.location.href='portal_orders.html'">Orders</button>
+        <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+        <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+        <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+        <button onclick="window.location.href='portal_settings.html'">Settings</button>
+        <button onclick="logOut()">Log Out</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="the-container">
+    <div class="inner-container">
+      <!-- Tab Buttons -->
+      <div class="tab-buttons">
+        <button data-tab="profile_tab" class="active" onclick="showTab('profile_tab')">My Profile</button>
+        <button data-tab="company_tab" onclick="showTab('company_tab')">Company Details</button>
+        <button data-tab="employee_portal_tab" onclick="showTab('employee_portal_tab')">Employee Portal</button>
+        <button data-tab="customer_portal_tab" onclick="showTab('customer_portal_tab')">Customer Portal</button>
+        <button data-tab="access_tab" onclick="showTab('access_tab')">Access</button>
+        <button data-tab="charge_out_rates_tab" onclick="showTab('charge_out_rates_tab')">Charge Out Rates</button>
+        <button data-tab="mark_ups_tab" onclick="showTab('mark_ups_tab')">Mark Ups</button>
+        <button data-tab="templates_tab" onclick="showTab('templates_tab')">Templates</button>
+      </div>
+
+      <!-- Tab Content -->
+      <div id="profile_tab" class="tab active">
+        <h2>My Profile</h2>
+        <form id="profile_form">
+          <label for="profile_input">Name:</label>
+          <input type="text" id="profile_input" name="profile_input" required>
+          <label for="profile_email">Email:</label>
+          <input type="email" id="profile_email" name="profile_email" required>
+          <label for="profile_phone">Phone:</label>
+          <input type="tel" id="profile_phone" name="profile_phone" required>
+          <button type="submit">Update Profile</button>
+        </form>
+      </div>
+
+      <div id="company_tab" class="tab">
+        <h2>Company Details</h2>
+        <form id="company_form" onsubmit="saveBusinessDetails(event)">
+          <label for="company_name">Company Name:</label>
+          <input type="text" id="company_name" name="company_name" class="themed" required>
+          <label for="company_abn">ABN:</label>
+          <input type="text" id="company_abn" name="company_abn" class="themed" required>
+          <label for="company_street">Street Address:</label>
+          <input type="text" id="company_street" name="company_street" class="themed" placeholder="Street" required>
+          <label for="company_city">City/Town:</label>
+          <input type="text" id="company_city" name="company_city" class="themed" placeholder="City" required>
+          <label for="company_postalCode">Postcode:</label>
+          <input type="text" id="company_postalCode" name="company_postalCode" class="themed" placeholder="Postcode" required>
+          <label for="company_state">State:</label>
+          <input type="text" id="company_state" name="company_state" class="themed" placeholder="State" required>
+          <label for="company_country">Country:</label>
+          <input type="text" id="company_country" name="company_country" class="themed" placeholder="Country" required>
+          <label for="company_phone">Phone:</label>
+          <input type="tel" id="company_phone" name="company_phone" class="themed" required>
+          <label for="company_email">Email:</label>
+          <input type="email" id="company_email" name="company_email" class="themed" required>
+          <button type="submit" id="save_button" style="display: none;">Save</button>
+          <button type="button" id="update_button" style="display: none;" onclick="updateBusinessDetails(event)">Update</button>
+          <button type="button" id="lock_button" style="display: none;" onclick="lockFormHandler()">Lock</button>
+          <button type="button" id="unlock_button" style="display: none;" onclick="unlockForm()">Unlock</button>
+        </form>
+      </div>
+
+      <div id="employee_portal_tab" class="tab">
+        <h2>Employee Portal</h2>
+        <p>Welcome to the Employee Portal. Here you can manage employee information, view timesheets, and more.</p>
+
+        <form id="employee_form">
+          <label for="first_name">First Name:</label>
+          <input type="text" id="first_name" name="first_name" required>
+
+          <label for="last_name">Last Name:</label>
+          <input type="text" id="last_name" name="last_name" required>
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required>
+
+          <label for="auth_codeFormInput">Auth Code:</label>
+          <input type="text" id="auth_codeFormInput" name="auth_codeFormInput" required readonly>
+
+          <!-- Message div -->
+          <div id="formMessage" style="color: red; margin-top: 10px;"></div>
+
+          <button type="submit">Add Employee</button>
+        </form>
+
+        <form id="employee_search_form">
+          <label for="employee_search">Search Employee:</label>
+          <input type="text" id="employee_search" name="employee_search">
+          <button type="submit">Search</button>
+        </form>
+
+        <h3>New Users</h3>
+        <table id="new_users_table">
+          <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Registration Link</th>
+          </tr>
+          </thead>
+          <tbody id="new_users_table_body">
+          <!-- New user rows will be dynamically added here -->
+          </tbody>
+        </table>
+
+        <h3>Employee List</h3>
+        <table id="employee_table">
+          <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Access</th>
+            <th>Role</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody id="employees_table_body">
+          <!-- User rows will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="customer_portal_tab" class="tab">
+        <h2>Customer Portal</h2>
+        <p>Welcome to the Customer Portal. Here you can manage customer information, view orders, and more.</p>
+        <form id="customer_search_form">
+          <label for="customer_search">Search Customer:</label>
+          <input type="text" id="customer_search" name="customer_search">
+          <button type="submit">Search</button>
+        </form>
+      </div>
+
+      <div id="access_tab" class="tab">
+        <h2>Access</h2>
+        <p>Manage user access and permissions.</p>
+        <form id="access_form">
+          <label for="user_role">User Role:</label>
+          <select id="user_role" name="user_role">
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="employee">Employee</option>
+          </select>
+          <label for="user_access_level">Access Level:</label>
+          <select id="user_access_level" name="user_access_level">
+            <option value="full">Full Access</option>
+            <option value="limited">Limited Access</option>
+          </select>
+          <button type="submit">Update Access</button>
+        </form>
+      </div>
+
+      <div id="charge_out_rates_tab" class="tab">
+        <h2>Charge Out Rates</h2>
+        <form id="charge_out_rates_form">
+          <label for="standard_rate">Standard Rate:</label>
+          <input type="number" id="standard_rate" name="standard_rate" required>
+          <label for="overtime_rate">Overtime Rate:</label>
+          <input type="number" id="overtime_rate" name="overtime_rate" required>
+          <label for="weekend_rate">Weekend Rate:</label>
+          <input type="number" id="weekend_rate" name="weekend_rate" required>
+          <button type="submit">Update Rates</button>
+        </form>
+      </div>
+
+      <div id="mark_ups_tab" class="tab">
+        <h2>Mark Ups</h2>
+        <form id="mark_ups_form">
+          <label for="material_markup">Material Markup (%):</label>
+          <input type="number" id="material_markup" name="material_markup" required>
+          <label for="labor_markup">Labor Markup (%):</label>
+          <input type="number" id="labor_markup" name="labor_markup" required>
+          <button type="submit">Update Markups</button>
+        </form>
+      </div>
+
+      <div id="templates_tab" class="tab">
+        <h2>Templates</h2>
+        <p>Manage and create templates for various documents and forms.</p>
+        <form id="template_search_form">
+          <label for="template_search">Search Template:</label>
+          <input type="text" id="template_search" name="template_search">
+          <button type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="js/settings.js" type="module"></script>
+<footer>
+  <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+  <p>Welcome, <span id="usernameFoot"></span>!!! Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
+</footer>
+</body>
+</html>

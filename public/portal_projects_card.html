@@ -8,6 +8,20 @@
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/colors.css">
   <script src="js/project_card.js" defer></script>
+  <script src="js/project_card_forms.js" defer></script>
+  <script src="js/project_card_tables.js" defer></script>
+  <style>
+    .scrollable {
+      overflow-y: auto;
+    }
+    .max-height-30 {
+      max-height: 30%;
+    }
+    .max-height-20 {
+      max-height: 20%;
+    }
+
+  </style>
 </head>
 <body>
 <header>
@@ -74,17 +88,29 @@
           <!-- Task rows will be dynamically inserted here -->
           </tbody>
         </table>
-        <form id="tasks_form">
+        <hr>
+        <form id="tasks_form" onsubmit="addTask(event)">
           <label for="task_input">Task:</label>
           <input type="text" id="task_input" name="task_input" required>
+
           <label for="details_input">Details:</label>
-          <input type="text" id="details_input" name="details_input" required>
+          <textarea id="details_input" name="details_input" required style="width: 100%; height: 150px;"></textarea>
+
           <label for="assigned_input">Assigned:</label>
-          <input type="text" id="assigned_input" name="assigned_input" required>
-          <label for="hours_input">Hours:</label>
-          <input type="number" id="hours_input" name="hours_input" required>
-          <label for="status_input">Status:</label>
-          <input type="text" id="status_input" name="status_input" required>
+          <select id="assigned_input" name="assigned_input" class="themed" required></select>
+
+          <label for="task_hours_input">Estimated Hours:</label>
+          <input type="number" id="task_hours_input" name="hours_input" required>
+
+          <label for="tasks_status_input">Status:</label>
+          <input type="text" id="tasks_status_input" name="status_input" required>
+
+          <label for="start_time_input">Scheduled Start Time:</label>
+          <input type="datetime-local" id="start_time_input" name="start_time_input" required>
+
+          <label for="end_time_input">Scheduled End Time:</label>
+          <input type="datetime-local" id="end_time_input" name="end_time_input" required>
+
           <button type="submit">Add Task</button>
         </form>
       </div>
@@ -115,11 +141,11 @@
           <label for="quantity_input">Quantity:</label>
           <input type="number" id="quantity_input" name="quantity_input" required>
           <label for="employee_input">Employee:</label>
-          <input type="text" id="employee_input" name="employee_input" required>
+          <input type="text" id="materials_employee_input" name="employee_input" required>
           <label for="time_input">Time:</label>
           <input type="time" id="time_input" name="time_input" required>
           <label for="date_input">Date:</label>
-          <input type="date" id="date_input" name="date_input" required>
+          <input type="date" id="materials_date_input" name="date_input" required>
           <button type="submit">Add Material</button>
         </form>
       </div>
@@ -147,7 +173,7 @@
           <label for="hours_input">Hours:</label>
           <input type="number" id="hours_input" name="hours_input" required>
           <label for="employee_input">Employee:</label>
-          <input type="text" id="employee_input" name="employee_input" required>
+          <input type="text" id="plant_employee_input" name="employee_input" required>
           <label for="checked_in_input">Checked in:</label>
           <input type="datetime-local" id="checked_in_input" name="checked_in_input" required>
           <label for="checked_out_input">Checked out:</label>
@@ -183,6 +209,172 @@
           <input type="date" id="date_input" name="date_input" required>
           <button type="submit">Add Time Log</button>
         </form>
+      </div>
+
+      <!-- Plans Tab -->
+      <div id="plans_tab" class="tab">
+        <h2>Plans</h2>
+        <div class="scrollable max-height-30">
+          <table id="plansTable">
+            <thead>
+            <tr>
+              <th>File</th>
+              <th>Employee</th>
+              <th>Time</th>
+              <th>Date</th>
+            </tr>
+            </thead>
+            <tbody id="plans_table_body">
+            <!-- Plans rows will be dynamically inserted here -->
+            </tbody>
+          </table>
+        </div>
+        <form id="upload_plans_form">
+          <label for="file_input">Upload File:</label>
+          <input type="file" id="file_input" name="file_input" required>
+          <button type="submit">Upload Plan</button>
+        </form>
+      </div>
+
+      <!-- Safety Tab -->
+      <div id="safety_tab" class="tab">
+        <h2>Safety</h2>
+        <div class="scrollable max-height-20">
+          <ul id="smwsList">
+            <!-- List of generic S.M.W.S. will be dynamically inserted here -->
+          </ul>
+        </div>
+        <table id="smwsEntriesTable">
+          <thead>
+          <tr>
+            <th>S.W.M.S.</th>
+            <th>Task</th>
+            <th>Time</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody id="smws_entries_table_body">
+          <!-- Safety entries rows will be dynamically inserted here -->
+          </tbody>
+        </table>
+        <div>
+          1. General Plumbing Work<br>
+
+          Installation and maintenance of plumbing systems.<br>
+          Handling tools and equipment.<br>
+          Working in confined spaces.<br><br>
+
+          2. Excavation and Trenching<br>
+
+          Digging trenches for pipes and other underground utilities.<br>
+          Backfilling and compaction.<br>
+          Identifying and working near underground services (e.g., gas lines, water mains).<br><br>
+
+          3. Working at Heights<br>
+
+          Installing roof plumbing or guttering.<br>
+          Accessing high areas using ladders, scaffolding, or elevated work platforms (EWPs).<br><br>
+
+          4. Manual Handling<br>
+
+          Lifting, carrying, and positioning heavy or awkward materials.<br>
+          Reducing risks of musculoskeletal injuries.<br><br>
+
+          5. Use of Power Tools and Equipment<br>
+
+          Operation of drills, grinders, and saws.<br>
+          Maintenance of power tools.<br><br>
+
+          6. Hot Work (Welding, Soldering, and Brazing)<br>
+
+          Performing tasks that involve open flames or sparks.<br>
+          Controlling fire hazards and working in designated hot work zones.<br><br>
+
+          7. Confined Space Entry<br>
+
+          Installing or repairing pipes in tanks, sewers, or pits.<br>
+          Ensuring proper ventilation and use of gas detection equipment.<br><br>
+
+          8. Gas Installation and Maintenance<br>
+
+          Installing and repairing gas appliances and pipelines.<br>
+          Testing for gas leaks.<br><br>
+
+          9. Handling Hazardous Chemicals<br>
+
+          Working with or near chemicals like adhesives, sealants, and cleaning agents.<br>
+          Safe storage, handling, and disposal of chemicals.<br><br>
+
+          10. Waterproofing<br>
+
+          Applying waterproof membranes in wet areas.<br>
+          Use of personal protective equipment (PPE) for chemicals.<br><br>
+
+          11. Use of Heavy Machinery<br>
+
+          Operation of excavators, trenchers, and compactors.<br>
+          Loading and unloading machinery from transport vehicles.<br><br>
+
+          12. Pipe Cutting and Installation<br>
+
+          Cutting, threading, and installing various pipe types (e.g., PVC, copper, steel).<br>
+          Preventing injuries from sharp edges and tools.<br><br>
+
+          13. Working Near Live Services<br>
+
+          Plumbing work near live electrical, gas, or water services.<br>
+          Isolation and tagging out procedures.<br>
+          <br>
+          14. Testing and Commissioning<br>
+
+          Pressure testing pipes and fittings.<br>
+          Identifying leaks and ensuring systems operate as designed.<br><br>
+
+          15. Demolition and Removal Work<br>
+
+          Removing old pipes, fixtures, or systems.<br>
+          Safely handling waste and asbestos if present.<br><br>
+
+          16. Traffic Management<br>
+
+          Managing vehicle and pedestrian traffic near worksites.<br>
+          Setting up barriers and signage for roadside plumbing work.<br><br>
+
+          17. Emergency Response<br>
+
+          Dealing with burst pipes, gas leaks, or other plumbing emergencies.<br><br>
+          First aid and evacuation procedures.
+
+          18. Environmental Protection<br>
+
+          Managing wastewater and sediment runoff.<br>
+          Preventing contamination of stormwater drains and natural waterways.<br><br>
+
+          19. Solar Hot Water Installation<br>
+
+          Installing solar hot water systems on rooftops.<br>
+          Electrical safety and panel handling.<br><br>
+
+          20. Stormwater and Drainage Work<br>
+
+          Installing or maintaining stormwater systems.<br>
+          Cleaning and clearing blocked drains.<br>
+          <br>
+          21. Septic and Wastewater Systems<br>
+
+          Installing and maintaining septic tanks or wastewater systems.<br>
+          Handling biological hazards and waste.<br>
+          <br>
+          22. Use of PPE<br>
+
+          Guidelines for selecting and using PPE specific to plumbing tasks.<br>
+          Ensuring PPE is correctly fitted and maintained.<br>
+          <br>
+          23. Workplace Safety Inspections<br>
+
+          Identifying and mitigating workplace hazards.<br>
+          Conducting pre-task risk assessments (e.g., Job Safety Analysis).<br>
+        </div>
       </div>
 
       <!-- Invoices Tab -->
@@ -224,24 +416,89 @@
 </main>
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
-    // Fetch session information from the server
-    fetch('/api/auth/session')
-            .then(response => response.json())
-            .then(data => {
-              if (data.user) {
-                document.getElementById('username').innerText = data.user.username;
-                document.getElementById('role').innerText = data.user.role;
-                document.getElementById('access').innerText = data.user.access;
-              } else {
-                alert('You are not logged in. Redirecting to login page.');
-                window.location.href = 'portal_login.html';
-              }
-            })
-            .catch(error => {
-              console.error('Error fetching session information:', error);
-              alert('An error occurred. Please try again.');
-            });
+    try {
+      // Fetch session information
+      const sessionResponse = await fetch('/api/auth/session');
+      const sessionData = await sessionResponse.json();
+      if (!sessionData.user) {
+        alert('You are not logged in. Redirecting to login page.');
+        window.location.href = 'portal_login.html';
+      } else {
+        document.getElementById('username').innerText = sessionData.user.username;
+        document.getElementById('role').innerText = sessionData.user.role;
+        document.getElementById('access').innerText = sessionData.user.access;
+
+        // Load employees into the dropdown
+        await loadEmployees();
+      }
+    } catch (error) {
+      console.error('Error fetching session information:', error);
+      alert('An error occurred. Please try again.');
+    }
   });
+
+  // Function to load employees into the dropdown
+  async function loadEmployees() {
+    try {
+      const response = await fetch('/api/employees/all');
+      const employees = await response.json();
+      const assignedInput = document.getElementById('assigned_input');
+      assignedInput.innerHTML = ''; // Clear previous options
+
+      employees.forEach(employee => {
+        const option = document.createElement('option');
+        option.value = employee.user_id;
+        option.text = `${employee.first_name} ${employee.last_name}`;
+        assignedInput.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading employees:', error);
+      alert('An error occurred while loading employees. Please try again.');
+    }
+  }
+
+  // Function to handle task form submission
+  async function addTask(event) {
+    event.preventDefault();
+    const taskData = {
+      task: document.getElementById('task_input').value,
+      details: document.getElementById('details_input').value,
+      assigned: document.getElementById('assigned_input').value,
+      hours: document.getElementById('task_hours_input').value,
+      status: document.getElementById('tasks_status_input').value,
+      start_time: document.getElementById('start_time_input').value,
+      end_time: document.getElementById('end_time_input').value
+    };
+
+    try {
+      const response = await fetch('/api/project_tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData)
+      });
+
+      if (response.ok) {
+        alert('Task added successfully!');
+        // Optionally, refresh the tasks list or clear the form
+        document.getElementById('tasks_form').reset();
+      } else {
+        throw new Error('Failed to add task');
+      }
+    } catch (error) {
+      console.error('Error adding task:', error);
+      alert('An error occurred while adding the task. Please try again.');
+    }
+  }
+
+  function showTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.getElementById(tabId).classList.add('active');
+  }
 
   async function logOut() {
     try {
