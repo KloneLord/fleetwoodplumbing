@@ -122,6 +122,88 @@ body {
     display: block;
 }
 
+
+/* Filing Cabinet Style for Main Tabs */
+.tab-buttons {
+    display: flex;
+    margin-bottom: -2px;
+    border-bottom: 2px solid; /* Matches the scheme for separation */
+}
+
+.tab-buttons button {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid; /* Matches the scheme */
+    border-bottom: none; /* Seamless with tab content */
+    border-top-left-radius: 8px; /* Rounded top corners */
+    border-top-right-radius: 8px;
+    font-family: 'Montserrat', sans-serif; /* Better font for tab buttons */
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    background: inherit; /* Background defined in colors.css */
+    color: inherit; /* Text color from colors.css */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.tab-buttons button.active {
+    z-index: 2; /* Keep the active tab above others */
+    border-bottom: 2px solid transparent; /* Overlaps the tab content */
+}
+
+.tab-buttons button:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Sub-tab Buttons Style */
+.sub-tab-buttons {
+    display: flex;
+    margin-bottom: -2px; /* Overlap with sub-tab content */
+    border-bottom: 2px solid; /* Matches the scheme for separation */
+}
+
+.sub-tab-buttons button {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid; /* Matches the scheme */
+    border-bottom: none; /* Seamless with sub-tab content */
+    border-top-left-radius: 8px; /* Rounded top corners */
+    border-top-right-radius: 8px;
+    font-family: 'Montserrat', sans-serif; /* Better font for sub-tab buttons */
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    background: inherit; /* Background defined in colors.css */
+    color: inherit; /* Text color from colors.css */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.sub-tab-buttons button.active {
+    z-index: 2; /* Keep the active sub-tab above others */
+    border-bottom: 2px solid transparent; /* Overlaps the sub-tab content */
+}
+
+.sub-tab-buttons button:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Sub-tab content styling */
+.sub-tabs {
+    display: none;
+    padding: 20px;
+    border: 2px solid; /* Matches border from sub-tab buttons */
+    border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+    background: inherit; /* Matches the scheme for seamless sub-tabs */
+}
+
+.sub-tabs.active {
+    display: block;
+}
+
+
+
 /* Form styling */
 form {
     display: flex;
@@ -324,52 +406,7 @@ footer a:hover {
     color: #666;
 }
 
-
-
-/* Style for the table headers */
-#inventoryTable thead,
-#hiddenItemsTable thead,
-#hiddenClientTable thead,
-#clientTable thead,
-#projectsTable thead,
-#hiddenProjectsTable thead,
-#projectSitesTable thead,
-#projectTable thead,
-#tasksTable thead,
-#materialsTable thead,
-#plantEquipmentTable thead,
-#timeLogTable thead,
-#invoicesTable thead,
-#new_users_table thead,
-#employee_table thead,
-#rego_certs_table thead {
-    background-color: dodgerblue; /* Blue background for the header */
-    width: 100%; /* Ensure the header spans the full width */
-}
-
-#inventoryTable th,
-#hiddenItemsTable th,
-#hiddenClientTable th,
-#clientTable th,
-#projectsTable th,
-#hiddenProjectsTable th,
-#projectSitesTable th,
-#projectTable th,
-#tasksTable th,
-#materialsTable th,
-#plantEquipmentTable th,
-#timeLogTable th,
-#invoicesTable th,
-#new_users_table th,
-#employee_table th,
-#rego_certs_table th {
-    color: white; /* White text color for better contrast */
-    padding: 10px; /* Add some padding for better spacing */
-    text-align: left; /* Align text to the left */
-    border: 1px solid #ddd; /* Optional: Add a border to the header cells */
-}
-
-/* Ensure columns are spread out evenly */
+/* General styles for all specified tables */
 #inventoryTable,
 #hiddenItemsTable,
 #hiddenClientTable,
@@ -385,8 +422,13 @@ footer a:hover {
 #invoicesTable,
 #new_users_table,
 #employee_table,
-#rego_certs_table {
-    width: 100%; /* Ensure the table spans the full width */
+#rego_certs_table,
+#materialsBookedTable,
+#materialsLogTable,
+#returnInventoryTable {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
 }
 
 #inventoryTable th,
@@ -420,50 +462,22 @@ footer a:hover {
 #employee_table th,
 #employee_table td,
 #rego_certs_table th,
-#rego_certs_table td {
-    width: auto; /* Let the table automatically adjust the column widths */
-    white-space: normal; /* Allow text to wrap */
-    overflow: visible; /* Ensure text is not cut off */
-}
-
-/* Specific styles for tables */
-#inventoryTable th,
-#inventoryTable td,
-#hiddenItemsTable th,
-#hiddenItemsTable td,
-#hiddenClientTable th,
-#hiddenClientTable td,
-#clientTable th,
-#clientTable td,
-#projectsTable th,
-#projectsTable td,
-#hiddenProjectsTable th,
-#hiddenProjectsTable td,
-#projectSitesTable th,
-#projectSitesTable td,
-#projectTable th,
-#projectTable td,
-#tasksTable th,
-#tasksTable td,
-#materialsTable th,
-#materialsTable td,
-#plantEquipmentTable th,
-#plantEquipmentTable td,
-#timeLogTable th,
-#timeLogTable td,
-#invoicesTable th,
-#invoicesTable td,
-#new_users_table th,
-#new_users_table td,
-#employee_table th,
-#employee_table td,
-#rego_certs_table th,
-#rego_certs_table td {
+#rego_certs_table td,
+#materialsBookedTable th,
+#materialsBookedTable td,
+#materialsLogTable th,
+#materialsLogTable td,
+#returnInventoryTable th,
+#returnInventoryTable td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
 }
 
+/* Header styles */
 #inventoryTable th,
 #hiddenItemsTable th,
 #hiddenClientTable th,
@@ -479,31 +493,17 @@ footer a:hover {
 #invoicesTable th,
 #new_users_table th,
 #employee_table th,
-#rego_certs_table th {
-    background-color: #2196F3;
+#rego_certs_table th,
+#materialsBookedTable th,
+#materialsLogTable th,
+#returnInventoryTable th {
+    background-color: #2196F3; /* Blue background for headers */
+    color: white; /* White text for headers */
+    padding: 10px;
+    border: 1px solid #ddd;
 }
 
-#inventoryTable,
-#hiddenItemsTable,
-#hiddenClientTable,
-#clientTable,
-#projectsTable,
-#hiddenProjectsTable,
-#projectSitesTable,
-#projectTable,
-#tasksTable,
-#materialsTable,
-#plantEquipmentTable,
-#timeLogTable,
-#invoicesTable,
-#new_users_table,
-#employee_table,
-#rego_certs_table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Alternating row colors */
+/* Alternating row colors for better readability */
 #inventoryTable tbody tr:nth-child(odd),
 #hiddenItemsTable tbody tr:nth-child(odd),
 #hiddenClientTable tbody tr:nth-child(odd),
@@ -519,7 +519,10 @@ footer a:hover {
 #invoicesTable tbody tr:nth-child(odd),
 #new_users_table tbody tr:nth-child(odd),
 #employee_table tbody tr:nth-child(odd),
-#rego_certs_table tbody tr:nth-child(odd) {
+#rego_certs_table tbody tr:nth-child(odd),
+#materialsBookedTable tbody tr:nth-child(odd),
+#materialsLogTable tbody tr:nth-child(odd),
+#returnInventoryTable tbody tr:nth-child(odd) {
     background-color: #ffffff; /* White background for odd rows */
 }
 
@@ -538,6 +541,51 @@ footer a:hover {
 #invoicesTable tbody tr:nth-child(even),
 #new_users_table tbody tr:nth-child(even),
 #employee_table tbody tr:nth-child(even),
-#rego_certs_table tbody tr:nth-child(even) {
+#rego_certs_table tbody tr:nth-child(even),
+#materialsBookedTable tbody tr:nth-child(even),
+#materialsLogTable tbody tr:nth-child(even),
+#returnInventoryTable tbody tr:nth-child(even) {
     background-color: #e6f7ff; /* Light blue background for even rows */
+}
+
+/* Optional: Add specific column width limits */
+#inventoryTable th,
+#inventoryTable td,
+#hiddenItemsTable th,
+#hiddenItemsTable td,
+#hiddenClientTable th,
+#hiddenClientTable td,
+#clientTable th,
+#clientTable td,
+#projectsTable th,
+#projectsTable td,
+#hiddenProjectsTable th,
+#hiddenProjectsTable td,
+#projectSitesTable th,
+#projectSitesTable td,
+#projectTable th,
+#projectTable td,
+#tasksTable th,
+#tasksTable td,
+#materialsTable th,
+#materialsTable td,
+#plantEquipmentTable th,
+#plantEquipmentTable td,
+#timeLogTable th,
+#timeLogTable td,
+#invoicesTable th,
+#invoicesTable td,
+#new_users_table th,
+#new_users_table td,
+#employee_table th,
+#employee_table td,
+#rego_certs_table th,
+#rego_certs_table td,
+#materialsBookedTable th,
+#materialsBookedTable td,
+#materialsLogTable th,
+#materialsLogTable td,
+#returnInventoryTable th,
+#returnInventoryTable td {
+    max-width: 200px; /* Set maximum width for cells */
 }

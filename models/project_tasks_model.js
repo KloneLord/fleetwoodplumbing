@@ -1,15 +1,16 @@
 import mongoose from 'mongoose';
 
-const projectTaskSchema = new mongoose.Schema({
+const TaskSchema = new mongoose.Schema({
     task: { type: String, required: true },
     details: { type: String, required: true },
-    assigned: { type: String, required: true },
-    hours: { type: Number, required: true },
-    status: { type: String, required: true },
-    start_time: { type: Date, required: true },
-    end_time: { type: Date, required: true },
-}, { timestamps: true });
+    assigned: { type: String, default: 'Unassigned' },
+    hours: { type: Number, default: 1, min: 0 },
+    status: { type: String, default: 'Stored' },
+    start_time: { type: Date, default: () => new Date().setHours(8, 0, 0, 0) },
+    end_time: { type: Date, default: () => new Date().setHours(16, 30, 0, 0) },
+}, {
+    timestamps: true
+});
 
-const ProjectTask = mongoose.model('ProjectTask', projectTaskSchema);
-
-export default ProjectTask;
+const TaskModel = mongoose.model('Task', TaskSchema);
+export default TaskModel;

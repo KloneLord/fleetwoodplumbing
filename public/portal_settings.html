@@ -48,6 +48,12 @@
             cursor: default;
             appearance: none;
         }
+
+        /* Add this rule to change label text color and make it bold */
+        #company_form label {
+            color: #2196F3;
+            font-weight: bold;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -325,6 +331,31 @@
                 alert('An error occurred while logging out. Please try again.');
             }
         }
+        function filterEmployeeTable() {
+            const searchInput = document.getElementById('employee_search').value.toLowerCase();
+            filterTable('new_users_table_body', searchInput);
+            filterTable('employees_table_body', searchInput);
+        }
+
+        function filterTable(tableId, searchInput) {
+            const tableBody = document.getElementById(tableId);
+            const rows = tableBody.getElementsByTagName('tr');
+
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                const firstName = cells[0].innerText.toLowerCase();
+                const lastName = cells[1].innerText.toLowerCase();
+                const email = cells[2] ? cells[2].innerText.toLowerCase() : '';
+                const username = cells[3] ? cells[3].innerText.toLowerCase() : ''; // Assuming username is in the fourth column (index 3)
+
+                if (firstName.includes(searchInput) || lastName.includes(searchInput) || email.includes(searchInput) || username.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -382,6 +413,11 @@
             <div id="company_tab" class="tab">
                 <h2>Company Details</h2>
                 <form id="company_form" onsubmit="saveBusinessDetails(event)">
+                    <button type="submit" id="save_button" style="display: none;">Save</button>
+                    <button type="button" id="update_button" style="display: none;" onclick="updateBusinessDetails(event)">Update</button>
+                    <button type="button" id="lock_button" style="display: none;" onclick="lockFormHandler()">Lock</button>
+                    <button type="button" id="unlock_button" style="display: none;" onclick="unlockForm()">Unlock</button>
+
                     <label for="company_name">Company Name:</label>
                     <input type="text" id="company_name" name="company_name" class="themed" required>
                     <label for="company_abn">ABN:</label>
@@ -400,46 +436,16 @@
                     <input type="tel" id="company_phone" name="company_phone" class="themed" required>
                     <label for="company_email">Email:</label>
                     <input type="email" id="company_email" name="company_email" class="themed" required>
-                    <button type="submit" id="save_button" style="display: none;">Save</button>
-                    <button type="button" id="update_button" style="display: none;" onclick="updateBusinessDetails(event)">Update</button>
-                    <button type="button" id="lock_button" style="display: none;" onclick="lockFormHandler()">Lock</button>
-                    <button type="button" id="unlock_button" style="display: none;" onclick="unlockForm()">Unlock</button>
                 </form>
             </div>
 
             <div id="employee_portal_tab" class="tab">
                 <h2>Employee Portal</h2>
-                <p>Welcome to the Employee Portal. Here you can manage employee information, view timesheets, and more.</p>
-
-                <form id="employee_form">
-                    <label for="first_name">First Name:</label>
-                    <input type="text" id="first_name" name="first_name" required>
-
-                    <label for="last_name">Last Name:</label>
-                    <input type="text" id="last_name" name="last_name" required>
-
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
-
-                    <label for="auth_codeFormInput">Auth Code:</label>
-                    <input type="text" id="auth_codeFormInput" name="auth_codeFormInput" required readonly>
-
-                    <!-- Message div -->
-                    <div id="formMessage" style="color: red; margin-top: 10px;"></div>
-
-                    <button type="submit">Add Employee</button>
-                </form>
-
-                <form id="employee_search_form">
-                    <label for="employee_search">Search Employee:</label>
-                    <input type="text" id="employee_search" name="employee_search">
-                    <button type="submit">Search</button>
-                </form>
+                <p>Welcome to the Employee Portal. Here you can manage employee information and more.</p>
 
                 <h3>New Users</h3>
+                <label for="employee_search">Search Employee:</label>
+                <input type="text" id="employee_search" name="employee_search" oninput="filterEmployeeTable()">
                 <table id="new_users_table">
                     <thead>
                     <tr>
@@ -470,6 +476,30 @@
                     <!-- User rows will be dynamically added here -->
                     </tbody>
                 </table>
+
+                <h3>Add a New Employee</h3>
+
+                <form id="employee_form">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" required>
+
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" required>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="auth_codeFormInput">Auth Code:</label>
+                    <input type="text" id="auth_codeFormInput" name="auth_codeFormInput" required readonly>
+
+                    <!-- Message div -->
+                    <div id="formMessage" style="color: red; margin-top: 10px;"></div>
+
+                    <button type="submit">Add Employee</button>
+                </form>
             </div>
 
             <div id="customer_portal_tab" class="tab">

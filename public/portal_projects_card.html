@@ -11,6 +11,38 @@
   <script src="js/project_card_forms.js" defer></script>
   <script src="js/project_card_tables.js" defer></script>
   <style>
+    .styled-button {
+      background-color: #2196F3; /* Main background color */
+      color: #FFFFFF; /* White text */
+      border: none; /* Remove default border */
+      border-radius: 8px; /* Rounded corners */
+      padding: 8px 14px; /* Padding for size */
+      font-size: 14px; /* Font size */
+      font-weight: bold; /* Make the text bold */
+      margin-top: 10px;
+      margin-bottom: 10px;
+      margin-right: 5px;
+      letter-spacing: 1px; /* Add some spacing between letters */
+      cursor: pointer; /* Change cursor to pointer on hover */
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+      transition: all 0.3s ease; /* Smooth transition for hover effects */
+    }
+
+    .styled-button:hover {
+      background-color: #1976D2; /* Slightly darker blue on hover */
+      box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3); /* More shadow on hover */
+      transform: translateY(-2px); /* Lift the button slightly on hover */
+    }
+
+    .styled-button:active {
+      background-color: #1565C0; /* Even darker blue for active state */
+      box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Reduce shadow on click */
+      transform: translateY(1px); /* Press down effect */
+    }
+
+    .styled-button.active {
+      background-color: lightgreen;
+    }
     .scrollable {
       overflow-y: auto;
     }
@@ -20,7 +52,19 @@
     .max-height-20 {
       max-height: 20%;
     }
-
+    .tab-buttons .active, .sub-tab-buttons .active {
+      background-color: #007bff; /* Active tab color */
+      color: white;
+    }
+    .sub-tabs {
+      display: none;
+    }
+    .sub-tabs.active {
+      display: block;
+    }
+    .styled-button.active {
+      background-color: lightgreen;
+    }
   </style>
 </head>
 <body>
@@ -97,13 +141,21 @@
           <textarea id="details_input" name="details_input" required style="width: 100%; height: 150px;"></textarea>
 
           <label for="assigned_input">Assigned:</label>
-          <select id="assigned_input" name="assigned_input" class="themed" required></select>
+          <select id="assigned_input" name="assigned_input" class="themed" required>
+            <option value="" selected>Unassigned</option>
+          </select>
 
           <label for="task_hours_input">Estimated Hours:</label>
-          <input type="number" id="task_hours_input" name="hours_input" required>
+          <input type="number" id="task_hours_input" name="hours_input" required value="1" min="0">
 
           <label for="tasks_status_input">Status:</label>
-          <input type="text" id="tasks_status_input" name="status_input" required>
+          <select id="tasks_status_input" name="status_input" required>
+            <option value="Stored" selected>Stored</option>
+            <option value="Scheduled">Scheduled</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Complete">Complete</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
 
           <label for="start_time_input">Scheduled Start Time:</label>
           <input type="datetime-local" id="start_time_input" name="start_time_input" required>
@@ -118,37 +170,101 @@
       <!-- Materials Tab -->
       <div id="materials_tab" class="tab">
         <h2>Materials</h2>
-        <table id="materialsTable">
-          <thead>
-          <tr>
-            <th>ItemId</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Employee</th>
-            <th>Time</th>
-            <th>Date</th>
-          </tr>
-          </thead>
-          <tbody id="materials_table_body">
-          <!-- Material rows will be dynamically inserted here -->
-          </tbody>
-        </table>
-        <form id="materials_form">
-          <label for="itemid_input">ItemId:</label>
-          <input type="text" id="itemid_input" name="itemid_input" required>
-          <label for="description_input">Description:</label>
-          <input type="text" id="description_input" name="description_input" required>
-          <label for="quantity_input">Quantity:</label>
-          <input type="number" id="quantity_input" name="quantity_input" required>
-          <label for="employee_input">Employee:</label>
-          <input type="text" id="materials_employee_input" name="employee_input" required>
-          <label for="time_input">Time:</label>
-          <input type="time" id="time_input" name="time_input" required>
-          <label for="date_input">Date:</label>
-          <input type="date" id="materials_date_input" name="date_input" required>
-          <button type="submit">Add Material</button>
-        </form>
+        <!-- Sub-tab Buttons -->
+        <div class="sub-tab-buttons">
+          <button data-sub-tab="materials_booked_tab" class="active" onclick="showSubTab('materials_booked_tab')">Materials Booked to Job</button>
+          <button data-sub-tab="book_out_materials_tab" onclick="showSubTab('book_out_materials_tab')">Book out Materials</button>
+          <button data-sub-tab="return_materials_tab" onclick="showSubTab('return_materials_tab')">Return Materials</button>
+          <button data-sub-tab="materials_log_tab" onclick="showSubTab('materials_log_tab')">Materials Log</button>
+        </div>
+
+        <!-- Sub-tab Content -->
+        <!-- Materials Booked Tab -->
+        <div id="materials_booked_tab" class="sub-tabs active">
+          <h3>Materials Booked to Job</h3>
+          <table id="materialsBookedTable">
+            <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Total Quantity</th>
+            </tr>
+            </thead>
+            <tbody id="materials_booked_table_body">
+            <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Book Out Materials Tab -->
+        <div id="book_out_materials_tab" class="sub-tabs">
+          <h3>Book Out Materials</h3>
+          <div id="category_buttons"></div> <!-- Dynamically generated buttons -->
+          <table id="inventoryTable">
+            <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Quantity in Stock</th>
+              <th>Quantity Taken</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="inventory_table_body">
+            <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+          <button onclick="clearBookOut()">Clear</button>
+          <button id="bookOutMaterialsBtn" onclick="bookOutMaterials()">Book Out Materials</button>
+        </div>
+
+        <!-- Return Materials Tab -->
+        <div id="return_materials_tab" class="sub-tabs">
+          <h3>Return Materials</h3>
+          <div id="return_category_buttons"></div> <!-- Dynamically generated buttons -->
+          <table id="returnInventoryTable">
+            <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Quantity in Stock</th>
+              <th>Quantity Taken</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="return_inventory_table_body">
+            <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+          <button onclick="clearReturn()">Clear</button>
+          <button onclick="returnMaterials()">Return Materials</button>
+        </div>
+
+        <!-- Materials Log Tab -->
+        <div id="materials_log_tab" class="sub-tabs">
+          <h3>Materials Log</h3>
+          <table id="materialsLogTable">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Item ID</th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Book Out</th>
+              <th>By</th>
+            </tr>
+            </thead>
+            <tbody id="materials_log_table_body">
+            <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
       </div>
+
 
       <!-- Plant Equipment Tab -->
       <div id="plant_equipment_tab" class="tab">
@@ -258,122 +374,7 @@
           </tbody>
         </table>
         <div>
-          1. General Plumbing Work<br>
 
-          Installation and maintenance of plumbing systems.<br>
-          Handling tools and equipment.<br>
-          Working in confined spaces.<br><br>
-
-          2. Excavation and Trenching<br>
-
-          Digging trenches for pipes and other underground utilities.<br>
-          Backfilling and compaction.<br>
-          Identifying and working near underground services (e.g., gas lines, water mains).<br><br>
-
-          3. Working at Heights<br>
-
-          Installing roof plumbing or guttering.<br>
-          Accessing high areas using ladders, scaffolding, or elevated work platforms (EWPs).<br><br>
-
-          4. Manual Handling<br>
-
-          Lifting, carrying, and positioning heavy or awkward materials.<br>
-          Reducing risks of musculoskeletal injuries.<br><br>
-
-          5. Use of Power Tools and Equipment<br>
-
-          Operation of drills, grinders, and saws.<br>
-          Maintenance of power tools.<br><br>
-
-          6. Hot Work (Welding, Soldering, and Brazing)<br>
-
-          Performing tasks that involve open flames or sparks.<br>
-          Controlling fire hazards and working in designated hot work zones.<br><br>
-
-          7. Confined Space Entry<br>
-
-          Installing or repairing pipes in tanks, sewers, or pits.<br>
-          Ensuring proper ventilation and use of gas detection equipment.<br><br>
-
-          8. Gas Installation and Maintenance<br>
-
-          Installing and repairing gas appliances and pipelines.<br>
-          Testing for gas leaks.<br><br>
-
-          9. Handling Hazardous Chemicals<br>
-
-          Working with or near chemicals like adhesives, sealants, and cleaning agents.<br>
-          Safe storage, handling, and disposal of chemicals.<br><br>
-
-          10. Waterproofing<br>
-
-          Applying waterproof membranes in wet areas.<br>
-          Use of personal protective equipment (PPE) for chemicals.<br><br>
-
-          11. Use of Heavy Machinery<br>
-
-          Operation of excavators, trenchers, and compactors.<br>
-          Loading and unloading machinery from transport vehicles.<br><br>
-
-          12. Pipe Cutting and Installation<br>
-
-          Cutting, threading, and installing various pipe types (e.g., PVC, copper, steel).<br>
-          Preventing injuries from sharp edges and tools.<br><br>
-
-          13. Working Near Live Services<br>
-
-          Plumbing work near live electrical, gas, or water services.<br>
-          Isolation and tagging out procedures.<br>
-          <br>
-          14. Testing and Commissioning<br>
-
-          Pressure testing pipes and fittings.<br>
-          Identifying leaks and ensuring systems operate as designed.<br><br>
-
-          15. Demolition and Removal Work<br>
-
-          Removing old pipes, fixtures, or systems.<br>
-          Safely handling waste and asbestos if present.<br><br>
-
-          16. Traffic Management<br>
-
-          Managing vehicle and pedestrian traffic near worksites.<br>
-          Setting up barriers and signage for roadside plumbing work.<br><br>
-
-          17. Emergency Response<br>
-
-          Dealing with burst pipes, gas leaks, or other plumbing emergencies.<br><br>
-          First aid and evacuation procedures.
-
-          18. Environmental Protection<br>
-
-          Managing wastewater and sediment runoff.<br>
-          Preventing contamination of stormwater drains and natural waterways.<br><br>
-
-          19. Solar Hot Water Installation<br>
-
-          Installing solar hot water systems on rooftops.<br>
-          Electrical safety and panel handling.<br><br>
-
-          20. Stormwater and Drainage Work<br>
-
-          Installing or maintaining stormwater systems.<br>
-          Cleaning and clearing blocked drains.<br>
-          <br>
-          21. Septic and Wastewater Systems<br>
-
-          Installing and maintaining septic tanks or wastewater systems.<br>
-          Handling biological hazards and waste.<br>
-          <br>
-          22. Use of PPE<br>
-
-          Guidelines for selecting and using PPE specific to plumbing tasks.<br>
-          Ensuring PPE is correctly fitted and maintained.<br>
-          <br>
-          23. Workplace Safety Inspections<br>
-
-          Identifying and mitigating workplace hazards.<br>
-          Conducting pre-task risk assessments (e.g., Job Safety Analysis).<br>
         </div>
       </div>
 
@@ -420,30 +421,378 @@
       // Fetch session information
       const sessionResponse = await fetch('/api/auth/session');
       const sessionData = await sessionResponse.json();
+
       if (!sessionData.user) {
         alert('You are not logged in. Redirecting to login page.');
         window.location.href = 'portal_login.html';
       } else {
+        // Populate user info
         document.getElementById('username').innerText = sessionData.user.username;
         document.getElementById('role').innerText = sessionData.user.role;
         document.getElementById('access').innerText = sessionData.user.access;
 
-        // Load employees into the dropdown
+        // Initialize dropdowns and category buttons
         await loadEmployees();
+        await loadCategoryButtons();
+        await loadReturnCategoryButtons();
       }
+
+      // Extract projectID from URL and fetch project details and materials logs
+      const projectID = getProjectId();
+      await fetchProjectDetails(projectID);
+      await fetchMaterialsLog(projectID);
+      await fetchMaterialsBooked(projectID);
+
+      // Set default task form values
+      const now = new Date().toISOString().split('T')[0];
+      document.getElementById('task_hours_input').value = 1;
+      document.getElementById('start_time_input').value = `${now}T08:00`;
+      document.getElementById('end_time_input').value = `${now}T16:30`;
     } catch (error) {
-      console.error('Error fetching session information:', error);
+      console.error('Error initializing page:', error);
       alert('An error occurred. Please try again.');
     }
   });
 
-  // Function to load employees into the dropdown
+  // Function to fetch materials booked to job and update the materials booked tab
+  async function fetchMaterialsBooked(projectID) {
+    try {
+      const response = await fetch(`/api/projects-materials/booked/${projectID}`);
+      if (!response.ok) throw new Error('Failed to fetch materials booked.');
+
+      const materialsBooked = await response.json();
+      const materialsBookedTableBody = document.getElementById('materials_booked_table_body');
+
+      // Clear existing rows
+      materialsBookedTableBody.innerHTML = '';
+
+      // Aggregate quantities by item ID
+      const aggregatedMaterials = materialsBooked.reduce((acc, entry) => {
+        if (!acc[entry.item_id]) {
+          acc[entry.item_id] = { ...entry, total_quantity: 0 };
+        }
+        acc[entry.item_id].total_quantity += entry.quantity_booked_out;
+        return acc;
+      }, {});
+
+      // Populate materials booked
+      Object.values(aggregatedMaterials).forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${entry.item_id}</td>
+        <td>${entry.item_name}</td>
+        <td>${entry.item_category}</td>
+        <td>${entry.total_quantity}</td>
+      `;
+        materialsBookedTableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error fetching materials booked:', error);
+      alert('Failed to fetch materials booked. Please try again.');
+    }
+  }
+
+  // Function to fetch materials log and update the materials log tab
+  async function fetchMaterialsLog(projectID) {
+    try {
+      const response = await fetch(`/api/projects-materials/log/${projectID}`);
+      if (!response.ok) throw new Error('Failed to fetch materials log.');
+
+      const materialsLog = await response.json();
+      const materialsLogTableBody = document.getElementById('materials_log_table_body');
+
+      // Clear existing rows
+      materialsLogTableBody.innerHTML = '';
+
+      // Populate materials log
+      materialsLog.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${entry.date}</td>
+        <td>${entry.time}</td>
+        <td>${entry.item_id}</td>
+        <td>${entry.item_name}</td>
+        <td>${entry.item_category}</td>
+        <td>${entry.quantity_booked_out}</td>
+        <td>${entry.username}</td>
+      `;
+        materialsLogTableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error fetching materials log:', error);
+      alert('Failed to fetch materials log. Please try again.');
+    }
+  }
+
+  // Function to extract projectID from URL
+  function getProjectId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('projectID');
+  }
+
+  // Function to fetch project details and update the project tab
+  async function fetchProjectDetails(projectID) {
+    try {
+      const response = await fetch(`/api/projects/${projectID}`);
+      if (!response.ok) throw new Error('Failed to fetch project details.');
+
+      const project = await response.json();
+      const projectTabContent = document.getElementById('project_tab_content');
+
+      // Populate project details
+      projectTabContent.innerHTML = `
+      <p><strong>Project ID:</strong> ${project.projectID}</p>
+      <p><strong>Project Name:</strong> ${project.name}</p>
+      <p><strong>Description:</strong> ${project.description}</p>
+      <p><strong>Start Date:</strong> ${project.startDate}</p>
+      <p><strong>End Date:</strong> ${project.endDate}</p>
+      <p><strong>Status:</strong> ${project.status}</p>
+    `;
+    } catch (error) {
+      console.error('Error fetching project details:', error);
+      alert('Failed to fetch project details. Please try again.');
+    }
+  }
+
+  // Function to book out materials
+  async function bookOutMaterials() {
+    try {
+      const rows = document.querySelectorAll('#inventory_table_body tr');
+      const materialsToBookOut = [];
+
+      rows.forEach(row => {
+        const itemId = row.children[0].innerText;
+        const description = row.children[1].innerText;
+        const category = row.children[2].innerText;
+        const quantityTaken = parseInt(row.querySelector('label').innerText);
+
+        if (quantityTaken > 0) {
+          materialsToBookOut.push({
+            itemId,
+            description,
+            category,
+            quantity: quantityTaken,
+          });
+        }
+      });
+
+      if (materialsToBookOut.length === 0) {
+        alert('No materials selected for booking out.');
+        return;
+      }
+
+      const sessionResponse = await fetch('/api/auth/session');
+      const sessionData = await sessionResponse.json();
+
+      if (!sessionData.user) {
+        alert('You are not logged in. Redirecting to login page.');
+        window.location.href = 'portal_login.html';
+        return;
+      }
+
+      const project_id = getProjectId(); // Retrieve project ID from URL
+      const username = sessionData.user.username;
+
+      const response = await fetch('/api/projects-materials/book-out', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id, username, materials: materialsToBookOut }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to book out materials.');
+      }
+
+      alert('Materials successfully booked out.');
+      loadInventoryItems(); // Refresh the inventory list
+    } catch (error) {
+      console.error('Error booking out materials:', error.message);
+      alert('Failed to book out materials. Please try again.');
+    }
+  }
+
+  // Function to return materials
+  async function returnMaterials() {
+    try {
+      const rows = document.querySelectorAll('#return_inventory_table_body tr');
+      const materialsToReturn = [];
+
+      rows.forEach(row => {
+        const itemId = row.children[0].innerText;
+        const description = row.children[1].innerText;
+        const category = row.children[2].innerText;
+        const quantityTaken = parseInt(row.querySelector('label').innerText);
+
+        if (quantityTaken > 0) {
+          materialsToReturn.push({
+            itemId,
+            description,
+            category,
+            quantity: quantityTaken,
+          });
+        }
+      });
+
+      if (materialsToReturn.length === 0) {
+        alert('No materials selected for return.');
+        return;
+      }
+
+      const sessionResponse = await fetch('/api/auth/session');
+      const sessionData = await sessionResponse.json();
+
+      if (!sessionData.user) {
+        alert('You are not logged in. Redirecting to login page.');
+        window.location.href = 'portal_login.html';
+        return;
+      }
+
+      const project_id = getProjectId(); // Retrieve project ID from URL
+      const username = sessionData.user.username;
+
+      const response = await fetch('/api/projects-materials/return', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id, username, materials: materialsToReturn }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to return materials.');
+      }
+
+      alert('Materials successfully returned.');
+      loadReturnInventoryItems(); // Refresh the inventory list
+    } catch (error) {
+      console.error('Error returning materials:', error.message);
+      alert('Failed to return materials. Please try again.');
+    }
+  }
+
+  // Clear Return Materials
+  function clearReturn() {
+    const rows = document.querySelectorAll('#return_inventory_table_body tr');
+    rows.forEach(row => {
+      const quantityLabel = row.querySelector('label');
+      if (quantityLabel) quantityLabel.innerText = '0';
+    });
+  }
+
+  // Helper function to load return inventory items
+  async function loadReturnInventoryItems(activeCategories = [], tableBodyId = 'return_inventory_table_body') {
+    try {
+      const response = await fetch('/api/inventory/list');
+      const inventoryItems = await response.json();
+
+      const filteredItems = inventoryItems.filter(item =>
+              !item.hidden && (activeCategories.length === 0 || activeCategories.includes(item.category))
+      );
+
+      const tableBody = document.getElementById(tableBodyId);
+      tableBody.innerHTML = '';
+
+      filteredItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${item.itemId}</td>
+        <td>${item.itemName}</td>
+        <td>${item.category}</td>
+        <td>${item.stockLevel}</td>
+        <td><label id="quantity_taken_return_${item.itemId}">0</label></td>
+        <td>
+          <button onclick="adjustReturnQuantity('${item.itemId}', 1)">+1</button>
+          <button onclick="adjustReturnQuantity('${item.itemId}', 5)">+5</button>
+          <button onclick="adjustReturnQuantity('${item.itemId}', 25)">+25</button>
+          <button onclick="adjustReturnQuantity('${item.itemId}', 0, true)">Reset</button>
+        </td>
+      `;
+        tableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error loading return inventory items:', error.message);
+    }
+  }
+
+  // Adjust Return Quantity
+  function adjustReturnQuantity(itemId, amount, reset = false) {
+    const quantityLabel = document.getElementById(`quantity_taken_return_${itemId}`);
+    if (reset) {
+      quantityLabel.innerText = '0';
+    } else {
+      const currentValue = parseInt(quantityLabel.innerText) || 0;
+      quantityLabel.innerText = currentValue + amount;
+    }
+  }
+
+  // Clear Book Out Materials
+  function clearBookOut() {
+    const rows = document.querySelectorAll('#inventory_table_body tr');
+    rows.forEach(row => {
+      const quantityLabel = row.querySelector('label');
+      if (quantityLabel) quantityLabel.innerText = '0';
+    });
+  }
+
+  // Helper function to load inventory items
+  async function loadInventoryItems(activeCategories = [], tableBodyId = 'inventory_table_body') {
+    try {
+      const response = await fetch('/api/inventory/list');
+      const inventoryItems = await response.json();
+
+      const filteredItems = inventoryItems.filter(item =>
+              !item.hidden && (activeCategories.length === 0 || activeCategories.includes(item.category))
+      );
+
+      const tableBody = document.getElementById(tableBodyId);
+      tableBody.innerHTML = '';
+
+      filteredItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${item.itemId}</td>
+        <td>${item.itemName}</td>
+        <td>${item.category}</td>
+        <td>${item.stockLevel}</td>
+        <td><label id="quantity_taken_${item.itemId}">0</label></td>
+        <td>
+          <button onclick="adjustQuantity('${item.itemId}', 1)">+1</button>
+          <button onclick="adjustQuantity('${item.itemId}', 5)">+5</button>
+          <button onclick="adjustQuantity('${item.itemId}', 25)">+25</button>
+          <button onclick="adjustQuantity('${item.itemId}', 0, true)">Reset</button>
+        </td>
+      `;
+        tableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Error loading inventory items:', error.message);
+    }
+  }
+
+  // Adjust Quantity
+  function adjustQuantity(itemId, amount, reset = false) {
+    const quantityLabel = document.getElementById(`quantity_taken_${itemId}`);
+    if (reset) {
+      quantityLabel.innerText = '0';
+    } else {
+      const currentValue = parseInt(quantityLabel.innerText) || 0;
+      quantityLabel.innerText = currentValue + amount;
+    }
+  }
+
+  // Load employees into dropdown
   async function loadEmployees() {
     try {
       const response = await fetch('/api/employees/all');
       const employees = await response.json();
+
       const assignedInput = document.getElementById('assigned_input');
-      assignedInput.innerHTML = ''; // Clear previous options
+      assignedInput.innerHTML = '';
+
+      const unassignedOption = document.createElement('option');
+      unassignedOption.value = '';
+      unassignedOption.text = 'Unassigned';
+      assignedInput.appendChild(unassignedOption);
 
       employees.forEach(employee => {
         const option = document.createElement('option');
@@ -457,66 +806,123 @@
     }
   }
 
-  // Function to handle task form submission
-  async function addTask(event) {
-    event.preventDefault();
-    const taskData = {
-      task: document.getElementById('task_input').value,
-      details: document.getElementById('details_input').value,
-      assigned: document.getElementById('assigned_input').value,
-      hours: document.getElementById('task_hours_input').value,
-      status: document.getElementById('tasks_status_input').value,
-      start_time: document.getElementById('start_time_input').value,
-      end_time: document.getElementById('end_time_input').value
-    };
-
+  // Load category buttons and filter inventory
+  async function loadCategoryButtons() {
     try {
-      const response = await fetch('/api/project_tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(taskData)
+      const response = await fetch('/api/inventory/list');
+      const inventoryItems = await response.json();
+
+      const categories = Array.from(new Set(inventoryItems.map(item => item.category)));
+
+      const categoryButtonsContainer = document.getElementById('category_buttons');
+      categoryButtonsContainer.innerHTML = '';
+
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.innerText = category;
+        button.classList.add('styled-button');
+        button.onclick = () => toggleCategoryFilter(button);
+        categoryButtonsContainer.appendChild(button);
       });
 
-      if (response.ok) {
-        alert('Task added successfully!');
-        // Optionally, refresh the tasks list or clear the form
-        document.getElementById('tasks_form').reset();
-      } else {
-        throw new Error('Failed to add task');
-      }
+      // Load inventory items for all categories initially
+      loadInventoryItems(categories);
     } catch (error) {
-      console.error('Error adding task:', error);
-      alert('An error occurred while adding the task. Please try again.');
+      console.error('Error loading categories:', error);
+      alert('An error occurred while loading categories. Please try again.');
     }
   }
 
-  function showTab(tabId) {
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-      tab.classList.remove('active');
-    });
-    document.getElementById(tabId).classList.add('active');
-  }
-
-  async function logOut() {
+  // Load return category buttons and filter inventory
+  async function loadReturnCategoryButtons() {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
+      const response = await fetch('/api/inventory/list');
+      const inventoryItems = await response.json();
+
+      const categories = Array.from(new Set(inventoryItems.map(item => item.category)));
+
+      const returnCategoryButtonsContainer = document.getElementById('return_category_buttons');
+      returnCategoryButtonsContainer.innerHTML = '';
+
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.innerText = category;
+        button.classList.add('styled-button');
+        button.onclick = () => toggleReturnCategoryFilter(button);
+        returnCategoryButtonsContainer.appendChild(button);
       });
 
-      if (!response.ok) throw new Error('Failed to log out');
+      // Load inventory items for all categories initially
+      loadReturnInventoryItems(categories);
+    } catch (error) {
+      console.error('Error loading return categories:', error);
+      alert('An error occurred while loading return categories. Please try again.');
+    }
+  }
 
+  // Toggle category filter for return materials
+  function toggleReturnCategoryFilter(button, tableBodyId = 'return_inventory_table_body') {
+    button.classList.toggle('active');
+    button.style.backgroundColor = button.classList.contains('active') ? 'lightgreen' : '';
+
+    const activeCategories = Array.from(document.querySelectorAll('.styled-button.active'))
+            .map(btn => btn.innerText);
+
+    loadReturnInventoryItems(activeCategories, tableBodyId);
+  }
+
+  // Toggle category filter
+  function toggleCategoryFilter(button, tableBodyId = 'inventory_table_body') {
+    button.classList.toggle('active');
+    button.style.backgroundColor = button.classList.contains('active') ? 'lightgreen' : '';
+
+    const activeCategories = Array.from(document.querySelectorAll('.styled-button.active'))
+            .map(btn => btn.innerText);
+
+    loadInventoryItems(activeCategories, tableBodyId);
+  }
+
+  // Show sub-tab
+  function showSubTab(subTabId) {
+    const subTabs = document.querySelectorAll('.sub-tabs');
+    subTabs.forEach(subTab => subTab.classList.remove('active'));
+
+    const selectedSubTab = document.getElementById(subTabId);
+    if (selectedSubTab) {
+      selectedSubTab.classList.add('active');
+    }
+  }
+
+  // Show main tab
+  function showTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.style.display = tab.id === tabId ? 'block' : 'none');
+
+    const tabButtons = document.querySelectorAll('.tab-buttons button');
+    tabButtons.forEach(button => {
+      button.classList.toggle('active', button.getAttribute('data-tab') === tabId);
+    });
+  }
+
+  // Logout functionality
+  async function logOut() {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to log out');
       alert('You have been logged out successfully!');
-      window.location.href = 'portal_login.html'; // Redirect to login page
+      window.location.href = 'portal_login.html';
     } catch (error) {
       console.error('Error during logout:', error.message);
       alert('An error occurred while logging out. Please try again.');
     }
   }
+
+  // Attach globally accessible functions
+  window.showTab = showTab;
+  window.showSubTab = showSubTab;
+  window.logOut = logOut;
 </script>
+
 <footer>
   <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
   <p>Welcome, <span id="username"></span>!!!  Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>

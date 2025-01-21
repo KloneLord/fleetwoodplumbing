@@ -12,7 +12,6 @@ import inventoryRoutes from './routes/inventory_routes.js';
 import authCodeRoutes from './routes/auth_code_routes.js';
 import projectSiteRoutes from './routes/project_site_routes.js';
 import projectRoutes from './routes/project_routes.js';
-import taskRoutes from './routes/task_routes.js';
 import materialRoutes from './routes/materials_routes.js';
 import plantEquipmentRoutes from './routes/plant_equipment_routes.js';
 import timeLogRoutes from './routes/time_log_routes.js';
@@ -20,7 +19,11 @@ import planRoutes from './routes/plan_routes.js';
 import invoiceRoutes from './routes/invoice_routes.js';
 import employeeRegisterRoutes from './routes/employee_register_routes.js';
 import projectTasksRoutes from './routes/project_tasks_routes.js'; // Adjust the path as necessary
+import projectMaterialsRoutes from './routes/project_materials_routes.js';
 
+// Import models to ensure they are compiled once
+import './models/project_materials_model.js';
+import './models/project_materials_booked.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,17 +59,14 @@ app.use('/api/auth-code', authCodeRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/project_sites', projectSiteRoutes);
-app.use('/api/tasks', taskRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/plantEquipment', plantEquipmentRoutes);
 app.use('/api/timeLog', timeLogRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/employees', employeeRegisterRoutes);
-// server.js or app.js
-app.use(projectTasksRoutes);
-
-
+app.use('/api/tasks', projectTasksRoutes);
+app.use('/api/projects-materials', projectMaterialsRoutes);
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

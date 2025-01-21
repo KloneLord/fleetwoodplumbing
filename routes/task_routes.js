@@ -1,9 +1,9 @@
+// project_tasks_routes.js
 import express from 'express';
-import { createTask, getTasks } from '../controllers/task_controller.js';
+import { addTask } from '../controllers/project_tasks_controller.js'; // Ensure the path and export name are correct
 
 const router = express.Router();
 
-router.post('/', createTask);
-router.get('/', getTasks);
+router.post('/tasks', addTask);
 
 export default router;
