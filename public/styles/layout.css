@@ -404,9 +404,7 @@ footer a:hover {
 
 .project-detail-value {
     color: #666;
-}
-
-/* General styles for all specified tables */
+}/* General styles for all specified tables */
 #inventoryTable,
 #hiddenItemsTable,
 #hiddenClientTable,
@@ -425,7 +423,10 @@ footer a:hover {
 #rego_certs_table,
 #materialsBookedTable,
 #materialsLogTable,
-#returnInventoryTable {
+#returnInventoryTable,
+#equipmentTable, /* Added */
+#serviceHistoryTable, /* Changed */
+#repairHistoryTable /* Changed */ {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
@@ -468,7 +469,13 @@ footer a:hover {
 #materialsLogTable th,
 #materialsLogTable td,
 #returnInventoryTable th,
-#returnInventoryTable td {
+#returnInventoryTable td,
+#equipmentTable th, /* Added */
+#equipmentTable td, /* Added */
+#serviceHistoryTable th, /* Changed */
+#serviceHistoryTable td, /* Changed */
+#repairHistoryTable th, /* Changed */
+#repairHistoryTable td /* Changed */ {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -485,18 +492,34 @@ footer a:hover {
 #projectsTable th,
 #hiddenProjectsTable th,
 #projectSitesTable th,
+#projectSitesTable th,
+#projectTable th,
 #projectTable th,
 #tasksTable th,
+#tasksTable th,
+#materialsTable th,
 #materialsTable th,
 #plantEquipmentTable th,
+#plantEquipmentTable th,
+#timeLogTable th,
 #timeLogTable th,
 #invoicesTable th,
+#invoicesTable th,
+#new_users_table th,
 #new_users_table th,
 #employee_table th,
+#employee_table th,
+#rego_certs_table th,
 #rego_certs_table th,
 #materialsBookedTable th,
+#materialsBookedTable th,
 #materialsLogTable th,
-#returnInventoryTable th {
+#materialsLogTable th,
+#returnInventoryTable th,
+#returnInventoryTable th,
+#equipmentTable th, /* Added */
+#serviceHistoryTable th, /* Changed */
+#repairHistoryTable th /* Changed */ {
     background-color: #2196F3; /* Blue background for headers */
     color: white; /* White text for headers */
     padding: 10px;
@@ -522,7 +545,10 @@ footer a:hover {
 #rego_certs_table tbody tr:nth-child(odd),
 #materialsBookedTable tbody tr:nth-child(odd),
 #materialsLogTable tbody tr:nth-child(odd),
-#returnInventoryTable tbody tr:nth-child(odd) {
+#returnInventoryTable tbody tr:nth-child(odd),
+#equipmentTable tbody tr:nth-child(odd), /* Added */
+#serviceHistoryTable tbody tr:nth-child(odd), /* Changed */
+#repairHistoryTable tbody tr:nth-child(odd) /* Changed */ {
     background-color: #ffffff; /* White background for odd rows */
 }
 
@@ -544,7 +570,10 @@ footer a:hover {
 #rego_certs_table tbody tr:nth-child(even),
 #materialsBookedTable tbody tr:nth-child(even),
 #materialsLogTable tbody tr:nth-child(even),
-#returnInventoryTable tbody tr:nth-child(even) {
+#returnInventoryTable tbody tr:nth-child(even),
+#equipmentTable tbody tr:nth-child(even), /* Added */
+#serviceHistoryTable tbody tr:nth-child(even), /* Changed */
+#repairHistoryTable tbody tr:nth-child(even) /* Changed */ {
     background-color: #e6f7ff; /* Light blue background for even rows */
 }
 
@@ -586,6 +615,50 @@ footer a:hover {
 #materialsLogTable th,
 #materialsLogTable td,
 #returnInventoryTable th,
-#returnInventoryTable td {
+#returnInventoryTable td,
+#equipmentTable th, /* Added */
+#equipmentTable td, /* Added */
+#serviceHistoryTable th, /* Changed */
+#serviceHistoryTable td, /* Changed */
+#repairHistoryTable th, /* Changed */
+#repairHistoryTable td /* Changed */ {
     max-width: 200px; /* Set maximum width for cells */
+}
+
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

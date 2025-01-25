@@ -20,7 +20,9 @@ import invoiceRoutes from './routes/invoice_routes.js';
 import employeeRegisterRoutes from './routes/employee_register_routes.js';
 import projectTasksRoutes from './routes/project_tasks_routes.js'; // Adjust the path as necessary
 import projectMaterialsRoutes from './routes/project_materials_routes.js';
-
+import equipmentRoutes from './routes/equipment_routes.js';
+import serviceRoutes from './routes/service_routes.js';
+import repairRoutes from './routes/repairs_routes.js';
 // Import models to ensure they are compiled once
 import './models/project_materials_model.js';
 import './models/project_materials_booked.js';
@@ -67,6 +69,9 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/employees', employeeRegisterRoutes);
 app.use('/api/tasks', projectTasksRoutes);
 app.use('/api/projects-materials', projectMaterialsRoutes);
+app.use('/api/plant-equipment', equipmentRoutes);
+app.use('/api/plant-equipment', serviceRoutes);
+app.use('/api/plant-equipment', repairRoutes);
 
 // Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());

@@ -102,3 +102,26 @@ export const getProjectSiteDetailsById = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
+// New controller function to fetch project site details by clientId and siteName
+export const getProjectSiteDetailsByClientAndSite = async (req, res) => {
+    const { clientId, projectSite } = req.query;
+
+    if (!clientId || !projectSite) {
+        return res.status(400).json({ message: 'Missing clientId or projectSite' });
+    }
+
+    try {
+        const siteDetails = await Project_site_model.findOne({ clientID: clientId, siteName: projectSite });
+
+        if (!siteDetails) {
+            return res.status(404).json({ message: 'Project site not found' });
+        }
+
+        res.json(siteDetails);
+    } catch (error) {
+        console.error('Error fetching project site details:', error);
+        res.status(500).json({ message: 'Failed to fetch project site details' });
+    }
+};

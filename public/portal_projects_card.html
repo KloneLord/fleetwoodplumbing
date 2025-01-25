@@ -99,7 +99,7 @@
         <button data-tab="tasks_tab" onclick="showTab('tasks_tab')">Tasks</button>
         <button data-tab="materials_tab" onclick="showTab('materials_tab')">Materials</button>
         <button data-tab="time_log_tab" onclick="showTab('time_log_tab')">Time Log</button>
-        <button data-tab="plant_equipment_tab" onclick="showTab('plant_equipment_tab')">Plant Equipment</button>
+        <button data-tab="plant_equipment_tab" onclick="showTab('plant_equipment_tab')">Vehicles/Equipment</button>
         <button data-tab="plans_tab" onclick="showTab('plans_tab')">Plans</button>
         <button data-tab="safety_tab" onclick="showTab('safety_tab')">Safety</button>
         <button data-tab="schedule_tab" onclick="showTab('schedule_tab')">Schedule</button>
@@ -266,13 +266,13 @@
       </div>
 
 
-      <!-- Plant Equipment Tab -->
+      <!-- Vehicles and Plant Equipment Tab -->
       <div id="plant_equipment_tab" class="tab">
-        <h2>Plant Equipment</h2>
+        <h2>Vehicles and Plant Equipment</h2>
         <table id="plantEquipmentTable">
           <thead>
           <tr>
-            <th>Plant Equipment</th>
+            <th>Vehicles and Plant Equipment</th>
             <th>Hours</th>
             <th>Employee</th>
             <th>Checked in</th>
@@ -280,11 +280,11 @@
           </tr>
           </thead>
           <tbody id="plant_equipment_table_body">
-          <!-- Plant equipment rows will be dynamically inserted here -->
+          <!-- Vehicles and Plant Equipment rows will be dynamically inserted here -->
           </tbody>
         </table>
         <form id="plant_equipment_form">
-          <label for="plant_equipment_input">Plant Equipment:</label>
+          <label for="plant_equipment_input">Vehicles and Plant Equipment:</label>
           <input type="text" id="plant_equipment_input" name="plant_equipment_input" required>
           <label for="hours_input">Hours:</label>
           <input type="number" id="hours_input" name="hours_input" required>
@@ -294,7 +294,7 @@
           <input type="datetime-local" id="checked_in_input" name="checked_in_input" required>
           <label for="checked_out_input">Checked out:</label>
           <input type="datetime-local" id="checked_out_input" name="checked_out_input" required>
-          <button type="submit">Add Plant Equipment</button>
+          <button type="submit">Add Vehicles and Plant Equipment</button>
         </form>
       </div>
 
@@ -529,6 +529,21 @@
     const params = new URLSearchParams(window.location.search);
     return params.get('projectID');
   }
+  // Function to fetch project site details and update the project tab
+  async function fetchProjectSiteDetails(clientId, projectSite) {
+    try {
+      const response = await fetch(`/api/projects-sites/details?clientId=${clientId}&projectSite=${encodeURIComponent(projectSite)}`);
+      if (!response.ok) throw new Error('Failed to fetch project site details.');
+
+      const siteDetails = await response.json();
+      console.log('Project Site Details:', siteDetails); // Log the details for troubleshooting
+      return siteDetails;
+    } catch (error) {
+      console.error('Error fetching project site details:', error);
+      alert('Failed to fetch project site details. Please try again.');
+      return null;
+    }
+  }
 
   // Function to fetch project details and update the project tab
   async function fetchProjectDetails(projectID) {
@@ -539,20 +554,36 @@
       const project = await response.json();
       const projectTabContent = document.getElementById('project_tab_content');
 
+      // Fetch project site details
+      const siteDetails = await fetchProjectSiteDetails(project.clientId, project.projectSite);
+
       // Populate project details
       projectTabContent.innerHTML = `
-      <p><strong>Project ID:</strong> ${project.projectID}</p>
-      <p><strong>Project Name:</strong> ${project.name}</p>
+      <p><strong>Project:</strong> ${project.title}</p>
+      <p><strong>Client:</strong> ${project.customer}</p>
+      <p><strong>Project Site:</strong> ${project.projectSite}</p>
+      ${siteDetails ? `
+        <p><strong>Street address:</strong> ${siteDetails.streetAddress}</p>
+        <p><strong>Town/City:</strong> ${siteDetails.cityTown}</p>
+        <p><strong>Post Code:</strong> ${siteDetails.postcode}</p>
+        <p><strong>State:</strong> ${siteDetails.state}</p>
+        <p><strong>Country:</strong> ${siteDetails.country}</p>
+      ` : ''}
       <p><strong>Description:</strong> ${project.description}</p>
-      <p><strong>Start Date:</strong> ${project.startDate}</p>
-      <p><strong>End Date:</strong> ${project.endDate}</p>
       <p><strong>Status:</strong> ${project.status}</p>
+      <hr>
+      <p><strong>Project ID:</strong> ${project.projectID}</p>
+      <p><strong>Client ID:</strong> ${project.clientId}</p>
     `;
     } catch (error) {
       console.error('Error fetching project details:', error);
       alert('Failed to fetch project details. Please try again.');
     }
   }
+
+
+
+
 
   // Function to book out materials
   async function bookOutMaterials() {

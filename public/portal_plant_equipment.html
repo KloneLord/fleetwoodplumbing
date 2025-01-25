@@ -1,0 +1,427 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetwood Plumbing - Vehicles and Plant Equipment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/colors.css">
+    <script src="js/plant_equipment.js" defer></script>
+</head>
+<body>
+<header>
+    <div>
+        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
+        <nav>
+            <div class="menu-buttons">
+                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
+                <button onclick="window.location.href='portal_clients.html'">Clients</button>
+                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
+                <button onclick="window.location.href='portal_plant_equipment.html'">Vehicles/Equipment</button>
+                <button onclick="window.location.href='portal_projects.html'">Projects</button>
+                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
+                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
+                <button onclick="window.location.href='portal_orders.html'">Orders</button>
+                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
+                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
+                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
+                <button onclick="logOut()">Log Out</button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="the-container">
+        <div class="inner-container">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button data-tab="equipment_list_tab" class="active" onclick="showTab('equipment_list_tab')">Equipment List</button>
+                <button data-tab="add_equipment_tab" onclick="showTab('add_equipment_tab')">Add Equipment</button>
+                <button data-tab="service_tab" onclick="showTab('service_tab')">Service</button>
+                <button data-tab="repairs_tab" onclick="showTab('repairs_tab')">Repairs</button>
+            </div>
+
+            <!-- Equipment List Tab -->
+            <div id="equipment_list_tab" class="tab">
+                <h2>Equipment List</h2>
+
+                <!-- Search and Filter Section -->
+                <div class="search-filter">
+                    <input type="text" id="searchBox" placeholder="Search by Machine ID or Name" oninput="filterEquipment()">
+                    <select id="sortSelect" onchange="sortEquipment()">
+                        <option value="id_asc">Sort by ID (Ascending)</option>
+                        <option value="id_desc">Sort by ID (Descending)</option>
+                        <option value="name_asc">Sort by Name (A-Z)</option>
+                        <option value="name_desc">Sort by Name (Z-A)</option>
+                    </select>
+                </div>
+
+                <!-- Equipment Table -->
+                <table id="equipmentTable">
+                    <thead>
+                    <tr>
+                        <th>Machine ID</th>
+                        <th>Machine Name</th>
+                        <th>Year</th>
+                        <th>Hours</th>
+                        <th>Next Service</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="6">Loading equipment...</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <div class="pagination">
+                    <button onclick="prevPage()">Previous</button>
+                    <span>Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                    <button onclick="nextPage()">Next</button>
+                </div>
+            </div>
+
+            <!-- Add Equipment Tab -->
+            <div id="add_equipment_tab" class="tab" style="display: none;">
+                <h2>Add Equipment</h2>
+                <form id="addEquipmentForm">
+                    <fieldset>
+                        <legend>Equipment Details</legend>
+
+                        <label for="machineName">Machine Name:</label>
+                        <input type="text" id="machineName" name="machineName" placeholder="Enter Machine Name" required>
+
+                        <label for="machineId">Machine ID:</label>
+                        <input type="text" id="machineId" name="machineId" placeholder="Generated Machine ID" readonly>
+
+                        <label for="yearOfManufacture">Year of Manufacture:</label>
+                        <input type="number" id="yearOfManufacture" name="yearOfManufacture" min="1900" max="2100" placeholder="e.g., 2020" required>
+
+                        <label for="manufacturer">Manufacturer:</label>
+                        <input type="text" id="manufacturer" name="manufacturer" placeholder="Enter Manufacturer Name" required>
+
+                        <label for="model">Model:</label>
+                        <input type="text" id="model" name="model" placeholder="Enter Machine Model" required>
+
+                        <label for="serialNumber">Serial Number:</label>
+                        <input type="text" id="serialNumber" name="serialNumber" placeholder="Enter Serial Number" required>
+
+                        <label for="numberPlate">Serial Number:</label>
+                        <input type="text" id="numberPlate" name="numberPlate" placeholder="Enter License Plate Number" required>
+
+                        <!-- Operational Information -->
+                        <label for="currentHours">Current Operating Hours:</label>
+                        <input type="number" id="currentHours" name="currentHours" min="0" placeholder="Enter Current Hours" required>
+
+                        <label for="fuelType">Fuel Type:</label>
+                        <br>
+                        <select id="fuelType" name="fuelType" required>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Petrol">Petrol</option>
+                        </select>
+                        <br><br>
+
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" placeholder="Enter Machine Weight" required>
+
+                        <label for="dimensions">Dimensions (L x W x H in meters):</label>
+                        <input type="text" id="dimensions" name="dimensions" placeholder="e.g., 3.5 x 1.8 x 2.2" required>
+
+                        <label for="licenseRequired">Special License Required:</label>
+                        <br>
+                        <select id="licenseRequired" name="licenseRequired" required>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</select>
+                        <br><br>
+
+                        <!-- Maintenance Information -->
+                        <label for="nextServiceDate">Next Scheduled Service Date:</label>
+                        <input type="date" id="nextServiceDate" name="nextServiceDate" required>
+
+                        <label for="lastServiceDate">Last Service Date:</label>
+                        <input type="date" id="lastServiceDate" name="lastServiceDate" required>
+
+                        <!-- Financial Information -->
+                        <label for="purchaseDate">Purchase Date:</label>
+                        <input type="date" id="purchaseDate" name="purchaseDate" required>
+
+                        <label for="purchasePrice">Purchase Price ($):</label>
+                        <input type="number" id="purchasePrice" name="purchasePrice" step="0.01" placeholder="Enter Purchase Price" required>
+
+                        <label for="chargeOutRate">Charge Out Rate ($/hour):</label>
+                        <input type="number" id="chargeOutRate" name="chargeOutRate" step="0.01" placeholder="Enter Charge Out Rate" required>
+
+                        <label for="insurancePolicy">Insurance Policy Number:</label>
+                        <input type="text" id="insurancePolicy" name="insurancePolicy" placeholder="Enter Insurance Policy Number">
+
+                        <!-- Attachments -->
+                        <label for="attachments">Upload Attachments (e.g., Manuals, Photos):</label>
+                        <input type="file" id="attachments" name="attachments" accept=".pdf,.jpg,.png,.doc,.docx" multiple>
+
+                        <button type="submit">Add Equipment</button>
+                    </fieldset>
+                </form>
+            </div>
+
+
+            <!-- Modal for Editing Equipment -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2>Edit Equipment</h2>
+                    <form id="editEquipmentForm">
+                        <fieldset>
+                            <legend>Equipment Details</legend>
+                            <input type="hidden" id="editMachineId" name="machineId" readonly>
+
+                            <label for="editMachineName">Machine Name:</label>
+                            <input type="text" id="editMachineName" name="machineName" required>
+
+                            <label for="editYearOfManufacture">Year of Manufacture:</label>
+                            <input type="number" id="editYearOfManufacture" name="yearOfManufacture" min="1900" max="2100" required>
+
+                            <label for="editCurrentHours">Current Operating Hours:</label>
+                            <input type="number" id="editCurrentHours" name="currentHours" min="0" required>
+
+                            <label for="editNextServiceDate">Next Scheduled Service Date:</label>
+                            <input type="date" id="editNextServiceDate" name="nextServiceDate" required>
+
+                            <button type="submit">Save Changes</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Service Tab -->
+            <div id="service_tab" class="tab" style="display: none;">
+                <h2>Service Management</h2>
+
+                <!-- Schedule Service Form -->
+                <form id="serviceForm">
+                    <fieldset>
+                        <legend>Schedule Service</legend>
+                        <label for="serviceMachineId">Machine Name:</label>
+                        <select id="serviceMachineId" name="machineId" required></select>
+
+                        <label for="serviceDate">Service Date:</label>
+                        <input type="date" id="serviceDate" name="serviceDate" required>
+
+                        <label for="serviceDetails">Service Details:</label><br>
+                        <textarea id="serviceDetails" name="serviceDetails" placeholder="Enter details about the service..." required></textarea>
+                        <br>
+                        <label for="serviceTechnician">Technician:</label>
+                        <input type="text" id="serviceTechnician" name="serviceTechnician" placeholder="Enter Technician Name" required>
+
+                        <button type="submit">Schedule Service</button>
+                    </fieldset>
+                </form>
+
+                <!-- Service History Section -->
+                <div id="serviceHistory">
+                    <h3>Service History</h3>
+                    <table id="serviceHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>Machine ID</th>
+                            <th>Date</th>
+                            <th>Details</th>
+                            <th>Technician</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="serviceHistoryBody">
+                        <tr>
+                            <td colspan="5">No service records found.</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Repairs Tab -->
+            <div id="repairs_tab" class="tab" style="display: none;">
+                <h2>Repairs Management</h2>
+                <form id="repairForm">
+                    <fieldset>
+                        <legend>Log a Repair</legend>
+                        <label for="repairMachineId">Machine Name:</label>
+                        <select id="repairMachineId" name="machineId" required></select>
+
+                        <label for="reportDate">Report Date:</label>
+                        <input type="date" id="reportDate" name="reportDate" required>
+
+                        <label for="repairDate">Repair Date:</label>
+                        <input type="date" id="repairDate" name="repairDate" required>
+
+                        <label for="repairDetails">Repair Details:</label>
+                        <textarea id="repairDetails" name="repairDetails" placeholder="Enter details about the repair..." required></textarea>
+
+                        <label for="repairCost">Cost:</label>
+                        <input type="number" id="repairCost" name="repairCost" placeholder="Enter repair cost" step="0.01" required>
+
+                        <button type="submit">Log Repair</button>
+                    </fieldset>
+                </form>
+
+                <div id="repairHistory">
+                    <h3>Repair History</h3>
+                    <table id="repairHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>Machine ID</th>
+                            <th>Date</th>
+                            <th>Details</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="repairHistoryBody">
+                        <tr>
+                            <td colspan="5">No repair records found.</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal for Editing Service -->
+            <div id="editServiceModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeServiceModal()">&times;</span>
+                    <h2>Edit Service</h2>
+                    <form id="editServiceForm">
+                        <fieldset>
+                            <legend>Service Details</legend>
+                            <input type="hidden" id="editServiceMachineId" name="machineId" readonly>
+
+                            <label for="editServiceDate">Service Date:</label>
+                            <input type="date" id="editServiceDate" name="serviceDate" required>
+
+                            <label for="editServiceDetails">Service Details:</label>
+                            <textarea id="editServiceDetails" name="serviceDetails" placeholder="Enter service details..." required></textarea>
+
+                            <label for="editServiceTechnician">Technician:</label>
+                            <input type="text" id="editServiceTechnician" name="serviceTechnician" placeholder="Enter technician name" required>
+
+                            <button type="submit">Save Changes</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal for Editing Repair -->
+            <div id="editRepairModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeRepairModal()">&times;</span>
+                    <h2>Edit Repair</h2>
+                    <form id="editRepairForm">
+                        <fieldset>
+                            <legend>Repair Details</legend>
+                            <input type="hidden" id="editRepairMachineId" name="machineId" readonly>
+
+                            <label for="editRepairDate">Repair Date:</label>
+                            <input type="date" id="editRepairDate" name="repairDate" required>
+
+                            <label for="editRepairDetails">Repair Details:</label>
+                            <textarea id="editRepairDetails" name="repairDetails" placeholder="Enter repair details..." required></textarea>
+
+                            <label for="editRepairCost">Repair Cost:</label>
+                            <input type="number" id="editRepairCost" name="repairCost" placeholder="Enter repair cost" step="0.01" required>
+
+                            <button type="submit">Save Changes</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<script>
+    // Function to show the selected tab
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.style.display = 'none';
+            tab.classList.remove('active');
+        });
+
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) {
+            activeTab.style.display = 'block';
+            activeTab.classList.add('active');
+        }
+
+        const buttons = document.querySelectorAll('.tab-buttons button');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+
+        if (tabId === 'equipment_list_tab') {
+            fetchEquipmentData();
+        } else if (tabId === 'service_tab') {
+            fetchEquipmentNames();
+            fetchServiceData();
+        } else if (tabId === 'repairs_tab') {
+            fetchEquipmentNames();
+            fetchRepairData();
+        }
+    }
+
+    // Function to log out
+    async function logOut() {
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Failed to log out');
+
+            alert('You have been logged out successfully!');
+            window.location.href = 'portal_login.html'; // Redirect to login page
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+            alert('An error occurred while logging out. Please try again.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch session information from the server
+        fetch('/api/auth/session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user) {
+                    document.getElementById('username').innerText = data.user.username;
+                    document.getElementById('role').innerText = data.user.role;
+                    document.getElementById('access').innerText = data.user.access;
+                } else {
+                    alert('You are not logged in. Redirecting to login page.');
+                    window.location.href = 'portal_login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching session information:', error);
+                alert('An error occurred. Please try again.');
+            });
+
+        fetchEquipmentData();
+        fetchEquipmentNames();
+        showTab('equipment_list_tab'); // Show the equipment list tab by default
+        initializeAddEquipmentForm(); // Initialize the form with generated ID and current date
+    });
+</script>
+<footer>
+    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
+    <p>Welcome, <span id="username"></span>!!! Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
+</footer>
+</body>
+</html>
