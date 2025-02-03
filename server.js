@@ -14,7 +14,6 @@ import projectSiteRoutes from './routes/project_site_routes.js';
 import projectRoutes from './routes/project_routes.js';
 import materialRoutes from './routes/materials_routes.js';
 import plantEquipmentRoutes from './routes/plant_equipment_routes.js';
-import timeLogRoutes from './routes/time_log_routes.js';
 import planRoutes from './routes/plan_routes.js';
 import invoiceRoutes from './routes/invoice_routes.js';
 import employeeRegisterRoutes from './routes/employee_register_routes.js';
@@ -23,9 +22,14 @@ import projectMaterialsRoutes from './routes/project_materials_routes.js';
 import equipmentRoutes from './routes/equipment_routes.js';
 import serviceRoutes from './routes/service_routes.js';
 import repairRoutes from './routes/repairs_routes.js';
-// Import models to ensure they are compiled once
+import timeLogRoutes from './routes/time_log_routes.js';
+import scheduleRoutes from './routes/schedule_routes.js';
+import businessTimesRoutes from './routes/business_times_routes.js';
+import employeeColorRoutes from './routes/employee_color_routes.js';
 import './models/project_materials_model.js';
 import './models/project_materials_booked.js';
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,7 +67,6 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/project_sites', projectSiteRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/plantEquipment', plantEquipmentRoutes);
-app.use('/api/timeLog', timeLogRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/employees', employeeRegisterRoutes);
@@ -72,11 +75,13 @@ app.use('/api/projects-materials', projectMaterialsRoutes);
 app.use('/api/plant-equipment', equipmentRoutes);
 app.use('/api/plant-equipment', serviceRoutes);
 app.use('/api/plant-equipment', repairRoutes);
+app.use('/api/timelogs', timeLogRoutes);
+app.use('/api/schedule', scheduleRoutes);
+app.use('/api/business-times', businessTimesRoutes);
+app.use('/api/employees', employeeColorRoutes);
 
-// Handle favicon requests
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
-// Example route to check API status
 app.get('/', (req, res) => {
     res.send('Fleetwood Plumbing API is running...');
 });

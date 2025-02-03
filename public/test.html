@@ -1,388 +1,249 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetwood Plumbing - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/layout.css">
-    <link rel="stylesheet" href="styles/colors.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Fetch session data
-                const sessionResponse = await fetch('/api/auth/session');
-                if (!sessionResponse.ok) {
-                    throw new Error(`HTTP error! status: ${sessionResponse.status}`);
-                }
-                const sessionData = await sessionResponse.json();
+// ----------------------------
+// UNUSED EVENT LISTENERS
+// ----------------------------
 
-                // Handle session data
-                if (sessionData.user) {
-                    // Update page content with user data
-                    document.getElementById('usernameFoot').innerText = sessionData.user.username;
-                    document.getElementById('role').innerText = sessionData.user.role;
-                    document.getElementById('access').innerText = sessionData.user.access;
+document.addEventListener('DOMContentLoaded', fetchProjects);
+document.addEventListener('DOMContentLoaded', populateProjectDropdown);
+document.addEventListener('DOMContentLoaded', setDefaultTimes);
 
-                    // Store authCode in the global variable
-                    authCode = sessionData.user.auth_code; // Accessing auth_code correctly
-                    console.log(sessionData);
-                    console.log(`Here is the authCode: ${authCode}`);
+document.addEventListener('DOMContentLoaded', async () => {
+await fetchEmployees();
+});
 
-                } else {
-                    // Redirect if not logged in
-                    alert('You are not logged in. Redirecting to login page.');
-                    window.location.href = 'portal_login.html';
-                }
+// ----------------------------
+// UNUSED FETCH FUNCTIONS
+// ----------------------------
 
-                // Load employee data
-                await loadEmployeeData();
+async function fetchEmployeesForColorAssignment() {
+try {
+const response = await fetch('/api/employees/all');
+if (response.ok) {
+const employees = await response.json();
+const employeeSelect = document.getElementById('employee_select');
 
-                // Load business details
-                await loadBusinessDetails();
-            } catch (error) {
-                console.error('Error fetching session information:', error);
-                alert('An error occurred. Please try again.');
-            }
-        });
+employeeSelect.innerHTML = '';
+employees.forEach(employee => {
+const option = document.createElement('option');
+option.value = employee.user_id;
+option.textContent = `${employee.first_name} ${employee.last_name}`;
+employeeSelect.appendChild(option);
+});
+} else {
+console.error('Failed to fetch employees:', response.status, response.statusText);
+}
+} catch (error) {
+console.error('Error fetching employees:', error);
+}
+}
 
-        async function loadEmployeeData() {
-            try {
-                // Fetch new users
-                const newUsersResponse = await fetch('/api/employees/new');
-                if (!newUsersResponse.ok) {
-                    throw new Error(`HTTP error! status: ${newUsersResponse.status}`);
-                }
-                const newUsers = await newUsersResponse.json();
-                const newUsersTableBody = document.getElementById('new_users_table_body');
-                newUsersTableBody.innerHTML = ''; // Clear the table body
-                newUsers.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${user.first_name}</td>
-                        <td>${user.last_name}</td>
-                        <td><a href="portal_employee_registration.html?user_id=${user.user_id}">${user.user_id}</a></td>
-                    `;
-                    newUsersTableBody.appendChild(row);
-                });
+document.addEventListener('DOMContentLoaded', fetchEmployeesForColorAssignment);
 
-                // Fetch existing employees
-                const employeesResponse = await fetch('/api/employees/all');
-                if (!employeesResponse.ok) {
-                    throw new Error(`HTTP error! status: ${employeesResponse.status}`);
-                }
-                const employees = await employeesResponse.json();
-                const employeesTableBody = document.getElementById('employees_table_body');
-                employeesTableBody.innerHTML = ''; // Clear the table body
-                employees.forEach(employee => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${employee.first_name}</td>
-                        <td>${employee.last_name}</td>
-                        <td>${employee.email}</td>
-                        <td>${employee.username}</td>
-                        <td>${employee.access}</td>
-                        <td>${employee.role}</td>
-                        <td><button onclick="editEmployee('${employee.user_id}')">Edit</button></td>
-                    `;
-                    employeesTableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error loading employee data:', error);
-                alert('An error occurred while loading employee data. Please try again.');
-            }
-        }
+// ----------------------------
+// UNUSED COLOR ASSIGNMENTS
+// ----------------------------
 
-        async function loadBusinessDetails() {
-            try {
-                const response = await fetch('/api/business/details');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const business = await response.json();
+document.getElementById('color_assignments_form')?.addEventListener('submit', async function(event) {
+event.preventDefault();
+const user_id = document.getElementById('employee_select').value;
+const schedule_color = document.getElementById('color_select').value;
 
-                document.getElementById('company_name').value = business.name;
-                document.getElementById('company_abn').value = business.abn;
-                document.getElementById('company_email').value = business.email;
-                document.getElementById('company_phone').value = business.phone;
-                document.getElementById('company_street').value = business.address.street;
-                document.getElementById('company_city').value = business.address.city;
-                document.getElementById('company_state').value = business.address.state;
-                document.getElementById('company_postalCode').value = business.address.postalCode;
-                document.getElementById('company_country').value = business.address.country;
-            } catch (error) {
-                console.error('Error loading business details:', error);
-                alert('An error occurred while loading business details. Please try again.');
-            }
-        }
+try {
+const response = await fetch(`/api/employees/update-color/${user_id}`, {
+method: 'PUT',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ schedule_color }),
+});
 
-        function editEmployee(user_id) {
-            window.location.href = `portal_employee_registration.html?user_id=${user_id}`;
-        }
+if (response.ok) {
+alert(`Color updated successfully for employee ID: ${user_id}`);
+} else {
+alert('Failed to update color');
+}
+} catch (error) {
+console.error('Error updating employee color:', error);
+}
+});
 
-        function showTab(tabId) {
-            // Find all tab contents and hide them
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.style.display = 'none'; // Hide all tabs
-                tab.classList.remove('active'); // Remove active class
-            });
+// ----------------------------
+// UNUSED DATE & TIME HANDLING
+// ----------------------------
 
-            // Show the selected tab content
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.style.display = 'block'; // Show the active tab
-                activeTab.classList.add('active'); // Add active class
-            }
+function updateDisplayWeek() {
+const startOfWeek = new Date(currentDate);
+startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+const endOfWeek = new Date(startOfWeek);
+endOfWeek.setDate(endOfWeek.getDate() + 6);
+document.getElementById('displayWeek')?.innerText = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
+}
 
-            // Reset styles for all tab buttons
-            const buttons = document.querySelectorAll('.tab-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('active'); // Remove active class from all buttons
-            });
+function updateDisplayMonth() {
+document.getElementById('displayMonth')?.innerText = currentDate.toLocaleString('default', { month: 'long' }) + ' ' + currentDate.getFullYear();
+}
 
-            // Highlight the active tab button
-            const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active'); // Add active class to the current button
-            }
+/**
+* Fleetwood Plumbing - Schedule Helpers and Utilities
+* This file contains helper functions that support the main scheduling script.
+*/
 
-            // Check if the Employee Portal tab is clicked
-            if (tabId === 'employee_portal_tab') {
-                const authCodeInput = document.getElementById('auth_codeFormInput');
-                if (authCodeInput) {
-                    authCodeInput.value = authCode; // Set authCode to the input field
-                } else {
-                    console.error('Auth Code input field not found');
-                }
-            }
-        }
+// ----------------------------
+// HELPER FUNCTIONS
+// ----------------------------
 
-        async function logOut() {
-            try {
-                const response = await fetch('/api/auth/logout', {
-                    method: 'POST',
-                    credentials: 'include',
-                });
+/**
+* Convert time to 15-minute slot index
+*/
+function timeToSlot(time) {
+const [hour, minute] = time.split(':').map(Number);
+return (hour - 6) * 4 + Math.floor(minute / 15);
+}
 
-                if (!response.ok) throw new Error('Failed to log out');
+/**
+* Check if a job overlaps with a time range
+*/
+function isTimeInRange(slot, startTime, finishTime) {
+const startSlot = timeToSlot(startTime);
+const endSlot = timeToSlot(finishTime);
+return slot >= startSlot && slot < endSlot;
+}
 
-                alert('You have been logged out successfully!');
-                window.location.href = 'portal_login.html'; // Redirect to login page
-            } catch (error) {
-                console.error('Error during logout:', error.message);
-                alert('An error occurred while logging out. Please try again.');
-            }
-        }
-    </script>
-</head>
-<body>
-<header>
-    <div>
-        <div class="logo" style="margin-left: 10px">Fleetwood Plumbing Pty Ltd</div>
-        <nav>
-            <div class="menu-buttons">
-                <button onclick="window.location.href='portal_dashboard.html'">Dashboard</button>
-                <button onclick="window.location.href='portal_clients.html'">Clients</button>
-                <button onclick="window.location.href='portal_inventory.html'">Inventory</button>
-                <button onclick="window.location.href='portal_projects.html'">Projects</button>
-                <button onclick="window.location.href='portal_time_sheets.html'">Time Sheets</button>
-                <button onclick="window.location.href='portal_schedule.html'">Schedule</button>
-                <button onclick="window.location.href='portal_orders.html'">Orders</button>
-                <button onclick="window.location.href='portal_inquiries.html'">Inquiries</button>
-                <button onclick="window.location.href='portal_estimates.html'">Estimates</button>
-                <button onclick="window.location.href='portal_invoicing.html'">Invoicing</button>
-                <button onclick="window.location.href='portal_settings.html'">Settings</button>
-                <button onclick="logOut()">Log Out</button>
-            </div>
-        </nav>
-    </div>
-</header>
+/**
+* Check if two dates are the same day
+*/
+function isSameDay(date1, date2) {
+return date1.getFullYear() === date2.getFullYear() &&
+date1.getMonth() === date2.getMonth() &&
+date1.getDate() === date2.getDate();
+}
 
-<main>
-    <section class="the-container">
-        <div class="inner-container">
-            <!-- Tab Buttons -->
-            <div class="tab-buttons">
-                <button data-tab="profile_tab" class="active" onclick="showTab('profile_tab')">My Profile</button>
-                <button data-tab="company_tab" onclick="showTab('company_tab')">Company Details</button>
-                <button data-tab="employee_portal_tab" onclick="showTab('employee_portal_tab')">Employee Portal</button>
-                <button data-tab="customer_portal_tab" onclick="showTab('customer_portal_tab')">Customer Portal</button>
-                <button data-tab="access_tab" onclick="showTab('access_tab')">Access</button>
-                <button data-tab="charge_out_rates_tab" onclick="showTab('charge_out_rates_tab')">Charge Out Rates</button>
-                <button data-tab="mark_ups_tab" onclick="showTab('mark_ups_tab')">Mark Ups</button>
-                <button data-tab="templates_tab" onclick="showTab('templates_tab')">Templates</button>
-            </div>
+// ----------------------------
+// MODALS
+// ----------------------------
 
-            <!-- Tab Content -->
-            <div id="profile_tab" class="tab active">
-                <h2>My Profile</h2>
-                <form id="profile_form">
-                    <label for="profile_input">Name:</label>
-                    <input type="text" id="profile_input" name="profile_input" required>
-                    <label for="profile_email">Email:</label>
-                    <input type="email" id="profile_email" name="profile_email" required>
-                    <label for="profile_phone">Phone:</label>
-                    <input type="tel" id="profile_phone" name="profile_phone" required>
-                    <button type="submit">Update Profile</button>
-                </form>
-            </div>
+/**
+* Open modal for adding/editing a schedule entry
+*/
+function openModal(cell) {
+const employee = cell.getAttribute('data-employee');
+const timeSlot = parseInt(cell.getAttribute('data-time'), 10);
+const startHour = timeSlot * 6 + 6;
 
-            <div id="company_tab" class="tab">
-                <h2>Company Details</h2>
-                <form id="company_form">
-                    <label for="company_name">Company Name:</label>
-                    <input type="text" id="company_name" name="company_name" required>
-                    <label for="company_abn">ABN:</label>
-                    <input type="text" id="company_abn" name="company_abn" required>
-                    <label for="company_address">Address:</label>
-                    <input type="text" id="company_street" name="company_street" placeholder="Street" required>
-                    <input type="text" id="company_city" name="company_city" placeholder="City" required>
-                    <input type="text" id="company_state" name="company_state" placeholder="State" required>
-                    <input type="text" id="company_postalCode" name="company_postalCode" placeholder="Postal Code" required>
-                    <input type="text" id="company_country" name="company_country" placeholder="Country" required>
-                    <label for="company_phone">Phone:</label>
-                    <input type="tel" id="company_phone" name="company_phone" required>
-                    <label for="company_email">Email:</label>
-                    <input type="email" id="company_email" name="company_email" required>
-                    <button type="submit">Update Details</button>
-                </form>
-            </div>
+const modal = document.getElementById('myModal');
+document.getElementById('modalEmployee').value = employee;
+document.getElementById('modalStartTime').value = `${String(startHour).padStart(2, '0')}:00`;
+document.getElementById('modalDate').value = formatDate(currentDate);
 
-            <div id="employee_portal_tab" class="tab">
-                <h2>Employee Portal</h2>
-                <p>Welcome to the Employee Portal. Here you can manage employee information, view timesheets, and more.</p>
+modal.style.display = 'block';
+}
 
-                <form id="employee_form">
-                    <label for="first_name">First Name:</label>
-                    <input type="text" id="first_name" name="first_name" required>
+/**
+* Close modal
+*/
+function closeModal() {
+document.getElementById('myModal').style.display = "none";
+document.getElementById('statusMessage').innerText = ''; // Clear status message
+}
 
-                    <label for="last_name">Last Name:</label>
-                    <input type="text" id="last_name" name="last_name" required>
+/**
+* Close clock modal
+*/
+function closeClockModal() {
+document.getElementById('clockModal').style.display = "none";
+}
 
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+// ----------------------------
+// FETCH & POPULATE EMPLOYEES
+// ----------------------------
 
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+async function fetchEmployeesAndPopulateSchedule() {
+try {
+const response = await fetch('/api/employees/all');
+if (response.ok) {
+const employees = await response.json();
+populateEmployeeColumn(employees);
+} else {
+console.error('Failed to fetch employees:', response.status, response.statusText);
+}
+} catch (error) {
+console.error('Error fetching employees:', error);
+}
+}
 
-                    <label for="auth_codeFormInput">Auth Code:</label>
-                    <input type="text" id="auth_codeFormInput" name="auth_codeFormInput" required readonly>
+function populateEmployeeColumn(employees) {
+const fixedColumnBody = document.getElementById('fixed_column_body');
+const scheduleBody = document.getElementById('schedule_body');
 
-                    <!-- Message div -->
-                    <div id="formMessage" style="color: red; margin-top: 10px;"></div>
+fixedColumnBody.innerHTML = ''; // Clear existing content
+scheduleBody.innerHTML = '';
 
-                    <button type="submit">Add Employee</button>
-                </form>
+employees.forEach(employee => {
+// Employee column
+const row = document.createElement('tr');
+const cell = document.createElement('td');
+cell.className = 'employee-name';
+cell.innerHTML = `${employee.first_name} ${employee.last_name} <span style="color: white;">${employee.schedule_color}</span>`;
+row.appendChild(cell);
+fixedColumnBody.appendChild(row);
 
-                <form id="employee_search_form">
-                    <label for="employee_search">Search Employee:</label>
-                    <input type="text" id="employee_search" name="employee_search">
-                    <button type="submit">Search</button>
-                </form>
+// Schedule row
+const scheduleRow = document.createElement('tr');
+for (let i = 6 * 4; i < 18 * 4; i++) {
+const cell = document.createElement('td');
+cell.dataset.employee = employee.user_id;
+cell.dataset.time = i;
+cell.style.backgroundColor = employee.schedule_color; // Apply color
+scheduleRow.appendChild(cell);
+}
+scheduleBody.appendChild(scheduleRow);
+});
+}
 
-                <h3>New Users</h3>
-                <table id="new_users_table">
-                    <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Registration Link</th>
-                    </tr>
-                    </thead>
-                    <tbody id="new_users_table_body">
-                    <!-- New user rows will be dynamically added here -->
-                    </tbody>
-                </table>
+document.addEventListener('DOMContentLoaded', fetchEmployeesAndPopulateSchedule);
 
-                <h3>Employee List</h3>
-                <table id="employee_table">
-                    <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Access</th>
-                        <th>Role</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody id="employees_table_body">
-                    <!-- User rows will be dynamically added here -->
-                    </tbody>
-                </table>
-            </div>
+// ----------------------------
+// FETCH & POPULATE PROJECTS
+// ----------------------------
 
-            <div id="customer_portal_tab" class="tab">
-                <h2>Customer Portal</h2>
-                <p>Welcome to the Customer Portal. Here you can manage customer information, view orders, and more.</p>
-                <form id="customer_search_form">
-                    <label for="customer_search">Search Customer:</label>
-                    <input type="text" id="customer_search" name="customer_search">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
+async function fetchAndPopulateProjects() {
+try {
+const response = await fetch('/api/projects/list');
+if (!response.ok) {
+console.error('Failed to fetch projects:', response.status, response.statusText);
+return;
+}
 
-            <div id="access_tab" class="tab">
-                <h2>Access</h2>
-                <p>Manage user access and permissions.</p>
-                <form id="access_form">
-                    <label for="user_role">User Role:</label>
-                    <select id="user_role" name="user_role">
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="employee">Employee</option>
-                    </select>
-                    <label for="user_access_level">Access Level:</label>
-                    <select id="user_access_level" name="user_access_level">
-                        <option value="full">Full Access</option>
-                        <option value="limited">Limited Access</option>
-                    </select>
-                    <button type="submit">Update Access</button>
-                </form>
-            </div>
+const projects = await response.json();
+console.log('Projects fetched:', projects); // Debugging
 
-            <div id="charge_out_rates_tab" class="tab">
-                <h2>Charge Out Rates</h2>
-                <form id="charge_out_rates_form">
-                    <label for="standard_rate">Standard Rate:</label>
-                    <input type="number" id="standard_rate" name="standard_rate" required>
-                    <label for="overtime_rate">Overtime Rate:</label>
-                    <input type="number" id="overtime_rate" name="overtime_rate" required>
-                    <label for="weekend_rate">Weekend Rate:</label>
-                    <input type="number" id="weekend_rate" name="weekend_rate" required>
-                    <button type="submit">Update Rates</button>
-                </form>
-            </div>
+const projectSelect = document.getElementById('project_select');
 
-            <div id="mark_ups_tab" class="tab">
-                <h2>Mark Ups</h2>
-                <form id="mark_ups_form">
-                    <label for="material_markup">Material Markup (%):</label>
-                    <input type="number" id="material_markup" name="material_markup" required>
-                    <label for="labor_markup">Labor Markup (%):</label>
-                    <input type="number" id="labor_markup" name="labor_markup" required>
-                    <button type="submit">Update Markups</button>
-                </form>
-            </div>
+// Clear existing options and add a placeholder
+projectSelect.innerHTML = '<option value="">Select a Project</option>';
 
-            <div id="templates_tab" class="tab">
-                <h2>Templates</h2>
-                <p>Manage and create templates for various documents and forms.</p>
-                <form id="template_search_form">
-                    <label for="template_search">Search Template:</label>
-                    <input type="text" id="template_search" name="template_search">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </section>
-</main>
-<script src="js/settings.js" type="module"></script>
-<footer>
-    <p>&copy; 2024 Fleetwood Plumbing Pty Ltd. All Rights Reserved. | <a href="#">Privacy Policy</a></p>
-    <p>Welcome, <span id="usernameFoot"></span>!!! Your role: <span id="role"></span>. Your access level: <span id="access"></span></p>
-</footer>
-</body>
-</html>
+// Populate the dropdown
+projects.forEach(project => {
+const option = document.createElement('option');
+option.value = project.projectID; // Use `projectID` as the value
+option.textContent = project.title; // Use `title` as the display text
+projectSelect.appendChild(option);
+});
+
+console.log('Projects loaded into dropdown');
+} catch (error) {
+console.error('Error fetching projects:', error);
+}
+}
+
+document.addEventListener('DOMContentLoaded', fetchAndPopulateProjects);
+
+// ----------------------------
+// SET DEFAULT TIMES FOR FORM ENTRIES
+// ----------------------------
+
+function setDefaultTimes() {
+const now = new Date();
+const formattedDate = now.toISOString().split('T')[0];
+document.getElementById('start_time').value = `${formattedDate}T07:00`;
+document.getElementById('end_time').value = `${formattedDate}T16:30`;
+}
+
+document.addEventListener('DOMContentLoaded', setDefaultTimes);

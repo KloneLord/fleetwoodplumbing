@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/colors.css">
-
+    <script src="js/dashboard.js" defer></script>
     <script>
         function showTab(tabId) {
             // Find all tab contents and hide them
@@ -67,25 +67,37 @@
             </div>
         </nav>
     </div>
-
 </header>
-
 <main>
     <section class="the-container">
         <div class="inner-container">
             <!-- Tab Buttons -->
             <div class="tab-buttons">
-                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Template 1</button>
+                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Todays Jobs</button>
                 <button data-tab="temp_2_tab" onclick="showTab('temp_2_tab')">Template 2</button>
                 <button data-tab="temp_3_tab" onclick="showTab('temp_3_tab')">Template 3</button>
                 <button data-tab="temp_4_tab" onclick="showTab('temp_4_tab')">Template 4</button>
             </div>
 
-            <!-- Tab Content -->
             <div id="temp_1_tab" class="tab active">
-                <h2>Template 1</h2>
-
-
+                <h2>Todays Jobs</h2>
+                <label>
+                    <input type="checkbox" id="todays_schedule">
+                    Today's Schedule
+                </label>
+                <br>
+                <label for="project_select">Select Project:</label>
+                <select id="project_select">
+                    <!-- Options will be populated dynamically -->
+                </select>
+                <br>
+                <div id="timer_display">
+                    <span id="project_title_display">No project selected</span>
+                    <span id="timer">00:00:00</span>
+                </div>
+                <br>
+                <button onclick="clockIn()">Clock In</button>
+                <button onclick="clockOut()">Clock Out</button>
             </div>
 
             <div id="temp_2_tab" class="tab">
@@ -152,6 +164,37 @@
         } catch (error) {
             console.error('Error during logout:', error.message);
             alert('An error occurred while logging out. Please try again.');
+        }
+    }
+    // File: js/dashboard.js
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await populateProjectDropdown();
+    });
+
+    // File: js/dashboard.js
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await populateProjectDropdown();
+    });
+
+    async function populateProjectDropdown() {
+        try {
+            const response = await fetch('/api/projects/list');
+            if (!response.ok) throw new Error('Failed to fetch projects.');
+
+            const projects = await response.json();
+            const projectSelect = document.getElementById('project_select');
+            projectSelect.innerHTML = ''; // Clear existing options
+
+            projects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.projectID;
+                option.textContent = `${project.customer} - ${project.title}`;
+                projectSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching project data:', error);
         }
     }
 </script>

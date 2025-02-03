@@ -103,7 +103,6 @@ export const getProjectSiteDetailsById = async (req, res) => {
     }
 };
 
-
 // New controller function to fetch project site details by clientId and siteName
 export const getProjectSiteDetailsByClientAndSite = async (req, res) => {
     const { clientId, projectSite } = req.query;

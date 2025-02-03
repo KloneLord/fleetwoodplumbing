@@ -1,0 +1,163 @@
+
+.schedule_large_container {
+    width: 100VH;
+    height: 70VH;
+    margin: 0 auto; /* Center the container horizontally */
+    position: relative; /* Allows for positioning of child elements */
+    display: flex; /* Enables flexible layout */
+    flex-direction: column; /* Stack child elements vertically */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    border: 1px solid #ddd; /* Add a border */
+    background-color: #ffffff; /* Background color */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure content stays within the bounds */
+}
+
+
+/* Schedule Styles */
+.schedule-container {
+    display: flex;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.fixed-column {
+    flex: 0 0 150px; /* Fixed width for employee column */
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+}
+
+.scrollable-content {
+    flex: 1 1 auto; /* Fills the remaining space */
+    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-y: hidden; /* Prevents vertical scrolling */
+}
+
+.schedule-table {
+    border-collapse: collapse; /* Collapse table borders */
+    width: 300px; /* Fixed width for the schedule grid */
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid #ccc; /* Add border for cells */
+    text-align: center;
+    width: 25px; /* Fixed width for each cell */
+    height: 25px; /* Fixed height for each cell */
+    line-height: 25px; /* Center text vertically */
+    font-size: 12px; /* Adjust font size */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Prevent content overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+    padding: 0; /* Remove extra padding */
+}
+
+.schedule-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.schedule-table td {
+    background-color: #ffffff;
+}
+
+.employee-name {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    height: 25px; /* Fixed height for the employee name cell */
+    line-height: 25px; /* Center text vertically */
+}
+
+/* Ensure fixed column doesn't move on scroll */
+.fixed-column {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+/* Scrollable area shadow */
+.scrollable-content::-webkit-scrollbar {
+    height: 10px;
+}
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px;
+}
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
+
+.daily_schedule-container {
+    display: flex;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.daily_fixed-column {
+    flex: 0 0 150px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+}
+
+.daily_schedule-table {
+    border-collapse: collapse;
+    width: 300px;
+}
+
+.daily_schedule-table th,
+.daily_schedule-table td {
+    border: 1px solid #ccc;
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+}
+
+.daily_employee-name {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    height: 25px;
+    line-height: 25px;
+}
+.tab {
+    display: none;
+    min-height: 100vh; /* Ensures each tab takes full height */
+    overflow: auto; /* Enables scrolling if content exceeds height */
+}
+
+.tab.active {
+    display: block;
+}
+
+#settings_tab,
+#submit_entry_tab {
+    min-height: auto; /* Allows it to grow as needed */
+    height: auto;
+    padding-bottom: 50px; /* Adds extra space at the bottom */
+}
+.the-container {
+    width: 100%;
+    max-width: 1200px; /* Adjust if needed */
+    margin: 0 auto; /* Centers the content */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers child elements */
+}
+
+

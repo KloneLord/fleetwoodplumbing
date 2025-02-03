@@ -532,7 +532,9 @@
   // Function to fetch project site details and update the project tab
   async function fetchProjectSiteDetails(clientId, projectSite) {
     try {
-      const response = await fetch(`/api/projects-sites/details?clientId=${clientId}&projectSite=${encodeURIComponent(projectSite)}`);
+      console.log(`Fetching details for clientId: ${clientId}, projectSite: ${projectSite}`);
+
+      const response = await fetch(`/api/projects-sites/details?clientId=${encodeURIComponent(clientId)}&projectSite=${encodeURIComponent(projectSite)}`);
       if (!response.ok) throw new Error('Failed to fetch project site details.');
 
       const siteDetails = await response.json();
@@ -581,6 +583,11 @@
     }
   }
 
+  // Example usage: Call fetchProjectDetails with a sample project ID
+  fetchProjectDetails('C8D096A438A467D7');
+
+  // Example usage: Call fetchProjectDetails with a sample project ID
+  fetchProjectDetails('C8D096A438A467D7');
 
 
 

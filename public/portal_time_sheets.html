@@ -73,47 +73,68 @@
         <div class="inner-container">
             <!-- Tab Buttons -->
             <div class="tab-buttons">
-                <button data-tab="temp_1_tab" class="active" onclick="showTab('temp_1_tab')">Template 1</button>
-                <button data-tab="temp_2_tab" onclick="showTab('temp_2_tab')">Template 2</button>
-                <button data-tab="temp_3_tab" onclick="showTab('temp_3_tab')">Template 3</button>
-                <button data-tab="temp_4_tab" onclick="showTab('temp_4_tab')">Template 4</button>
+                <button data-tab="timesheet_display" class="active" onclick="showTab('timesheet_display')">Timesheet Display</button>
+                <button data-tab="timesheet_entry" onclick="showTab('timesheet_entry')">Timesheet Entry</button>
+                <button data-tab="employee_list" onclick="showTab('employee_list')">Employee List</button>
             </div>
 
-            <!-- Tab Content -->
-            <div id="temp_1_tab" class="tab active">
-                <h2>Template 1</h2>
-                <form id="temp_1_form">
-                    <label for="temp_1_input">Input:</label>
-                    <input type="text" id="temp_1_input" name="temp_1_input" required>
+            <!-- Timesheet Display Tab -->
+            <div id="timesheet_display" class="tab active">
+                <h2>Timesheet Display</h2>
+                <p>Date: <span id="current_date"></span></p>
+                <p>Employee: <span id="employee_name"></span></p>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Total Hours</th>
+                        <th>Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody id="timesheet_table_body">
+                    <!-- Timesheet data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Timesheet Entry Tab -->
+            <div id="timesheet_entry" class="tab">
+                <h2>Timesheet Entry</h2>
+                <form id="timesheet_entry_form">
+                    <label for="entry_date">Date:</label>
+                    <input type="date" id="entry_date" name="entry_date" required>
+
+                    <label for="start_time">Start Time:</label>
+                    <input type="time" id="start_time" name="start_time" required>
+
+                    <label for="end_time">End Time:</label>
+                    <input type="time" id="end_time" name="end_time" required>
+
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes"></textarea>
+
                     <button type="submit">Submit</button>
                 </form>
             </div>
 
-            <div id="temp_2_tab" class="tab">
-                <h2>Template 2</h2>
-                <form id="temp_2_form">
-                    <label for="temp_2_input">Input:</label>
-                    <input type="text" id="temp_2_input" name="temp_2_input" required>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-
-            <div id="temp_3_tab" class="tab">
-                <h2>Template 3</h2>
-                <form id="temp_3_form">
-                    <label for="temp_3_input">Input:</label>
-                    <input type="text" id="temp_3_input" name="temp_3_input" required>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-
-            <div id="temp_4_tab" class="tab">
-                <h2>Template 4</h2>
-                <form id="temp_4_form">
-                    <label for="temp_4_input">Input:</label>
-                    <input type="text" id="temp_4_input" name="temp_4_input" required>
-                    <button type="submit">Submit</button>
-                </form>
+            <!-- Employee List Tab -->
+            <div id="employee_list" class="tab">
+                <h2>Employee List</h2>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Role</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employee_table_body">
+                    <!-- Employees list will be populated here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
