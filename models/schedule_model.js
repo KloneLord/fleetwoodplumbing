@@ -1,18 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const scheduleLogSchema = new mongoose.Schema(
-    {
-        user_id: { type: String, required: true }, // Employee ID
-        employee: { type: String, required: true }, // Full name of the employee
-        project_id: { type: String, required: true }, // Associated project ID
-        project_title: { type: String, required: true }, // Project name
-        date: { type: Date, required: true }, // Store actual date object
-        start_time: { type: String, required: true }, // Format: "07:00"
-        finish_time: { type: String, required: true }, // Format: "16:30"
-        schedule_job_description: { type: String, required: true } // Renamed for clarity
-    },
-    { timestamps: true } // Auto-createdAt & updatedAt fields
-);
+const jobSchema = new mongoose.Schema({
+        project_id: { type: String, required: true },
+        project_title: { type: String, required: true },
+        job_site: { type: String, required: true },
+        user_id: { type: String, required: true },
+        username: { type: String, required: true },
+        first_name: { type: String, required: true },
+        last_name: { type: String, required: true },
+        clockin_time: { type: Date },
+        clockout_time: { type: Date },
+        total_hours: { type: Number, default: 0 },
+        entry_date: { type: Date, default: Date.now },
+        been_edited: { type: Boolean, default: false },
+        edit_log_ids: { type: String }
+});
 
-const ScheduleLog = mongoose.model('ScheduleLog', scheduleLogSchema);
-export default ScheduleLog;
+const Job = mongoose.model("Job", jobSchema);
+export default Job;

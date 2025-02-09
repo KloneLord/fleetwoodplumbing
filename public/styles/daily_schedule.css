@@ -1,7 +1,7 @@
 
 .schedule_large_container {
-    width: 100VH;
-    height: 70VH;
+    width: 80VH;
+    height: 60VH;
     margin: 0 auto; /* Center the container horizontally */
     position: relative; /* Allows for positioning of child elements */
     display: flex; /* Enables flexible layout */
@@ -11,6 +11,7 @@
     background-color: #ffffff; /* Background color */
     border-radius: 8px; /* Rounded corners */
     overflow: hidden; /* Ensure content stays within the bounds */
+    align-self: flex-start;
 }
 
 
@@ -73,12 +74,6 @@
     line-height: 25px; /* Center text vertically */
 }
 
-/* Ensure fixed column doesn't move on scroll */
-.fixed-column {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-}
 
 /* Scrollable area shadow */
 .scrollable-content::-webkit-scrollbar {
@@ -103,14 +98,14 @@
 }
 
 .daily_fixed-column {
-    flex: 0 0 150px;
+    flex: 0 0 75px;
     background-color: #f9f9f9;
     border-right: 1px solid #ddd;
 }
 
 .daily_schedule-table {
     border-collapse: collapse;
-    width: 300px;
+    width: 500px;
 }
 
 .daily_schedule-table th,

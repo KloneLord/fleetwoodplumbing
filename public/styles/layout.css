@@ -130,22 +130,6 @@ body {
     border-bottom: 2px solid; /* Matches the scheme for separation */
 }
 
-.tab-buttons button {
-    flex: 1;
-    padding: 12px 20px;
-    border: 2px solid; /* Matches the scheme */
-    border-bottom: none; /* Seamless with tab content */
-    border-top-left-radius: 8px; /* Rounded top corners */
-    border-top-right-radius: 8px;
-    font-family: 'Montserrat', sans-serif; /* Better font for tab buttons */
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    background: inherit; /* Background defined in colors.css */
-    color: inherit; /* Text color from colors.css */
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
 
 .tab-buttons button.active {
     z-index: 2; /* Keep the active tab above others */
@@ -404,7 +388,46 @@ footer a:hover {
 
 .project-detail-value {
     color: #666;
-}/* General styles for all specified tables */
+}
+
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 #inventoryTable,
 #hiddenItemsTable,
 #hiddenClientTable,
@@ -426,7 +449,9 @@ footer a:hover {
 #returnInventoryTable,
 #equipmentTable, /* Added */
 #serviceHistoryTable, /* Changed */
-#repairHistoryTable /* Changed */ {
+#repairHistoryTable, /* Changed */
+#timesheetTable, /* Added */
+#employeeTable /* Added */ {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
@@ -475,7 +500,11 @@ footer a:hover {
 #serviceHistoryTable th, /* Changed */
 #serviceHistoryTable td, /* Changed */
 #repairHistoryTable th, /* Changed */
-#repairHistoryTable td /* Changed */ {
+#repairHistoryTable td, /* Changed */
+#timesheetTable th, /* Added */
+#timesheetTable td, /* Added */
+#employeeTable th, /* Added */
+#employeeTable td /* Added */ {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -519,7 +548,9 @@ footer a:hover {
 #returnInventoryTable th,
 #equipmentTable th, /* Added */
 #serviceHistoryTable th, /* Changed */
-#repairHistoryTable th /* Changed */ {
+#repairHistoryTable th, /* Changed */
+#timesheetTable th, /* Added */
+#employeeTable th /* Added */ {
     background-color: #2196F3; /* Blue background for headers */
     color: white; /* White text for headers */
     padding: 10px;
@@ -548,7 +579,9 @@ footer a:hover {
 #returnInventoryTable tbody tr:nth-child(odd),
 #equipmentTable tbody tr:nth-child(odd), /* Added */
 #serviceHistoryTable tbody tr:nth-child(odd), /* Changed */
-#repairHistoryTable tbody tr:nth-child(odd) /* Changed */ {
+#repairHistoryTable tbody tr:nth-child(odd), /* Changed */
+#timesheetTable tbody tr:nth-child(odd), /* Added */
+#employeeTable tbody tr:nth-child(odd) /* Added */ {
     background-color: #ffffff; /* White background for odd rows */
 }
 
@@ -573,7 +606,9 @@ footer a:hover {
 #returnInventoryTable tbody tr:nth-child(even),
 #equipmentTable tbody tr:nth-child(even), /* Added */
 #serviceHistoryTable tbody tr:nth-child(even), /* Changed */
-#repairHistoryTable tbody tr:nth-child(even) /* Changed */ {
+#repairHistoryTable tbody tr:nth-child(even), /* Changed */
+#timesheetTable tbody tr:nth-child(even), /* Added */
+#employeeTable tbody tr:nth-child(even) /* Added */ {
     background-color: #e6f7ff; /* Light blue background for even rows */
 }
 
@@ -621,44 +656,11 @@ footer a:hover {
 #serviceHistoryTable th, /* Changed */
 #serviceHistoryTable td, /* Changed */
 #repairHistoryTable th, /* Changed */
-#repairHistoryTable td /* Changed */ {
+#repairHistoryTable td, /* Changed */
+#timesheetTable th, /* Added */
+#timesheetTable td, /* Added */
+#employeeTable th, /* Added */
+#employeeTable td /* Added */ {
     max-width: 200px; /* Set maximum width for cells */
 }
 
-
-/* Modal styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}

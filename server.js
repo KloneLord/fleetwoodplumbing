@@ -17,19 +17,17 @@ import plantEquipmentRoutes from './routes/plant_equipment_routes.js';
 import planRoutes from './routes/plan_routes.js';
 import invoiceRoutes from './routes/invoice_routes.js';
 import employeeRegisterRoutes from './routes/employee_register_routes.js';
-import projectTasksRoutes from './routes/project_tasks_routes.js'; // Adjust the path as necessary
+import projectTasksRoutes from './routes/project_tasks_routes.js';
 import projectMaterialsRoutes from './routes/project_materials_routes.js';
 import equipmentRoutes from './routes/equipment_routes.js';
 import serviceRoutes from './routes/service_routes.js';
 import repairRoutes from './routes/repairs_routes.js';
 import timeLogRoutes from './routes/time_log_routes.js';
-import scheduleRoutes from './routes/schedule_routes.js';
+import scheduleRoutes from "./routes/schedule_routes.js";
 import businessTimesRoutes from './routes/business_times_routes.js';
 import employeeColorRoutes from './routes/employee_color_routes.js';
 import './models/project_materials_model.js';
 import './models/project_materials_booked.js';
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,15 +74,15 @@ app.use('/api/plant-equipment', equipmentRoutes);
 app.use('/api/plant-equipment', serviceRoutes);
 app.use('/api/plant-equipment', repairRoutes);
 app.use('/api/timelogs', timeLogRoutes);
-app.use('/api/schedule', scheduleRoutes);
 app.use('/api/business-times', businessTimesRoutes);
 app.use('/api/employees', employeeColorRoutes);
-
+app.use("/api", scheduleRoutes);
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 app.get('/', (req, res) => {
     res.send('Fleetwood Plumbing API is running...');
 });
+
 
 // Example API to fetch session data
 app.get('/api/fetch-session', async (req, res) => {

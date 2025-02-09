@@ -1,121 +1,55 @@
-import ScheduleLog from '../models/schedule_model.js';
+import Job from "../models/schedule_model.js";
 
-// Utility function to extract date from datetime-local input
-const extractDate = (dateTimeString) => {
-    return dateTimeString.split('T')[0]; // Extract YYYY-MM-DD
-};
-
-// Add Schedule Log
-export const addScheduleLog = async (req, res) => {
+// Create a new schedule entry
+export const createSchedule = async (req, res) => {
     try {
-        let { user_id, employee, project_id, project_title, start_time, finish_time, schedule_job_description } = req.body;
-
-        // Extract date from start_time
-        const date = extractDate(start_time);
-
-        // Check if entry already exists for this user on the same project & date
-        const existingLog = await ScheduleLog.findOne({ user_id, project_id, date });
-        if (existingLog) {
-            return res.status(400).json({ error: 'Schedule entry already exists for this user on this date' });
-        }
-
-        // Create new schedule entry
-        const newLog = new ScheduleLog({
-            user_id,
-            employee,
-            project_id,
-            project_title,
-            date,
-            start_time,
-            finish_time,
-            schedule_job_description
-        });
-
-        await newLog.save();
-        res.status(201).json({ message: 'Schedule log saved successfully', log: newLog });
-
+        const job = new Job(req.body);
+        await job.save();
+        res.status(201).json({ message: "Schedule entry created", job });
     } catch (error) {
-        console.error('Error saving schedule log:', error.message);
-        res.status(500).json({ error: 'Failed to save schedule log' });
+        res.status(500).json({ message: "Server Error", error });
     }
 };
 
-// List all schedule logs
-export const listScheduleLogs = async (req, res) => {
+// Get all schedule entries
+export const getSchedules = async (req, res) => {
     try {
-        const logs = await ScheduleLog.find().sort({ date: 1, start_time: 1 });
-        res.status(200).json(logs);
+        const jobs = await Job.find();
+        res.status(200).json(jobs);
     } catch (error) {
-        console.error('Error listing schedule logs:', error.message);
-        res.status(500).json({ error: 'Failed to list schedule logs' });
+        res.status(500).json({ message: "Server Error", error });
     }
 };
 
-// Get Schedule Log by ID
-export const getScheduleLogById = async (req, res) => {
+// Get a specific schedule entry by ID
+export const getScheduleById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const log = await ScheduleLog.findById(id);
-        if (!log) {
-            return res.status(404).json({ error: 'Schedule log not found' });
-        }
-        res.status(200).json(log);
+        const job = await Job.findById(req.params.id);
+        if (!job) return res.status(404).json({ message: "Schedule not found" });
+        res.status(200).json(job);
     } catch (error) {
-        console.error('Error fetching schedule log:', error.message);
-        res.status(500).json({ error: 'Failed to fetch schedule log' });
+        res.status(500).json({ message: "Server Error", error });
     }
 };
 
-// Update Schedule Log
-export const updateScheduleLog = async (req, res) => {
+// Update a schedule entry
+export const updateSchedule = async (req, res) => {
     try {
-        const { id } = req.params;
-        let updateData = req.body;
-
-        // Extract and update date from new start_time if provided
-        if (updateData.start_time) {
-            updateData.date = extractDate(updateData.start_time);
-        }
-
-        const updatedLog = await ScheduleLog.findByIdAndUpdate(id, updateData, { new: true });
-        if (!updatedLog) {
-            return res.status(404).json({ error: 'Schedule log not found' });
-        }
-        res.status(200).json({ message: 'Schedule log updated successfully', log: updatedLog });
+        const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedJob) return res.status(404).json({ message: "Schedule not found" });
+        res.status(200).json(updatedJob);
     } catch (error) {
-        console.error('Error updating schedule log:', error.message);
-        res.status(500).json({ error: 'Failed to update schedule log' });
+        res.status(500).json({ message: "Server Error", error });
     }
 };
 
-// Delete Schedule Log
-export const deleteScheduleLog = async (req, res) => {
+// Delete a schedule entry
+export const deleteSchedule = async (req, res) => {
     try {
-        const { id } = req.params;
-        const deletedLog = await ScheduleLog.findByIdAndDelete(id);
-        if (!deletedLog) {
-            return res.status(404).json({ error: 'Schedule log not found' });
-        }
-        res.status(200).json({ message: 'Schedule log deleted successfully', log: deletedLog });
+        const deletedJob = await Job.findByIdAndDelete(req.params.id);
+        if (!deletedJob) return res.status(404).json({ message: "Schedule not found" });
+        res.status(200).json({ message: "Schedule deleted" });
     } catch (error) {
-        console.error('Error deleting schedule log:', error.message);
-        res.status(500).json({ error: 'Failed to delete schedule log' });
-    }
-};
-
-// Fetch all schedule data
-export const fetchScheduleData = async (req, res) => {
-    try {
-        const response = await fetch('/api/schedule/list');
-        if (response.ok) {
-            const scheduleData = await response.json();
-            res.status(200).json(scheduleData);
-        } else {
-            console.error('Failed to fetch schedule data:', response.status, response.statusText);
-            res.status(500).json({ error: 'Failed to fetch schedule data' });
-        }
-    } catch (error) {
-        console.error('Error fetching schedule data:', error);
-        res.status(500).json({ error: 'Error fetching schedule data' });
+        res.status(500).json({ message: "Server Error", error });
     }
 };

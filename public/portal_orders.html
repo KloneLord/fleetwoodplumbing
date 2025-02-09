@@ -67,6 +67,7 @@
             <div class="tab-buttons">
                 <button data-tab="order_list_tab" class="active" onclick="showTab('order_list_tab')">Order List</button>
                 <button data-tab="make_order_tab" onclick="showTab('make_order_tab')">Make Order</button>
+                <button data-tab="flagged_orders_tab" onclick="showTab('flagged_orders_tab')">Flagged Orders</button>
                 <button data-tab="settings_tab" onclick="showTab('settings_tab')">Settings</button>
             </div>
 
@@ -78,6 +79,7 @@
                         <th>Order Number</th>
                         <th>Supplier</th>
                         <th>Order Date</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -94,8 +96,26 @@
                     <input type="text" id="supplier" name="supplier" required>
                     <label for="order_date">Order Date:</label>
                     <input type="date" id="order_date" name="order_date" required>
-                    <button type="submit">Submit Order</button>
+                    <button type="submit">Create Order</button>
                 </form>
+            </div>
+
+            <div id="flagged_orders_tab" class="tab">
+                <h2>Flagged to Order</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Description</th>
+                        <th>Stock Level</th>
+                        <th>Low Stock Level</th>
+                        <th>Need to Order</th>
+                    </tr>
+                    </thead>
+                    <tbody id="flagged_orders_list">
+                    <!-- Flagged orders will be loaded dynamically -->
+                    </tbody>
+                </table>
             </div>
 
             <div id="settings_tab" class="tab">

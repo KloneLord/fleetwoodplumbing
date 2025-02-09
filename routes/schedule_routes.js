@@ -1,19 +1,18 @@
-import express from 'express';
+import express from "express";
 import {
-    addScheduleLog,
-    listScheduleLogs,
-    getScheduleLogById,
-    updateScheduleLog,
-    deleteScheduleLog
-} from '../controllers/schedule_controller.js';
+    createSchedule,
+    getSchedules,
+    getScheduleById,
+    updateSchedule,
+    deleteSchedule
+} from "../controllers/schedule_controller.js";
 
 const router = express.Router();
 
-// Schedule Routes
-router.post('/add', addScheduleLog);
-router.get('/list', listScheduleLogs);
-router.get('/:id', getScheduleLogById);
-router.put('/update/:id', updateScheduleLog);
-router.delete('/delete/:id', deleteScheduleLog);
+router.post("/schedules", createSchedule);
+router.get("/schedules", getSchedules);
+router.get("/schedules/:id", getScheduleById);
+router.put("/schedules/:id", updateSchedule);
+router.delete("/schedules/:id", deleteSchedule);
 
 export default router;
